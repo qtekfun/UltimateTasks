@@ -1,0 +1,32 @@
+UltimateTasks es una app amable para las tareas que guardas en <b>Nextcloud</b> (CalDAV), inspirada en Recordatorios de Apple. Sigue funcionando sin conexión y sincroniza cuando puede.
+
+<b>De un vistazo</b>
+<ul>
+<li>Hoy, Programados, Todos y Completados, después tus listas, y búsqueda en todo.</li>
+<li>Casillas redondas con deshacer, notas, fecha y hora, prioridad, etiquetas, enlace y subtareas.</li>
+<li>Elige qué listas ver: las listas de tareas que publica Nextcloud Deck no molestan salvo que las quieras.</li>
+<li>Crea, renombra, cambia de color y reordena listas; bórralas solo si lo activas en Ajustes.</li>
+</ul>
+
+<b>Tareas que se repiten y avisos que llegan</b>
+<ul>
+<li>Cada día, semana, mes, año o a medida, incluido "el 3.er viernes de cada mes".</li>
+<li>Avisos exactos, avisos anticipados y posponer desde la notificación.</li>
+<li>Un asistente para móviles que paran las apps en segundo plano (Xiaomi, Oppo, OnePlus, Realme, Huawei, Honor, Samsung, vivo) y un modo alarma que ningún ahorro de batería retrasa.</li>
+</ul>
+
+<b>Sin conexión primero</b>
+<ul>
+<li>Cada cambio se guarda al momento y se sincroniza después, aunque cierres la app.</li>
+<li>Si un título o unas notas cambian aquí y en el servidor, eliges cuál conservar: nada se sobrescribe sin avisar.</li>
+</ul>
+
+<b>Tuya</b>
+<ul>
+<li>Temas claro, oscuro y negro puro, colores de Material You, inglés y español; dos o tres paneles en tablets.</li>
+<li>Exporta tus ajustes, y si quieres tu sesión protegida con contraseña, para pasar a un móvil nuevo.</li>
+<li>Solo HTTPS, inicio de sesión con el Login Flow de Nextcloud, contraseña de aplicación cifrada con el Android Keystore.</li>
+<li>Software libre (GPL-3.0-or-later). Sin servicios de Google, sin anuncios, sin rastreo: tus datos solo van a tu propio Nextcloud.</li>
+</ul>
+
+Necesita un servidor Nextcloud con tareas en CalDAV (la app Tasks, Calendar o Deck).
