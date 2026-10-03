@@ -152,6 +152,14 @@ Hoja/pantalla con, en este orden:
 - **Robustez:** ninguna pérdida de datos ante cierres, falta de red o errores del servidor.
 - **Transparencia:** `PRIVACY.md` explica cada permiso (avisos, alarmas exactas, batería, cámara…) y por qué.
 
+### Medidas (T28, 2026-10-03)
+Móvil de pruebas (1080×2400, Android 15/16), build release minificada firmada con la clave de depuración, datos locales reales (7 listas, ~80 tareas).
+- **Arranque en frío** (`am start -W`, 10 veces tras `force-stop`): mediana **126 ms**, máximo **138 ms** (objetivo < 1,5 s).
+- **Scroll** de "Todos" (`dumpsys gfxinfo`, 16 desplazamientos): 378 frames, **0,26 %** con tirones; p50 5 ms, p90 6 ms, p99 10 ms (60 fps = 16,7 ms).
+- **Fuente al 200 %**: inicio, lista, detalle y ajustes sin cortes ni solapes (filas etiqueta/valor reparten el ancho; la prioridad pasa a chips).
+- **TalkBack**: cada tarea es un elemento (título, prioridad en palabras, notas, fecha con "vencida", lista) con su estado (hecha/pendiente) y la acción de marcarla; abrir tiene etiqueta.
+- No hace falta Baseline Profile: las cifras están muy por debajo del objetivo.
+
 ## 7. Calidad y CI
 - Igual que UltimateDeck: GitHub Actions con build, detekt, ktlint, Android Lint, tests unitarios y Kover en cada PR; Dependabot; verificación de dependencias de Gradle; comprobación de licencias y de Play Services.
 - **Cobertura:** ≥ 85% global en `domain`/`data`/`sync`; 100% en resolutor, cola, recurrencia y planificador de avisos.
