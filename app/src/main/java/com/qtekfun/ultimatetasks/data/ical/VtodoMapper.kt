@@ -44,6 +44,7 @@ object VtodoMapper {
             reminderBefore = todo.components(
                 "VALARM"
             ).firstNotNullOfOrNull(VtodoAlarms::secondsBeforeDue),
+            attachments = VtodoAttachments.read(todo),
             modifiedAt = IcsDate.parseUtc(todo.property("LAST-MODIFIED"))
         )
     }
@@ -122,6 +123,7 @@ object VtodoMapper {
             c.withProperty("RRULE", v?.let { IcsProperty("RRULE", value = it) })
         }
         field(VtodoFields::reminderBefore) { c, v -> VtodoAlarms.withReminder(c, v) }
+        field(VtodoFields::attachments) { c, v -> VtodoAttachments.write(c, v) }
         return result
     }
 

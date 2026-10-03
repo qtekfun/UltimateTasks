@@ -24,5 +24,6 @@ data class VtodoFields(
     val recurrence: String? = null,
     /** The first alarm relative to the due date, in seconds before it. */
     val reminderBefore: Long? = null,
+    val attachments: List<IcsAttachment> = emptyList(),
     val modifiedAt: Instant? = null
 )

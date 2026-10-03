@@ -23,6 +23,7 @@ fun TaskEntity.fields() = VtodoFields(
     sortOrder = sortOrder,
     recurrence = recurrence,
     reminderBefore = reminderBefore,
+    attachments = attachments,
     modifiedAt = modifiedAt
 )
 
@@ -44,5 +45,6 @@ fun TaskEntity.withFields(fields: VtodoFields) = copy(
     sortOrder = fields.sortOrder,
     recurrence = fields.recurrence,
     reminderBefore = fields.reminderBefore,
+    attachments = fields.attachments,
     modifiedAt = fields.modifiedAt
 )

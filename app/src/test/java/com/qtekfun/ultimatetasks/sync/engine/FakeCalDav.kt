@@ -49,28 +49,38 @@ class FakeCalDav : Dispatcher() {
         requests += "${request.method} $path"
         failures[path]?.removeFirstOrNull()?.let { return MockResponse(it) }
         val body = request.body?.utf8().orEmpty()
-        return when (request.method) {
-            "PROPFIND" -> propfind(path)
-
-            "REPORT" -> report(path, body)
-
-            "PUT" -> write(
-                path,
-                body,
-                request.headers["If-Match"],
-                request.headers["If-None-Match"]
-            )
-
-            "DELETE" -> delete(path)
-
-            "MKCALENDAR" -> createList(path, body)
-
-            "PROPPATCH" -> patchList(path, body)
-
-            "MOVE" -> move(path, request.headers["Destination"].orEmpty())
-
-            else -> MockResponse(405)
+        return when {
+            path.startsWith(FILES) -> files(request.method, path, request.body?.toByteArray())
+            else -> dav(request.method, path, body, request)
         }
+    }
+
+    private fun dav(
+        method: String,
+        path: String,
+        body: String,
+        request: RecordedRequest
+    ): MockResponse = when (method) {
+        "PROPFIND" -> propfind(path)
+
+        "REPORT" -> report(path, body)
+
+        "PUT" -> write(
+            path,
+            body,
+            request.headers["If-Match"],
+            request.headers["If-None-Match"]
+        )
+
+        "DELETE" -> delete(path)
+
+        "MKCALENDAR" -> createList(path, body)
+
+        "PROPPATCH" -> patchList(path, body)
+
+        "MOVE" -> move(path, request.headers["Destination"].orEmpty())
+
+        else -> MockResponse(405)
     }
 
     private fun propfind(path: String): MockResponse = when (path) {
@@ -184,6 +194,29 @@ class FakeCalDav : Dispatcher() {
     /** Every PROPPATCH body received, by list. */
     val proppatches = mutableListOf<Pair<String, String>>()
 
+    /** Nextcloud Files: the uploaded bytes by path, and whether the folder exists. */
+    val uploaded = linkedMapOf<String, ByteArray>()
+    var folderExists = false
+
+    private fun files(method: String, path: String, body: ByteArray?): MockResponse = when {
+        method == "MKCOL" -> MockResponse(201).also { folderExists = true }
+
+        method == "PUT" && !folderExists -> MockResponse(409)
+
+        method == "PUT" -> MockResponse(201).also { uploaded[path] = body ?: ByteArray(0) }
+
+        method == "PROPFIND" && path in uploaded -> multistatus(
+            response(
+                path,
+                "<oc:fileid xmlns:oc=\"http://owncloud.org/ns\">${uploaded.keys.indexOf(
+                    path
+                ) + 100}</oc:fileid>"
+            )
+        )
+
+        else -> MockResponse(404)
+    }
+
     private fun createList(path: String, body: String): MockResponse {
         lists[path] = DISPLAY_NAME.find(body)?.groupValues?.get(1).orEmpty()
         return MockResponse(201)
@@ -239,5 +272,6 @@ class FakeCalDav : Dispatcher() {
 
     private companion object {
         val DISPLAY_NAME = Regex("<d:displayname>([^<]*)</d:displayname>")
+        const val FILES = "/remote.php/dav/files/"
     }
 }

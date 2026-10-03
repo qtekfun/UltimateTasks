@@ -29,7 +29,8 @@ enum class TaskField(
     RECURRENCE(VtodoFields::recurrence, { to, from -> to.copy(recurrence = from.recurrence) }),
     REMINDER(VtodoFields::reminderBefore, { to, from ->
         to.copy(reminderBefore = from.reminderBefore)
-    });
+    }),
+    ATTACHMENTS(VtodoFields::attachments, { to, from -> to.copy(attachments = from.attachments) });
 
     val bit: Int get() = 1 shl ordinal
 

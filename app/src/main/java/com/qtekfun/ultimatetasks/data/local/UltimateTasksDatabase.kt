@@ -15,9 +15,11 @@ import com.qtekfun.ultimatetasks.data.local.dao.ReminderDao
 import com.qtekfun.ultimatetasks.data.local.dao.SmartListDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskListDao
+import com.qtekfun.ultimatetasks.data.local.dao.UploadDao
 import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
 import com.qtekfun.ultimatetasks.data.local.entity.AccountEntity
 import com.qtekfun.ultimatetasks.data.local.entity.PendingOperationEntity
+import com.qtekfun.ultimatetasks.data.local.entity.PendingUploadEntity
 import com.qtekfun.ultimatetasks.data.local.entity.SnoozeEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
@@ -30,7 +32,8 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
         TaskListEntity::class,
         TaskEntity::class,
         PendingOperationEntity::class,
-        SnoozeEntity::class
+        SnoozeEntity::class,
+        PendingUploadEntity::class
     ],
     version = UltimateTasksDatabase.VERSION,
     exportSchema = true
@@ -38,13 +41,14 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 @ColumnTypeConverters(Converters::class)
 abstract class UltimateTasksDatabase : RoomDatabase() {
     companion object {
-        const val VERSION = 4
+        const val VERSION = 5
 
         /**
          * Migrations from each released version to the next. There is no destructive fallback:
          * raising [VERSION] requires adding its migration here (checked by DatabaseSchemaTest).
          */
-        val MIGRATIONS: Array<Migration> = arrayOf(Migration1To2, Migration2To3, Migration3To4)
+        val MIGRATIONS: Array<Migration> =
+            arrayOf(Migration1To2, Migration2To3, Migration3To4, Migration4To5)
     }
 
     abstract fun accountDao(): AccountDao
@@ -62,4 +66,6 @@ abstract class UltimateTasksDatabase : RoomDatabase() {
     abstract fun smartListDao(): SmartListDao
 
     abstract fun reminderDao(): ReminderDao
+
+    abstract fun uploadDao(): UploadDao
 }
