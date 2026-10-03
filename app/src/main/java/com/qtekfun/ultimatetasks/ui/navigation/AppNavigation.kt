@@ -84,7 +84,8 @@ fun AppNavigation(
                     adding = true
                     opened = encode(TaskSource.List(it))
                 },
-                onReorder = { reorder = true }
+                onReorder = { reorder = true },
+                onOpenTask = { task = it }
             )
         )
     }

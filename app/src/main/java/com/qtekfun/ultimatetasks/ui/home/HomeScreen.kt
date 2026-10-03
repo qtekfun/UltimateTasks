@@ -114,12 +114,20 @@ fun HomeScreen(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         topBar = { TopAppBar(title = {}, actions = { HomeMenu(actions) }) }
     ) { padding ->
-        PullToRefreshBox(
-            isRefreshing = syncing,
-            onRefresh = viewModel::refresh,
-            modifier = Modifier.padding(padding).fillMaxSize()
-        ) {
-            HomeContent(home, actions.onOpen)
+        val query by viewModel.query.collectAsStateWithLifecycle()
+        Column(Modifier.padding(padding).fillMaxSize()) {
+            SearchBar(viewModel)
+            if (query.isBlank()) {
+                PullToRefreshBox(
+                    isRefreshing = syncing,
+                    onRefresh = viewModel::refresh,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    HomeContent(home, actions.onOpen)
+                }
+            } else {
+                SearchResults(viewModel, actions.onOpenTask)
+            }
         }
     }
     if (creating) {
