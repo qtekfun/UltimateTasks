@@ -5,7 +5,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 ## Fase 0 — Cimientos y prototipos de riesgo
 - [x] **T00 Proyecto base**: copiar de UltimateDeck la estructura Gradle (KTS, `libs.versions.toml`, Hilt, Compose, Material 3), tema (claro/oscuro/AMOLED/Material You), `strings.xml` en/es, cabeceras SPDX, `LICENSE`, `.editorconfig`, `.gitignore`. Paquete `com.qtekfun.ultimatetasks`.
   - *Verificación:* `./gradlew assembleDebug` compila y la app arranca con pantalla vacía.
-- [ ] **T01 CI y calidad**: detekt, ktlint, Lint (warnings como errores), Kover con umbrales, verificación de dependencias, chequeo de licencias/Play Services, GitHub Actions, Dependabot (copiado y adaptado).
+- [x] **T01 CI y calidad**: detekt, ktlint, Lint (warnings como errores), Kover con umbrales, verificación de dependencias, chequeo de licencias/Play Services, GitHub Actions, Dependabot (copiado y adaptado).
   - *Verificación:* PR de prueba en verde; una dependencia de Play Services añadida a propósito la hace fallar.
 - [ ] **T02 Prototipo CalDAV + iCalendar**: evaluar `dav4jvm` + `ical4j` frente a implementación propia (tamaño del APK, funcionamiento en API 26, licencias). Corpus `.ics` real (Nextcloud Tasks, Apple, Thunderbird, tasks.org, Deck) con ida y vuelta sin pérdidas. Comprobar contra el servidor: descubrimiento, `sync-collection`, listas de Deck (¿escribibles?), formato `ATTACH` que muestra la web.
   - *Verificación:* tests del corpus; decisiones anotadas en `SPEC.md` §9 (preguntar antes de añadir dependencias).
