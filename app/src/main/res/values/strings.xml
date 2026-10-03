@@ -232,4 +232,8 @@
     <string name="search_clear">Clear search</string>
     <string name="search_include_completed">Include completed</string>
     <string name="search_no_results">No results</string>
+
+    <string name="share_label">New task</string>
+    <string name="share_sign_in_first">Sign in to UltimateTasks first.</string>
+    <string name="share_added">Task added</string>
 </resources>
