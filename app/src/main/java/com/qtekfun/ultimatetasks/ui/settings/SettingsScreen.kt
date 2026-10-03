@@ -48,6 +48,7 @@ fun SettingsScreen(
     accountName: String,
     onLogOut: () -> Unit,
     onBack: () -> Unit,
+    onWizard: () -> Unit,
     viewModel: SettingsViewModel = viewModel()
 ) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -82,7 +83,7 @@ fun SettingsScreen(
             SectionTitle(stringResource(R.string.settings_appearance))
             AppearanceSection(settings, viewModel.repository)
             SectionTitle(stringResource(R.string.settings_reminders))
-            RemindersSection(settings, viewModel)
+            RemindersSection(settings, viewModel, onWizard)
             SectionTitle(stringResource(R.string.settings_backup))
             BackupSection()
             SectionTitle(stringResource(R.string.settings_account))

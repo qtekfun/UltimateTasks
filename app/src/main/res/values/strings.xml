@@ -262,4 +262,22 @@
     <string name="sort_title">By title</string>
     <string name="reorder">Reorder</string>
     <string name="reorder_done">Done reordering</string>
+
+    <string name="wizard_title">Reminders you can trust</string>
+    <string name="wizard_intro">Many phones stop apps in the background to save battery, and reminders arrive late or not at all. These steps prevent it. You can come back here from Settings › Reminders.</string>
+    <string name="wizard_notifications_why">Without it no reminder can be shown.</string>
+    <string name="wizard_exact">Exact alarms</string>
+    <string name="wizard_exact_why">So reminders ring at their minute, not when the system feels like it.</string>
+    <string name="wizard_battery_why">Battery savers delay alarms with the screen off. UltimateTasks only wakes up for your reminders and to sync.</string>
+    <string name="wizard_maker">Your phone’s own settings</string>
+    <string name="wizard_maker_coloros">ColorOS (OPPO, OnePlus, realme): in the app settings, open Battery and choose “Allow background activity” and “Allow auto launch”.</string>
+    <string name="wizard_maker_xiaomi">MIUI / HyperOS: in the app settings, turn on Autostart and set Battery saver to “No restrictions”.</string>
+    <string name="wizard_maker_huawei">EMUI / HarmonyOS: in Battery › App launch, set UltimateTasks to “Manage manually” and turn on the three options.</string>
+    <string name="wizard_maker_samsung">One UI: in Battery, choose “Unrestricted”, and make sure the app is not in “Sleeping apps”.</string>
+    <string name="wizard_maker_vivo">Funtouch OS / OriginOS: allow Autostart and “High background power consumption” for the app.</string>
+    <string name="wizard_maker_other">If reminders still arrive late, check the app’s battery settings and allow it to run in the background.</string>
+    <string name="wizard_open_app_settings">Open app settings</string>
+    <string name="wizard_alarm_recommended">Recommended on this phone: reminders are set like an alarm clock, which its battery saver does not delay.</string>
+    <string name="wizard_done">Done</string>
+    <string name="settings_wizard">Reminders wizard</string>
 </resources>
