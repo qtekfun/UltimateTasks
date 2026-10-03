@@ -35,9 +35,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
-import com.qtekfun.ultimatetasks.domain.recurrence.Frequency
+import com.qtekfun.ultimatetasks.domain.recurrence.CustomRepeat
 import com.qtekfun.ultimatetasks.domain.recurrence.RecurrenceRules
 import com.qtekfun.ultimatetasks.domain.task.DueEdits
+import com.qtekfun.ultimatetasks.domain.task.RepeatEdits
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -80,7 +81,7 @@ fun DateSection(task: TaskEntity, editable: Boolean, viewModel: TaskDetailViewMo
             enabled = editable && date != null
         ) { seconds -> viewModel.edit { it.copy(reminderBefore = seconds) } }
         HorizontalDivider(Modifier.padding(start = 16.dp))
-        ValueRow(stringResource(R.string.field_repeat), recurrenceLabel(task.recurrence))
+        RepeatRow(task, editable, viewModel)
     }
     if (pickDate) {
         DueDatePicker(
@@ -195,26 +196,59 @@ private fun reminderLabel(seconds: Long?): String {
     return pluralStringResource(plural, count, count)
 }
 
-/** A short description until the repetition editor arrives (T18). */
+/** Repeat: the current rule in words; tapping opens the presets and the custom editor (RF-06). */
 @Composable
-private fun recurrenceLabel(recurrence: String?): String {
-    val rule = recurrence?.let(RecurrenceRules::parse)
-    val simple = rule?.takeIf { it.interval == 1 && it.byDay.isEmpty() && it.byMonthDay.isEmpty() }
-    return stringResource(
-        when {
-            recurrence == null -> R.string.repeat_never
-            simple == null -> R.string.repeat_custom
-            simple.frequency == Frequency.DAILY -> R.string.repeat_daily
-            simple.frequency == Frequency.WEEKLY -> R.string.repeat_weekly
-            simple.frequency == Frequency.MONTHLY -> R.string.repeat_monthly
-            else -> R.string.repeat_yearly
+private fun RepeatRow(task: TaskEntity, editable: Boolean, viewModel: TaskDetailViewModel) {
+    var menu by remember { mutableStateOf(false) }
+    var custom by remember { mutableStateOf(false) }
+    val zone = ZoneId.systemDefault()
+    val today = LocalDate.now(zone)
+    val anchor = DueEdits.date(task) ?: today
+    val apply = { rule: String? -> viewModel.edit { RepeatEdits.withRule(it, rule, today, zone) } }
+    Row(
+        Modifier.fillMaxWidth().heightIn(
+            min = 56.dp
+        ).clickable(enabled = editable, role = Role.Button) {
+            menu =
+                true
         }
-    )
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(stringResource(R.string.field_repeat), Modifier.weight(1f))
+        Text(repeatLabel(task.recurrence), color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+    if (menu) {
+        RepeatDialog(
+            current = task.recurrence,
+            onPick = {
+                menu = false
+                apply(it)
+            },
+            onCustom = {
+                menu = false
+                custom = true
+            },
+            onDismiss = { menu = false }
+        )
+    }
+    if (custom) {
+        val start = CustomRepeat.from(task.recurrence?.let(RecurrenceRules::parse), anchor)
+        CustomRepeatDialog(
+            start = start,
+            anchor = anchor,
+            onSave = {
+                custom = false
+                apply(RecurrenceRules.format(it.toRule(anchor)))
+            },
+            onDismiss = { custom = false }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DueDatePicker(date: LocalDate?, onPick: (LocalDate) -> Unit, onDismiss: () -> Unit) {
+fun DueDatePicker(date: LocalDate?, onPick: (LocalDate) -> Unit, onDismiss: () -> Unit) {
     // The picker works in UTC milliseconds at midnight.
     val state = rememberDatePickerState(
         initialSelectedDateMillis = (date ?: LocalDate.now()).atStartOfDay().toInstant(
