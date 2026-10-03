@@ -33,6 +33,7 @@ android {
         // Derived from appVersion in gradle.properties once releases start (T31).
         versionCode = 1
         versionName = providers.gradleProperty("appVersion").get()
+        testInstrumentationRunner = "com.qtekfun.ultimatetasks.HiltTestRunner"
     }
 
     // Reproducible builds (F-Droid): no Google-encrypted dependency blob in the APK.
@@ -277,6 +278,17 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // UI tests (T29), run on a device with connectedDebugAndroidTest.
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    // Compose's test rule brings Espresso 3.5, which calls an API Android 17 removed.
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
