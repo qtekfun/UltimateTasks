@@ -10,8 +10,9 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T02 Prototipo CalDAV + iCalendar**: evaluar `dav4jvm` + `ical4j` frente a implementación propia (tamaño del APK, funcionamiento en API 26, licencias). Corpus `.ics` real (Nextcloud Tasks, Apple, Thunderbird, tasks.org, Deck) con ida y vuelta sin pérdidas. Comprobar contra el servidor: descubrimiento, `sync-collection`, listas de Deck (¿escribibles?), formato `ATTACH` que muestra la web.
   - *Verificación:* tests del corpus; decisiones anotadas en `SPEC.md` §9 (preguntar antes de añadir dependencias).
   - *Resultado:* implementación propia sin dependencias; las comprobaciones contra el servidor pasan a T05.
-- [ ] **T02b Prototipo de fiabilidad de avisos**: alarma exacta, modo alarma, exención de batería y aviso de prueba en el móvil del autor (ColorOS) con la app cerrada y el móvil en reposo. Elegir `USE_EXACT_ALARM` o `SCHEDULE_EXACT_ALARM`.
+- [x] **T02b Prototipo de fiabilidad de avisos**: alarma exacta, modo alarma, exención de batería y aviso de prueba en el móvil del autor (ColorOS) con la app cerrada y el móvil en reposo. Elegir `USE_EXACT_ALARM` o `SCHEDULE_EXACT_ALARM`.
   - *Verificación:* informe con retrasos medidos; decisión en `SPEC.md` §9.
+  - *Resultado:* se copia la solución de UltimateDeck; medidas y permisos en `SPEC.md` §9.
 
 ## Fase 1 — Datos y red
 - [ ] **T03 Modelo de dominio y Room**: cuenta, lista (color, icono local, orden, visible, sync-token), tarea (campos de RF-05, padre, orden, `.ics` original, ETag, campos sucios), etiqueta, adjunto, aviso pospuesto, cola de operaciones. Migraciones con test.
