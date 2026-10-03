@@ -47,6 +47,10 @@ interface TaskListDao {
     @Query("UPDATE task_list SET syncToken = :token WHERE accountId = :accountId AND href = :href")
     suspend fun setSyncToken(accountId: Long, href: String, token: String?)
 
+    /** The ctag of the list when it was last pulled, to skip lists without changes. */
+    @Query("UPDATE task_list SET ctag = :ctag WHERE accountId = :accountId AND href = :href")
+    suspend fun setCtag(accountId: Long, href: String, ctag: String?)
+
     @Query("UPDATE task_list SET visible = :visible WHERE accountId = :accountId AND href = :href")
     suspend fun setVisible(accountId: Long, href: String, visible: Boolean)
 

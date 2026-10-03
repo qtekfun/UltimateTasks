@@ -35,9 +35,19 @@ class PullSync @Inject constructor(
     suspend fun pull(dav: CalDav, account: AccountEntity): DavResult<*>? {
         val result = home(dav, account)
             .then { home -> dav.read.taskLists(home) }
-            .then { collections -> DavResult.Success(saveLists(account.id, collections)) }
+            .then { collections ->
+                DavResult.Success(
+                    saveLists(account.id, collections).zip(
+                        collections.map {
+                            it.ctag
+                        }
+                    )
+                )
+            }
         if (result !is DavResult.Success) return result
-        return result.value.firstNotNullOfOrNull { pullList(dav, account.id, it) }
+        return result.value.firstNotNullOfOrNull { (list, ctag) ->
+            pullList(dav, account.id, list, ctag)
+        }
     }
 
     private suspend fun home(dav: CalDav, account: AccountEntity): DavResult<String> =
@@ -67,7 +77,8 @@ class PullSync @Inject constructor(
                 visible = old?.visible ?: true,
                 writable = collection.writable,
                 syncToken = old?.syncToken,
-                ctag = collection.ctag
+                // The ctag of the last pull; the server's current one is compared with it.
+                ctag = old?.ctag
             )
         }
         lists.upsert(saved)
@@ -83,20 +94,34 @@ class PullSync @Inject constructor(
         return saved
     }
 
+    /**
+     * Pulls one list: with its sync token when the server supports sync-collection, otherwise
+     * (as for the lists Deck publishes) every task with its ETag, and only when [ctag] changed.
+     */
     private suspend fun pullList(
         dav: CalDav,
         accountId: Long,
-        list: TaskListEntity
+        list: TaskListEntity,
+        ctag: String?
     ): DavResult<*>? {
+        if (list.syncToken == null && ctag != null && ctag == list.ctag) return null
         var full = list.syncToken == null
         var changes = dav.read.changes(list.href, list.syncToken)
         if (changes == DavResult.SyncTokenExpired) {
             full = true
             changes = dav.read.changes(list.href, null)
         }
+        if (changes == DavResult.HttpError(UNSUPPORTED_REPORT)) {
+            full = true
+            changes =
+                dav.read.allTasks(list.href).then {
+                    DavResult.Success(DavChanges(it, emptyList(), null))
+                }
+        }
         return changes.then { found -> fetchChanged(dav, accountId, list, found) }
             .then { (found, fetched) ->
                 save(accountId, list, found, fetched, full)
+                lists.setCtag(accountId, list.href, ctag)
                 DavResult.Success(Unit)
             }.takeIf { it !is DavResult.Success }
     }
@@ -149,5 +174,8 @@ class PullSync @Inject constructor(
     private companion object {
         /** Tasks per calendar-multiget request. */
         const val BATCH = 50
+
+        /** Sabre's answer to a REPORT the collection does not support. */
+        const val UNSUPPORTED_REPORT = 415
     }
 }

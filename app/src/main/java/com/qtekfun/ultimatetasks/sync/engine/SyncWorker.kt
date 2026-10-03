@@ -4,6 +4,7 @@
 package com.qtekfun.ultimatetasks.sync.engine
 
 import android.content.Context
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
@@ -14,13 +15,22 @@ import javax.inject.Provider
 /** Runs a sync in the background; WorkManager retries it with backoff when it fails. */
 class SyncWorker(context: Context, params: WorkerParameters, private val engine: SyncEngine) :
     CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result = when (engine.sync()) {
+    override suspend fun doWork(): Result = when (engine.sync().also(::log)) {
         is SyncOutcome.Ok, SyncOutcome.NoAccount -> Result.success()
 
         SyncOutcome.Offline, is SyncOutcome.Error -> Result.retry()
 
         // Retrying cannot help until the user signs in again.
         SyncOutcome.Unauthorized -> Result.failure()
+    }
+
+    /** Only the outcome kind and HTTP codes are logged, never task data or credentials. */
+    private fun log(outcome: SyncOutcome) {
+        Log.i(TAG, "Sync finished: $outcome")
+    }
+
+    private companion object {
+        const val TAG = "UltimateTasksSync"
     }
 }
 

@@ -27,6 +27,9 @@ class FakeCalDav : Dispatcher() {
 
     val home = "/remote.php/dav/calendars/ana/"
 
+    /** Lists that answer sync-collection with 415, as Deck's do; they have a ctag instead. */
+    val withoutSync = mutableSetOf<String>()
+
     fun addList(name: String): String = (home + name.lowercase() + "/").also { lists[it] = name }
 
     fun put(href: String, ics: String): String {
@@ -91,7 +94,13 @@ class FakeCalDav : Dispatcher() {
                     href,
                     "<d:displayname>$name</d:displayname>" +
                         "<d:resourcetype><d:collection/><c:calendar/></d:resourcetype>" +
-                        "<d:sync-token>$version</d:sync-token>"
+                        if (href in
+                            withoutSync
+                        ) {
+                            "<cs:getctag>${ctag(href)}</cs:getctag>"
+                        } else {
+                            "<d:sync-token>$version</d:sync-token>"
+                        }
                 )
             }.toTypedArray()
         )
@@ -99,7 +108,17 @@ class FakeCalDav : Dispatcher() {
         else -> MockResponse(404)
     }
 
+    private fun ctag(list: String) = log.lastOrNull { it.second.startsWith(list) }?.first ?: 0
+
     private fun report(path: String, body: String): MockResponse = when {
+        "sync-collection" in body && path in withoutSync -> MockResponse(415)
+
+        "calendar-query" in body -> multistatus(
+            *resources.keys.filter {
+                it.startsWith(path)
+            }.map(::state).toTypedArray()
+        )
+
         "sync-collection" in body -> {
             val token = Regex(
                 "<d:sync-token>([^<]*)</d:sync-token>"
@@ -186,7 +205,8 @@ class FakeCalDav : Dispatcher() {
     private fun multistatus(vararg responses: String, token: String? = null) = MockResponse(
         207,
         headersOf("Content-Type", "application/xml"),
-        "<d:multistatus xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">" +
+        "<d:multistatus xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\" " +
+            "xmlns:cs=\"http://calendarserver.org/ns/\">" +
             responses.joinToString("") +
             (token?.let { "<d:sync-token>$it</d:sync-token>" } ?: "") + "</d:multistatus>"
     )

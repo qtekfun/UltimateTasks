@@ -149,6 +149,23 @@ class SyncTest {
     }
 
     @Test
+    fun `lists without sync tokens are listed whole, only when their ctag changed`() = runTest {
+        val deck = fake.addList("Deck")
+        fake.withoutSync += deck
+        fake.put("${deck}card-1.ics", ics("card-1", "Tarjeta"))
+        assertNull(pullAll())
+        assertEquals("Tarjeta", local("${deck}card-1.ics")!!.summary)
+        fake.requests.clear()
+        assertNull(pullAll())
+        assertFalse(fake.requests.any { it == "REPORT $deck" })
+        fake.remove("${deck}card-1.ics")
+        fake.put("${deck}card-2.ics", ics("card-2", "Otra"))
+        assertNull(pullAll())
+        assertNull(local("${deck}card-1.ics"))
+        assertEquals("Otra", local("${deck}card-2.ics")!!.summary)
+    }
+
+    @Test
     fun `resources that are not tasks are ignored`() = runTest {
         fake.put(
             "${work}e.ics",
