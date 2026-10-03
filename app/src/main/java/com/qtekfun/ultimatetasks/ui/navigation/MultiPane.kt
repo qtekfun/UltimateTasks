@@ -6,8 +6,13 @@ package com.qtekfun.ultimatetasks.ui.navigation
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,7 +28,7 @@ import com.qtekfun.ultimatetasks.ui.detail.TaskDetailScreen
 import com.qtekfun.ultimatetasks.ui.home.HomeScreen
 import com.qtekfun.ultimatetasks.ui.list.TaskListScreen
 
-private val SIDEBAR = 340.dp
+private val SIDEBAR = 360.dp
 private val DETAIL = 420.dp
 
 /**
@@ -34,13 +39,16 @@ private val DETAIL = 420.dp
 fun MultiPane(nav: NavState, panes: Panes) {
     val source = nav.opened
     val task = nav.task
+    val safe = WindowInsets.safeDrawing
     BackHandler(enabled = task != null || source != null) {
         if (task != null) nav.task = null else nav.closeList()
     }
     Row(Modifier.fillMaxSize()) {
-        Box(Modifier.width(SIDEBAR).fillMaxHeight()) { HomeScreen(homeActions(nav)) }
+        Box(Modifier.width(SIDEBAR).fillMaxHeight().inner(safe, WindowInsetsSides.End)) {
+            HomeScreen(homeActions(nav))
+        }
         VerticalDivider()
-        Box(Modifier.weight(1f).fillMaxHeight()) {
+        Box(Modifier.weight(1f).fillMaxHeight().inner(safe, middleSides(panes, task != null))) {
             when {
                 task != null && panes == Panes.TWO -> Detail(nav, task)
 
@@ -56,9 +64,26 @@ fun MultiPane(nav: NavState, panes: Panes) {
         }
         if (task != null && panes == Panes.THREE) {
             VerticalDivider()
-            Box(Modifier.width(DETAIL).fillMaxHeight()) { Detail(nav, task) }
+            Box(Modifier.width(DETAIL).fillMaxHeight().inner(safe, WindowInsetsSides.Start)) {
+                Detail(nav, task)
+            }
         }
     }
+}
+
+/**
+ * Only the outer panes touch the screen edges: the sides that face another pane drop the
+ * cutout and navigation bar insets, so no pane is padded for a camera it does not reach.
+ */
+private fun Modifier.inner(safe: WindowInsets, sides: WindowInsetsSides) =
+    consumeWindowInsets(safe.only(sides))
+
+private fun middleSides(panes: Panes, detailOpen: Boolean) = if (panes == Panes.THREE &&
+    detailOpen
+) {
+    WindowInsetsSides.Horizontal
+} else {
+    WindowInsetsSides.Start
 }
 
 @Composable
