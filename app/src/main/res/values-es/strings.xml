@@ -226,4 +226,6 @@
         <item quantity="other">También se eliminarán sus %d tareas, aquí y en el servidor.</item>
         <item quantity="many">También se eliminarán sus %d tareas, aquí y en el servidor.</item>
     </plurals>
+
+    <string name="group_overdue">Vencidas</string>
 </resources>

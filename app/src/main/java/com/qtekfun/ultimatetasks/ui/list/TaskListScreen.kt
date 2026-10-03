@@ -56,6 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.domain.recurrence.RepeatingTasks
+import com.qtekfun.ultimatetasks.domain.task.GroupKey
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
@@ -183,19 +184,29 @@ private fun TaskListContent(
                 }
             )
         }
-        items(state.tasks, key = { it.id }) { task ->
-            val list = state.lists[task.listHref]
-            TaskRow(
-                task = task,
-                color = if (source is TaskSource.List) color else ListColors.of(list?.color),
-                listName = if (source is TaskSource.List) null else list?.name,
-                // Repeating rules the app cannot follow are left to other clients.
-                onCheckedChange = { done: Boolean -> viewModel.setCompleted(task, done) }
-                    .takeIf {
-                        list?.writable == true && RepeatingTasks.understood(task.recurrence)
+        state.groups.forEach { group ->
+            if (group.key != GroupKey.None) {
+                item(key = "header:${group.key}") { GroupHeader(group.key, state) }
+            }
+            items(group.tasks, key = { it.id }) { task ->
+                val list = state.lists[task.listHref]
+                TaskRow(
+                    task = task,
+                    color = if (source is TaskSource.List) color else ListColors.of(list?.color),
+                    // Grouped by list, the list name is already the header.
+                    listName = list?.name.takeIf {
+                        source !is TaskSource.List &&
+                            group.key !is GroupKey.InList
                     },
-                onClick = { onOpenTask(task.id) }
-            )
+                    // Repeating rules the app cannot follow are left to other clients.
+                    onCheckedChange = { done: Boolean -> viewModel.setCompleted(task, done) }
+                        .takeIf {
+                            list?.writable == true &&
+                                RepeatingTasks.understood(task.recurrence)
+                        },
+                    onClick = { onOpenTask(task.id) }
+                )
+            }
         }
         if (adding.value) {
             item(key = "new") {
