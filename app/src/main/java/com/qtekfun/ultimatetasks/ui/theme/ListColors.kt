@@ -17,4 +17,13 @@ object ListColors {
         it.length == 6
     }?.toLongOrNull(16)?.let { Color(0xFF000000 or it) }
         ?: Blue
+
+    /** New lists start blue, as in Apple Reminders. */
+    const val DEFAULT = "#007AFF"
+
+    /** The palette of Apple Reminders, as `#RRGGBB` for the server (RF-08). */
+    val palette = listOf(
+        "#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#5AC8FA", "#007AFF",
+        "#5856D6", "#AF52DE", "#FF2D55", "#A2845E", "#8E8E93"
+    )
 }

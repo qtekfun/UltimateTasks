@@ -208,4 +208,22 @@
     <string name="language_system">Idioma del sistema</string>
     <string name="settings_account">Cuenta</string>
     <string name="settings_version">UltimateTasks %1$s</string>
+
+    <string name="list_new">Nueva lista</string>
+    <string name="list_edit">Editar lista</string>
+    <string name="list_name">Nombre</string>
+    <string name="list_add">Añadir lista</string>
+    <string name="list_delete">Eliminar lista</string>
+    <string name="list_delete_confirm">¿Eliminar «%1$s»?</string>
+    <string name="list_offline">Sin conexión: las listas se cambian en el servidor, inténtalo cuando haya conexión.</string>
+    <string name="list_failed">El servidor rechazó el cambio.</string>
+    <string name="lists_reorder">Reordenar listas</string>
+    <string name="move_up">Subir %1$s</string>
+    <string name="move_down">Bajar %1$s</string>
+    <string name="save">Guardar</string>
+    <plurals name="list_delete_tasks">
+        <item quantity="one">También se eliminará su %d tarea, aquí y en el servidor.</item>
+        <item quantity="other">También se eliminarán sus %d tareas, aquí y en el servidor.</item>
+        <item quantity="many">También se eliminarán sus %d tareas, aquí y en el servidor.</item>
+    </plurals>
 </resources>

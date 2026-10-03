@@ -197,4 +197,21 @@
     <string name="language_system">System language</string>
     <string name="settings_account">Account</string>
     <string name="settings_version">UltimateTasks %1$s</string>
+
+    <string name="list_new">New list</string>
+    <string name="list_edit">Edit list</string>
+    <string name="list_name">Name</string>
+    <string name="list_add">Add list</string>
+    <string name="list_delete">Delete list</string>
+    <string name="list_delete_confirm">Delete “%1$s”?</string>
+    <string name="list_offline">No connection: lists are changed on the server, try again when online.</string>
+    <string name="list_failed">The server refused the change.</string>
+    <string name="lists_reorder">Reorder lists</string>
+    <string name="move_up">Move %1$s up</string>
+    <string name="move_down">Move %1$s down</string>
+    <string name="save">Save</string>
+    <plurals name="list_delete_tasks">
+        <item quantity="one">Its %d task will be deleted too, here and on the server.</item>
+        <item quantity="other">Its %d tasks will be deleted too, here and on the server.</item>
+    </plurals>
 </resources>

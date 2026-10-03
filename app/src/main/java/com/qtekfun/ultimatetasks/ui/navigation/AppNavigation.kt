@@ -13,8 +13,10 @@ import androidx.compose.runtime.setValue
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.detail.TaskDetailScreen
+import com.qtekfun.ultimatetasks.ui.home.HomeActions
 import com.qtekfun.ultimatetasks.ui.home.HomeScreen
 import com.qtekfun.ultimatetasks.ui.list.TaskListScreen
+import com.qtekfun.ultimatetasks.ui.lists.ReorderListsScreen
 import com.qtekfun.ultimatetasks.ui.settings.SettingsScreen
 
 /** Home, and the list or smart list opened from it; back returns home. */
@@ -29,6 +31,8 @@ fun AppNavigation(
     var opened by rememberSaveable { mutableStateOf<String?>(null) }
     var task by rememberSaveable { mutableStateOf<Long?>(null) }
     var settings by rememberSaveable { mutableStateOf(false) }
+    var reorder by rememberSaveable { mutableStateOf(false) }
+    var adding by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(link) {
         if (link != null) {
             task = link
@@ -46,21 +50,42 @@ fun AppNavigation(
             })
         }
 
+        reorder -> {
+            BackHandler { reorder = false }
+            ReorderListsScreen(onBack = { reorder = false })
+        }
+
         openTask != null -> {
             BackHandler { task = null }
             TaskDetailScreen(taskId = openTask, onBack = { task = null })
         }
 
         source != null -> {
-            BackHandler { opened = null }
-            TaskListScreen(source = source, onBack = { opened = null }, onOpenTask = { task = it })
+            BackHandler {
+                opened = null
+                adding = false
+            }
+            TaskListScreen(
+                source = source,
+                onBack = {
+                    opened = null
+                    adding = false
+                },
+                onOpenTask = { task = it },
+                startAdding = adding
+            )
         }
 
         else -> HomeScreen(
-            accountName = accountName,
-            onOpen = { opened = encode(it) },
-            onSettings = { settings = true },
-            onLogOut = onLogOut
+            HomeActions(
+                onOpen = { opened = encode(it) },
+                onSettings = { settings = true },
+                onNewTask = {
+                    adding = true
+                    opened = encode(TaskSource.List(it))
+                },
+                onReorder = { reorder = true }
+            )
         )
     }
 }

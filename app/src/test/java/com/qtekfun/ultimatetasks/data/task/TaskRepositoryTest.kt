@@ -187,13 +187,13 @@ class TaskRepositoryTest {
     @Test
     fun `hiding a list takes it out of the home screen and its counts`() = runTest {
         setUp()
-        ListRepository(db, session).setVisible("/b/", false)
+        ListRepository(db, session, mockk(), mockk(relaxed = true)).setVisible("/b/", false)
         repository.observeHome().test {
             val home = awaitItem()
             assertEquals(listOf("A"), home.lists.map { it.list.name })
             assertEquals(SmartCounts(today = 2, scheduled = 2, all = 2, completed = 0), home.counts)
         }
         account.value = null
-        ListRepository(db, session).setVisible("/b/", true)
+        ListRepository(db, session, mockk(), mockk(relaxed = true)).setVisible("/b/", true)
     }
 }

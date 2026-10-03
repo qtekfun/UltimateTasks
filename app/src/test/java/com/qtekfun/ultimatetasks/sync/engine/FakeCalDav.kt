@@ -61,13 +61,11 @@ class FakeCalDav : Dispatcher() {
                 request.headers["If-None-Match"]
             )
 
-            "DELETE" -> if (resources.containsKey(path)) {
-                MockResponse(204).also {
-                    remove(path)
-                }
-            } else {
-                MockResponse(404)
-            }
+            "DELETE" -> delete(path)
+
+            "MKCALENDAR" -> createList(path, body)
+
+            "PROPPATCH" -> patchList(path, body)
 
             "MOVE" -> move(path, request.headers["Destination"].orEmpty())
 
@@ -183,6 +181,31 @@ class FakeCalDav : Dispatcher() {
         }
     }
 
+    /** Every PROPPATCH body received, by list. */
+    val proppatches = mutableListOf<Pair<String, String>>()
+
+    private fun createList(path: String, body: String): MockResponse {
+        lists[path] = DISPLAY_NAME.find(body)?.groupValues?.get(1).orEmpty()
+        return MockResponse(201)
+    }
+
+    private fun patchList(path: String, body: String): MockResponse {
+        if (path !in lists) return MockResponse(404)
+        proppatches += path to body
+        DISPLAY_NAME.find(body)?.let { lists[path] = it.groupValues[1] }
+        return multistatus()
+    }
+
+    private fun delete(path: String): MockResponse = when {
+        resources.containsKey(path) -> MockResponse(204).also { remove(path) }
+
+        lists.remove(path) != null -> MockResponse(204).also {
+            resources.keys.removeAll { it.startsWith(path) }
+        }
+
+        else -> MockResponse(404)
+    }
+
     private fun move(path: String, destination: String): MockResponse {
         val resource = resources[path] ?: return MockResponse(404)
         val to = destination.substringAfter("://").substringAfter('/').let { "/$it" }
@@ -213,4 +236,8 @@ class FakeCalDav : Dispatcher() {
 
     private fun escape(text: String) =
         text.replace("&", "&amp;").replace("<", "&lt;").replace("\r", "&#13;")
+
+    private companion object {
+        val DISPLAY_NAME = Regex("<d:displayname>([^<]*)</d:displayname>")
+    }
 }
