@@ -3,7 +3,7 @@
 
 package com.qtekfun.ultimatetasks.ui.theme
 
-enum class ThemeMode { SYSTEM, LIGHT, DARK }
+import com.qtekfun.ultimatetasks.data.settings.ThemeMode
 
 /** What the user picks in Settings (T22); the defaults follow the system. */
 data class ThemeOptions(

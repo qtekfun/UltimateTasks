@@ -14,6 +14,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.qtekfun.ultimatetasks.data.settings.ThemeMode
 
 internal val LightColors = lightColorScheme(
     primary = Blue40,

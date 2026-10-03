@@ -40,7 +40,10 @@ fun AppNavigation(
     when {
         settings -> {
             BackHandler { settings = false }
-            SettingsScreen(onBack = { settings = false })
+            SettingsScreen(accountName = accountName, onLogOut = onLogOut, onBack = {
+                settings =
+                    false
+            })
         }
 
         openTask != null -> {

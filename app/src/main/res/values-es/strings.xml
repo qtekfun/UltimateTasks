@@ -189,4 +189,23 @@
     <string name="reminder_snooze_15">15 min</string>
     <string name="reminder_snooze_hour">1 hora</string>
     <string name="reminder_tomorrow">Mañana</string>
+
+    <string name="settings_lists">Listas</string>
+    <string name="settings_visible_lists">Listas visibles</string>
+    <string name="settings_visible_lists_hint">Las listas ocultas desaparecen de la pantalla de inicio, Hoy, Programados, Todos, Completados, la búsqueda y los avisos. Siguen sincronizándose, así que volver a mostrarlas es instantáneo.</string>
+    <string name="settings_default_list">Lista por defecto</string>
+    <string name="settings_allow_deleting_lists">Permitir borrar listas</string>
+    <string name="settings_allow_deleting_lists_hint">Desactivado por defecto, para que nunca se borre una lista sin querer.</string>
+    <string name="settings_appearance">Apariencia</string>
+    <string name="settings_theme">Tema</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="settings_amoled">Negro puro</string>
+    <string name="settings_amoled_hint">Fondos negros en modo oscuro, para pantallas OLED.</string>
+    <string name="settings_dynamic_color">Colores del fondo de pantalla</string>
+    <string name="settings_language">Idioma</string>
+    <string name="language_system">Idioma del sistema</string>
+    <string name="settings_account">Cuenta</string>
+    <string name="settings_version">UltimateTasks %1$s</string>
 </resources>
