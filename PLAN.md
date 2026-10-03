@@ -55,7 +55,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T24 Búsqueda** (RF-12).
 - [x] **T25 Compartir a la app** (RF-13).
 - ~~**T26 Adjuntos**~~: implementada y retirada (2026-10-03): Nextcloud Tasks no muestra adjuntos. Ver `SPEC.md` §4.
-- [ ] **T27 Tablet** (RF-15): diseño adaptativo de 2–3 paneles.
+- [x] **T27 Tablet** (RF-15): diseño adaptativo de 2–3 paneles.
 
 ## Fase 4 — Pulido y publicación
 - [ ] **T28 Accesibilidad y rendimiento**: TalkBack, 48 dp, fuente al 200%, contraste; medidas de arranque y scroll anotadas en `SPEC.md`.
