@@ -171,7 +171,7 @@ Hoja/pantalla con, en este orden:
 5. **Listas de Deck vía CalDAV**: comportamiento de escritura (¿se pueden completar o editar desde CalDAV?) a verificar contra el servidor.
 
 ## 9. Decisiones abiertas
-- Librerías: WebDAV (candidata `dav4jvm`, MPL-2.0) e iCalendar (candidata `ical4j`, BSD-3) frente a implementación propia. **Se decide en T02 y se pregunta antes de añadirlas.**
+- Comportamiento real del servidor (listas de Deck escribibles, `sync-collection`, formato de `ATTACH`): se comprueba con `tools/caldav-probe.py` en T05.
 - Diseño adaptativo para tablet: `material3-adaptive` (Apache-2.0, nueva dependencia, a consultar) o layout propio.
 - Semántica de completar recurrentes (propuesta en RF-06), a validar contra Nextcloud Tasks web.
 - ¿Las listas ocultas se siguen sincronizando? Propuesta: sí, solo metadatos y tareas (barato), para mostrarlas al instante al hacerlas visibles.
@@ -186,4 +186,8 @@ Hoja/pantalla con, en este orden:
 - Visibilidad de listas manual en Ajustes, sin filtros automáticos; las ocultas desaparecen de todo, incluidos los avisos.
 - Completar como Apple; aviso a la hora + anticipado; asistente de fiabilidad tras el login.
 - Extras v1: búsqueda y compartir a la app; tablet incluida.
+- **CalDAV e iCalendar propios (T02, 2026-10-03):** sin librerías externas.
+  - `ical4j` 4.x descartada: en Android necesita *desugaring* y silenciar `java.time.zone.ZoneRulesProvider`, que no existe (riesgo de fallos en zonas horarias); añade ~970 KB al APK de release y, en el móvil, normalizó el texto (mayúsculas en parámetros) y unió líneas con finales LF.
+  - `dav4jvm` descartada: solo se publica en JitPack y usa Ktor, un segundo cliente HTTP junto a OkHttp.
+  - Implementación propia en `data/ical`: lector y escritor que conservan byte a byte lo no modificado (corpus de DAVx5 + casos límite, CRLF y LF). CalDAV irá sobre OkHttp (T05); la recurrencia, en el motor propio de T10.
 - Crear listas siempre; borrarlas solo tras activarlo en Ajustes. Copias de seguridad como en UltimateDeck.

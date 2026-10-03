@@ -7,8 +7,9 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Verificación:* `./gradlew assembleDebug` compila y la app arranca con pantalla vacía.
 - [x] **T01 CI y calidad**: detekt, ktlint, Lint (warnings como errores), Kover con umbrales, verificación de dependencias, chequeo de licencias/Play Services, GitHub Actions, Dependabot (copiado y adaptado).
   - *Verificación:* PR de prueba en verde; una dependencia de Play Services añadida a propósito la hace fallar.
-- [ ] **T02 Prototipo CalDAV + iCalendar**: evaluar `dav4jvm` + `ical4j` frente a implementación propia (tamaño del APK, funcionamiento en API 26, licencias). Corpus `.ics` real (Nextcloud Tasks, Apple, Thunderbird, tasks.org, Deck) con ida y vuelta sin pérdidas. Comprobar contra el servidor: descubrimiento, `sync-collection`, listas de Deck (¿escribibles?), formato `ATTACH` que muestra la web.
+- [x] **T02 Prototipo CalDAV + iCalendar**: evaluar `dav4jvm` + `ical4j` frente a implementación propia (tamaño del APK, funcionamiento en API 26, licencias). Corpus `.ics` real (Nextcloud Tasks, Apple, Thunderbird, tasks.org, Deck) con ida y vuelta sin pérdidas. Comprobar contra el servidor: descubrimiento, `sync-collection`, listas de Deck (¿escribibles?), formato `ATTACH` que muestra la web.
   - *Verificación:* tests del corpus; decisiones anotadas en `SPEC.md` §9 (preguntar antes de añadir dependencias).
+  - *Resultado:* implementación propia sin dependencias; las comprobaciones contra el servidor pasan a T05.
 - [ ] **T02b Prototipo de fiabilidad de avisos**: alarma exacta, modo alarma, exención de batería y aviso de prueba en el móvil del autor (ColorOS) con la app cerrada y el móvil en reposo. Elegir `USE_EXACT_ALARM` o `SCHEDULE_EXACT_ALARM`.
   - *Verificación:* informe con retrasos medidos; decisión en `SPEC.md` §9.
 
@@ -16,7 +17,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [ ] **T03 Modelo de dominio y Room**: cuenta, lista (color, icono local, orden, visible, sync-token), tarea (campos de RF-05, padre, orden, `.ics` original, ETag, campos sucios), etiqueta, adjunto, aviso pospuesto, cola de operaciones. Migraciones con test.
 - [ ] **T04 Mapeo iCalendar ⇄ dominio**: `VTODO` ↔ tarea conservando lo desconocido; `PRIORITY`, `CATEGORIES`, `RELATED-TO`, `VALARM`, `RRULE`, `DUE` con/sin hora y zonas horarias.
   - *Verificación:* corpus de ida y vuelta + tests por propiedad.
-- [ ] **T05 Cliente CalDAV**: descubrimiento, listar colecciones, `sync-collection`/ctag, GET/PUT/DELETE/MOVE con ETags, MKCALENDAR, PROPPATCH (nombre, color, orden). Tests con MockWebServer (4xx/5xx, timeouts, 412). Fijar versión mínima de Nextcloud.
+- [ ] **T05 Cliente CalDAV**: descubrimiento, listar colecciones, `sync-collection`/ctag, GET/PUT/DELETE/MOVE con ETags, MKCALENDAR, PROPPATCH (nombre, color, orden). Tests con MockWebServer (4xx/5xx, timeouts, 412). Fijar versión mínima de Nextcloud. Ejecutar `tools/caldav-probe.py` contra el servidor (listas de Deck, `sync-collection`, ETags, `ATTACH`) y añadir las tareas capturadas al corpus.
 - [ ] **T06 Login Flow v2**: copiar de UltimateDeck (Keystore, cierre de sesión que limpia datos).
 
 ## Fase 2 — Sincronización y lógica
