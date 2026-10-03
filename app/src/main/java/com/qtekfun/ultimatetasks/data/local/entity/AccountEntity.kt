@@ -6,7 +6,7 @@ package com.qtekfun.ultimatetasks.data.local.entity
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
 
-/** A Nextcloud account. Credentials are not stored here but encrypted apart (T06). */
+/** A Nextcloud account. Credentials are stored encrypted apart, in [AccountCredentialsEntity]. */
 @Entity(tableName = "account")
 data class AccountEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

@@ -8,9 +8,11 @@ import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.migration.Migration
 import com.qtekfun.ultimatetasks.data.local.dao.AccountDao
+import com.qtekfun.ultimatetasks.data.local.dao.CredentialsDao
 import com.qtekfun.ultimatetasks.data.local.dao.PendingOperationDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskListDao
+import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
 import com.qtekfun.ultimatetasks.data.local.entity.AccountEntity
 import com.qtekfun.ultimatetasks.data.local.entity.PendingOperationEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
@@ -20,6 +22,7 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 @Database(
     entities = [
         AccountEntity::class,
+        AccountCredentialsEntity::class,
         TaskListEntity::class,
         TaskEntity::class,
         PendingOperationEntity::class
@@ -30,16 +33,18 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 @ColumnTypeConverters(Converters::class)
 abstract class UltimateTasksDatabase : RoomDatabase() {
     companion object {
-        const val VERSION = 1
+        const val VERSION = 2
 
         /**
          * Migrations from each released version to the next. There is no destructive fallback:
          * raising [VERSION] requires adding its migration here (checked by DatabaseSchemaTest).
          */
-        val MIGRATIONS: Array<Migration> = arrayOf()
+        val MIGRATIONS: Array<Migration> = arrayOf(Migration1To2)
     }
 
     abstract fun accountDao(): AccountDao
+
+    abstract fun credentialsDao(): CredentialsDao
 
     abstract fun taskListDao(): TaskListDao
 
