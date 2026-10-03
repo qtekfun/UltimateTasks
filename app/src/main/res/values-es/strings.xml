@@ -241,4 +241,9 @@
         <item quantity="other">Ocultar %1$d subtareas</item>
         <item quantity="many">Ocultar %1$d subtareas</item>
     </plurals>
+
+    <string name="search">Buscar</string>
+    <string name="search_clear">Borrar búsqueda</string>
+    <string name="search_include_completed">Incluir completadas</string>
+    <string name="search_no_results">Sin resultados</string>
 </resources>

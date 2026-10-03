@@ -227,4 +227,9 @@
         <item quantity="one">Hide %1$d subtask</item>
         <item quantity="other">Hide %1$d subtasks</item>
     </plurals>
+
+    <string name="search">Search</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_include_completed">Include completed</string>
+    <string name="search_no_results">No results</string>
 </resources>

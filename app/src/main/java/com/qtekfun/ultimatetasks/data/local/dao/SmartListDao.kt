@@ -67,4 +67,18 @@ interface SmartListDao {
             "ORDER BY t.completedAt IS NULL, t.completedAt DESC, t.id DESC"
     )
     fun observeCompleted(accountId: Long): Flow<List<TaskEntity>>
+
+    /**
+     * Tasks whose title, notes or tags contain [pattern] (a LIKE pattern, already escaped with
+     * `\\`), in visible lists, by list and then manual order (RF-12).
+     */
+    @Query(
+        "SELECT t.* $VISIBLE_TASKS" +
+            "AND t.accountId = :accountId AND (:completed OR NOT t.completed) " +
+            "AND (t.summary LIKE :pattern ESCAPE '\\' OR t.notes LIKE :pattern ESCAPE '\\' " +
+            "OR t.tags LIKE :pattern ESCAPE '\\') " +
+            "ORDER BY l.sortOrder IS NULL, l.sortOrder, l.name COLLATE NOCASE, " +
+            "t.sortOrder IS NULL, t.sortOrder, t.id"
+    )
+    fun search(accountId: Long, pattern: String, completed: Boolean): Flow<List<TaskEntity>>
 }
