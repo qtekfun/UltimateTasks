@@ -276,4 +276,22 @@
     <string name="sort_title">Por título</string>
     <string name="reorder">Reordenar</string>
     <string name="reorder_done">Terminar de reordenar</string>
+
+    <string name="wizard_title">Avisos en los que confiar</string>
+    <string name="wizard_intro">Muchos móviles paran las apps en segundo plano para ahorrar batería, y los avisos llegan tarde o no llegan. Estos pasos lo evitan. Puedes volver aquí desde Ajustes › Avisos.</string>
+    <string name="wizard_notifications_why">Sin él no se puede mostrar ningún aviso.</string>
+    <string name="wizard_exact">Alarmas exactas</string>
+    <string name="wizard_exact_why">Para que los avisos suenen en su minuto, no cuando al sistema le parezca.</string>
+    <string name="wizard_battery_why">El ahorro de batería retrasa las alarmas con la pantalla apagada. UltimateTasks solo se despierta para tus avisos y para sincronizar.</string>
+    <string name="wizard_maker">Ajustes de tu móvil</string>
+    <string name="wizard_maker_coloros">ColorOS (OPPO, OnePlus, realme): en los ajustes de la app, abre Batería y elige «Permitir actividad en segundo plano» y «Permitir inicio automático».</string>
+    <string name="wizard_maker_xiaomi">MIUI / HyperOS: en los ajustes de la app, activa Inicio automático y pon Ahorro de batería en «Sin restricciones».</string>
+    <string name="wizard_maker_huawei">EMUI / HarmonyOS: en Batería › Inicio de aplicaciones, pon UltimateTasks en «Gestionar manualmente» y activa las tres opciones.</string>
+    <string name="wizard_maker_samsung">One UI: en Batería, elige «Sin restricciones» y comprueba que la app no está en «Aplicaciones en suspensión».</string>
+    <string name="wizard_maker_vivo">Funtouch OS / OriginOS: permite el Inicio automático y el «Alto consumo en segundo plano» para la app.</string>
+    <string name="wizard_maker_other">Si los avisos siguen llegando tarde, revisa los ajustes de batería de la app y permite que funcione en segundo plano.</string>
+    <string name="wizard_open_app_settings">Abrir ajustes de la app</string>
+    <string name="wizard_alarm_recommended">Recomendado en este móvil: los avisos se programan como un despertador, que su ahorro de batería no retrasa.</string>
+    <string name="wizard_done">Hecho</string>
+    <string name="settings_wizard">Asistente de avisos</string>
 </resources>

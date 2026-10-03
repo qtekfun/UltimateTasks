@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -51,13 +52,13 @@ import java.time.format.FormatStyle
  * exemption, the aggressive alarm-clock mode, the hour of all-day tasks and a test.
  */
 @Composable
-fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel) {
+fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWizard: () -> Unit) {
     val context = LocalContext.current
     // Permissions change outside the app: read them again whenever it comes back.
     var refresh by remember { mutableIntStateOf(0) }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { refresh++ }
-    val notifications = remember(refresh) { notificationsAllowed(context) }
-    val exempt = remember(refresh) { batteryExempt(context) }
+    val notifications = remember(refresh) { ReminderPermissions.notificationsAllowed(context) }
+    val exempt = remember(refresh) { ReminderPermissions.batteryExempt(context) }
     val askNotifications =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { refresh++ }
     DetailCard {
@@ -70,7 +71,7 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel) {
         }
         HorizontalDivider(Modifier.padding(start = 16.dp))
         StatusRow(stringResource(R.string.settings_battery), exempt) {
-            askBatteryExemption(context)
+            ReminderPermissions.askBatteryExemption(context)
         }
         HorizontalDivider(Modifier.padding(start = 16.dp))
         SwitchSetting(
@@ -90,6 +91,10 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel) {
             }, viewModel::setAllDayHour)
         }
         HorizontalDivider(Modifier.padding(start = 16.dp))
+        TextButton(onClick = onWizard, modifier = Modifier.padding(horizontal = 8.dp)) {
+            Text(stringResource(R.string.settings_wizard))
+        }
+        HorizontalDivider(Modifier.padding(start = 16.dp))
         val testTitle = stringResource(R.string.settings_test_title)
         OutlinedButton(onClick = {
             ReminderReceiver.test(context, testTitle)
@@ -100,7 +105,7 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel) {
 }
 
 @Composable
-private fun StatusRow(label: String, ok: Boolean, onFix: () -> Unit) {
+internal fun StatusRow(label: String, ok: Boolean, onFix: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -138,26 +143,3 @@ private const val LAST_HOUR = 23
 
 private fun hourLabel(hour: Int): String =
     DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).format(LocalTime.of(hour, 0))
-
-private fun notificationsAllowed(context: Context): Boolean =
-    Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
-        PackageManager.PERMISSION_GRANTED
-
-private fun batteryExempt(context: Context): Boolean = context.getSystemService(
-    PowerManager::class.java
-).isIgnoringBatteryOptimizations(context.packageName)
-
-/**
- * The system dialog that exempts the app from battery optimisation. Play restricts it to some
- * apps; F-Droid does not, and reminders are exactly the case it exists for (T02b, PRIVACY.md).
- */
-@SuppressLint("BatteryLife")
-private fun askBatteryExemption(context: Context) {
-    context.startActivity(
-        Intent(
-            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-            "package:${context.packageName}".toUri()
-        )
-    )
-}

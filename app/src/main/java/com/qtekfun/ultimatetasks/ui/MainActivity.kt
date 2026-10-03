@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qtekfun.ultimatetasks.data.settings.AppSettings
+import com.qtekfun.ultimatetasks.data.settings.OnboardingPrefs
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.notify.TaskLink
 import com.qtekfun.ultimatetasks.ui.login.LoginScreen
@@ -28,6 +29,9 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var settingsRepository: SettingsRepository
+
+    @Inject
+    lateinit var onboarding: OnboardingPrefs
 
     /** A task to open, from a reminder notification (RF-10). */
     private var link by mutableStateOf<Long?>(null)
@@ -54,7 +58,8 @@ class MainActivity : ComponentActivity() {
                         accountName = account.displayName,
                         onLogOut = sessionViewModel::logOut,
                         link = link,
-                        onLinkOpened = { link = null }
+                        onLinkOpened = { link = null },
+                        onboarding = onboarding
                     )
                 }
             }
