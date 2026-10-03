@@ -3,6 +3,7 @@
 
 package com.qtekfun.ultimatetasks.sync.engine
 
+import com.qtekfun.ultimatetasks.data.attachments.AttachmentFiles
 import com.qtekfun.ultimatetasks.data.local.UltimateTasksDatabase
 import com.qtekfun.ultimatetasks.data.remote.caldav.CalDav
 import com.qtekfun.ultimatetasks.sync.queue.OperationQueue
@@ -14,8 +15,9 @@ import javax.inject.Inject
 class PushSync @Inject constructor(
     private val database: UltimateTasksDatabase,
     private val queue: OperationQueue,
-    private val clock: Clock
+    private val clock: Clock,
+    private val files: AttachmentFiles
 ) {
     suspend fun push(dav: CalDav, accountId: Long): ProcessResult =
-        queue.process(accountId, TaskOperationExecutor(dav, database, queue, clock))
+        queue.process(accountId, TaskOperationExecutor(dav, database, queue, clock, files))
 }

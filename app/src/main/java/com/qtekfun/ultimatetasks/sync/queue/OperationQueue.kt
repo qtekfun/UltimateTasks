@@ -39,7 +39,11 @@ class OperationQueue @Inject constructor(
         val waiting = dao.forTask(accountId, taskId)
         val unsentCreate = waiting.any { it.type == OperationType.CREATE && it.neverSent() }
         when (operation) {
-            QueuedOperation.CreateTask -> insert(accountId, taskId, operation)
+            QueuedOperation.CreateTask, is QueuedOperation.UploadAttachment -> insert(
+                accountId,
+                taskId,
+                operation
+            )
 
             QueuedOperation.UpdateTask -> if (!unsentCreate &&
                 waiting.none { it.neverSent(OperationType.UPDATE) }

@@ -268,4 +268,11 @@
     <string name="backup_skip_sessions">Solo ajustes</string>
     <string name="backup_wrong_password">Contraseña incorrecta.</string>
     <string name="settings_backup">Copia de seguridad</string>
+
+    <string name="field_attachments">Adjuntos</string>
+    <string name="attachment_remove">Quitar %1$s</string>
+    <string name="attachment_uploading">Subiendo…</string>
+    <string name="attachment_failed">No se pudo subir</string>
+    <string name="attachment_from_gallery">De la galería</string>
+    <string name="attachment_from_files">De archivos</string>
 </resources>

@@ -7,7 +7,9 @@ import android.content.Context
 import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
+import com.qtekfun.ultimatetasks.data.ical.IcsAttachment
 import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
+import com.qtekfun.ultimatetasks.data.local.entity.PendingUploadEntity
 import com.qtekfun.ultimatetasks.data.local.entity.SnoozeEntity
 import io.mockk.every
 import io.mockk.mockk
@@ -148,5 +150,36 @@ class MigrationTest {
 
         assertEquals(listOf(100L), snoozes.map { it.taskId })
         assertEquals(emptyList<SnoozeEntity>(), afterDelete)
+    }
+
+    @Test
+    fun `migrates version 4 to the latest with no attachments`() = runTest {
+        val file = File(dir, "v4.db")
+        createFromSchema(
+            file,
+            version = 4,
+            extraSql = listOf(
+                "INSERT INTO account (id, serverUrl, userId, displayName) " +
+                    "VALUES (1, 'https://c.example/', 'ana', 'Ana')",
+                "INSERT INTO task_list (accountId, href, name, visible, writable) " +
+                    "VALUES (1, '/l/', 'List', 1, 1)",
+                "INSERT INTO task (id, accountId, listHref, href, uid, summary, notes, " +
+                    "completed, " +
+                    "priority, tags, dirtyFields, deleted, deletedOnServer) " +
+                    "VALUES (100, 1, '/l/', '/l/t.ics', 't', 'Task', '', 0, 0, '', 0, 0, 0)"
+            )
+        )
+
+        val db = open(file)
+        val task = db.taskDao().get(100)
+        db.uploadDao().insert(
+            PendingUploadEntity(taskId = 100, uri = "/f", name = "f", mimeType = null)
+        )
+        db.taskDao().delete(100)
+        val uploads = db.uploadDao().observeForTask(100).first()
+        db.close()
+
+        assertEquals(emptyList<IcsAttachment>(), task?.attachments)
+        assertEquals(emptyList<PendingUploadEntity>(), uploads)
     }
 }

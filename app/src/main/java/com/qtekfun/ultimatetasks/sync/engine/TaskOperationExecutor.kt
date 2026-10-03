@@ -3,6 +3,7 @@
 
 package com.qtekfun.ultimatetasks.sync.engine
 
+import com.qtekfun.ultimatetasks.data.attachments.AttachmentFiles
 import com.qtekfun.ultimatetasks.data.ical.IcsParser
 import com.qtekfun.ultimatetasks.data.ical.IcsWriter
 import com.qtekfun.ultimatetasks.data.ical.VtodoMapper
@@ -22,10 +23,12 @@ class TaskOperationExecutor(
     private val dav: CalDav,
     database: UltimateTasksDatabase,
     queue: OperationQueue,
-    private val clock: Clock
+    private val clock: Clock,
+    files: AttachmentFiles
 ) : OperationExecutor {
     private val tasks = database.taskDao()
     private val merger = TaskMerger(database, queue)
+    private val uploader = AttachmentUploader(dav, database, queue, files)
 
     override suspend fun execute(
         taskId: Long,
@@ -35,6 +38,11 @@ class TaskOperationExecutor(
         val task = tasks.get(taskId)
         return when {
             operation is QueuedOperation.DeleteTask -> delete(taskId, operation)
+
+            operation is QueuedOperation.UploadAttachment -> uploader.upload(
+                operation.uploadId,
+                ::failure
+            )
 
             // Gone meanwhile, or waiting for the user: nothing to send.
             task == null || task.deleted || task.deletedOnServer -> ExecutionResult.Done

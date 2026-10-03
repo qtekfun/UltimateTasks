@@ -8,5 +8,6 @@ enum class OperationType {
     CREATE,
     UPDATE,
     MOVE,
-    DELETE
+    DELETE,
+    UPLOAD
 }

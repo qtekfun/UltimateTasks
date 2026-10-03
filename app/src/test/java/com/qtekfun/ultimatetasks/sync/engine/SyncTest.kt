@@ -48,6 +48,7 @@ class SyncTest {
     private val queue = OperationQueue(db, clock, FixedRandom(0.5))
     private val pull = PullSync(db, queue, PendingListPrefs(FakePreferences()))
     private val tasks = db.taskDao()
+    private val files = MemoryAttachmentFiles()
     private lateinit var account: AccountEntity
     private lateinit var dav: CalDav
     private lateinit var work: String
@@ -78,7 +79,7 @@ class SyncTest {
     private suspend fun pullAll(): DavResult<*>? = pull.pull(dav, db.accountDao().get(account.id)!!)
 
     private suspend fun push() =
-        queue.process(account.id, TaskOperationExecutor(dav, db, queue, clock))
+        queue.process(account.id, TaskOperationExecutor(dav, db, queue, clock, files))
 
     private suspend fun local(href: String) = tasks.byHref(account.id, href)
 
@@ -230,7 +231,7 @@ class SyncTest {
         val task = local("${work}a.ics")!!
         tasks.update(task.copy(summary = "Edit 1", dirtyFields = TaskField.SUMMARY.bit))
         queue.enqueue(account.id, task.id, QueuedOperation.UpdateTask)
-        val executor = TaskOperationExecutor(dav, db, queue, clock)
+        val executor = TaskOperationExecutor(dav, db, queue, clock, files)
         fake.failures["${work}a.ics"] = ArrayDeque()
         server.dispatcher = object : mockwebserver3.Dispatcher() {
             override fun dispatch(
@@ -338,7 +339,7 @@ class SyncTest {
         val task = local("${work}a.ics")!!
         tasks.update(task.copy(summary = "A2", dirtyFields = TaskField.SUMMARY.bit))
         fake.resources.remove("${work}a.ics")
-        val executor = TaskOperationExecutor(dav, db, queue, clock)
+        val executor = TaskOperationExecutor(dav, db, queue, clock, files)
         assertEquals(
             ExecutionResult.Done,
             executor.execute(task.id, QueuedOperation.UpdateTask, false)
@@ -358,7 +359,7 @@ class SyncTest {
         tasks.update(task.copy(summary = "A2", dirtyFields = TaskField.SUMMARY.bit))
         fake.failures["${work}a.ics"] = ArrayDeque(listOf(412))
         fake.resources.remove("${work}a.ics")
-        val executor = TaskOperationExecutor(dav, db, queue, clock)
+        val executor = TaskOperationExecutor(dav, db, queue, clock, files)
         assertEquals(
             ExecutionResult.Done,
             executor.execute(task.id, QueuedOperation.UpdateTask, false)
@@ -382,7 +383,7 @@ class SyncTest {
         assertNull(fake.resources["${work}a.ics"])
         assertNull(tasks.get(a.id))
         assertNotNull(fake.resources["${home}b.ics"])
-        val executor = TaskOperationExecutor(dav, db, queue, clock)
+        val executor = TaskOperationExecutor(dav, db, queue, clock, files)
         assertEquals(
             ExecutionResult.Done,
             executor.execute(a.id, QueuedOperation.DeleteTask(a.href, null), true)
@@ -396,7 +397,7 @@ class SyncTest {
     @Test
     fun `operations on tasks that are gone or waiting for the user send nothing`() = runTest {
         pullAll()
-        val executor = TaskOperationExecutor(dav, db, queue, clock)
+        val executor = TaskOperationExecutor(dav, db, queue, clock, files)
         assertEquals(ExecutionResult.Done, executor.execute(99, QueuedOperation.UpdateTask, false))
         val id = tasks.insert(
             TaskEntity(
@@ -430,7 +431,7 @@ class SyncTest {
                 summary = "X"
             )
         )
-        val executor = TaskOperationExecutor(dav, db, queue, clock)
+        val executor = TaskOperationExecutor(dav, db, queue, clock, files)
         fun fail(vararg codes: Int) =
             fake.failures.getOrPut("${work}x.ics") { ArrayDeque() }.addAll(codes.toList())
         fail(403, 400, 503, 401)

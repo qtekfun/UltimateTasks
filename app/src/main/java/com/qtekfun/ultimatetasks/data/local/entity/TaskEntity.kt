@@ -8,6 +8,7 @@ import androidx.room3.Entity
 import androidx.room3.ForeignKey
 import androidx.room3.Index
 import androidx.room3.PrimaryKey
+import com.qtekfun.ultimatetasks.data.ical.IcsAttachment
 import java.time.Instant
 
 /**
@@ -80,5 +81,8 @@ data class TaskEntity(
     val conflictNotes: String? = null,
     /** Deleted on the server while changed here: the user keeps a copy or discards it (rule 3). */
     @ColumnInfo(defaultValue = "0")
-    val deletedOnServer: Boolean = false
+    val deletedOnServer: Boolean = false,
+    /** Files linked with ATTACH (RF-11). */
+    @ColumnInfo(defaultValue = "[]")
+    val attachments: List<IcsAttachment> = emptyList()
 )

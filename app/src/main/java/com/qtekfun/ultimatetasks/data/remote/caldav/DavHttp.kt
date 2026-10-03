@@ -28,6 +28,17 @@ internal class DavHttp(
 ) {
     fun url(href: String): HttpUrl = requireNotNull(server.resolve(href)) { "Not a URL: $href" }
 
+    /** A PUT of raw bytes, for files (RF-11). */
+    suspend fun sendBytes(
+        href: String,
+        bytes: ByteArray,
+        contentType: String
+    ): DavResult<DavAnswer> = execute(
+        Request.Builder().url(
+            url(href)
+        ).put(bytes.toRequestBody(contentType.toMediaType())).build()
+    )
+
     suspend fun send(
         method: String,
         href: String,
@@ -40,6 +51,10 @@ internal class DavHttp(
             .method(method, body?.toRequestBody(contentType.toMediaType()))
             .apply { headers.forEach { (name, value) -> header(name, value) } }
             .build()
+        execute(request)
+    }
+
+    private suspend fun execute(request: Request): DavResult<DavAnswer> = withContext(io) {
         try {
             client.newCall(request).execute().use { response ->
                 result(DavAnswer(response.code, response.body.string(), response.header("ETag")))
