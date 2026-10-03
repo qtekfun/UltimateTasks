@@ -1,0 +1,1 @@
+First release candidate of 1.0.0: offline-first CalDAV sync, smart lists, your lists, repeating tasks, reliable reminders with snooze, tablets, settings and backups.

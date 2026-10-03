@@ -1,0 +1,1 @@
+Primera versión candidata de la 1.0.0: sincronización CalDAV sin conexión, listas inteligentes, tus listas, tareas que se repiten, avisos fiables con posponer, tablets, ajustes y copias de seguridad.

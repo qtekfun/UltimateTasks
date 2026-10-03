@@ -9,6 +9,10 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+## [1.0.0-rc.1] - 2026-10-04
+
+First release candidate of 1.0.0.
+
 ### Added
 
 - Sign in with Nextcloud's Login Flow v2; the app password is encrypted with the Android Keystore.
@@ -25,4 +29,5 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 - Accessibility: TalkBack reads each task as one element with its actions; layouts hold at 200% font size.
 - English and Spanish.
 
-[Unreleased]: https://github.com/qtekfun/UltimateTasks/commits/HEAD
+[Unreleased]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.1...HEAD
+[1.0.0-rc.1]: https://github.com/qtekfun/UltimateTasks/releases/tag/v1.0.0-rc.1
