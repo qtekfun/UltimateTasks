@@ -4,7 +4,6 @@
   SPDX-License-Identifier: GPL-3.0-or-later
 -->
 <resources>
-    <string name="home_tagline">Tus tareas de Nextcloud, muy pronto.</string>
     <string name="login_title">Inicia sesión en Nextcloud</string>
     <string name="login_server_label">Dirección del servidor</string>
     <string name="login_button">Iniciar sesión</string>
@@ -24,4 +23,27 @@
     <string name="logout_confirm_title">¿Cerrar sesión?</string>
     <string name="logout_confirm_text">Se borrarán de este dispositivo los datos locales de %1$s. Los cambios aún no sincronizados se perderán.</string>
     <string name="cancel">Cancelar</string>
+
+    <string name="smart_today">Hoy</string>
+    <string name="smart_scheduled">Programados</string>
+    <string name="smart_all">Todos</string>
+    <string name="smart_completed">Completados</string>
+    <string name="my_lists">Mis listas</string>
+    <string name="no_lists">Aún no hay listas. Desliza hacia abajo para sincronizar.</string>
+    <string name="loading">Cargando…</string>
+    <string name="read_only_list">Lista de solo lectura</string>
+    <string name="more_options">Más opciones</string>
+    <string name="back">Atrás</string>
+    <string name="new_task">Nueva tarea</string>
+    <string name="no_tasks">Sin tareas</string>
+    <string name="show_completed">Mostrar completadas</string>
+    <string name="hide_completed">Ocultar completadas</string>
+    <string name="task_completed">Completada</string>
+    <string name="undo">Deshacer</string>
+    <string name="task_mark_done">Marcar «%1$s» como hecha</string>
+    <string name="task_mark_open">Marcar «%1$s» como pendiente</string>
+    <string name="task_repeats">Se repite</string>
+    <string name="due_today">Hoy</string>
+    <string name="due_tomorrow">Mañana</string>
+    <string name="due_yesterday">Ayer</string>
 </resources>

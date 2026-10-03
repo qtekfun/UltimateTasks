@@ -5,7 +5,6 @@
 -->
 <resources>
     <string name="app_name" translatable="false">UltimateTasks</string>
-    <string name="home_tagline">Your Nextcloud tasks, coming soon.</string>
     <string name="login_title">Sign in to Nextcloud</string>
     <string name="login_server_label">Server address</string>
     <string name="login_server_hint" translatable="false">cloud.example.com</string>
@@ -26,4 +25,28 @@
     <string name="logout_confirm_title">Log out?</string>
     <string name="logout_confirm_text">The local data of %1$s will be removed from this device. Changes not synced yet will be lost.</string>
     <string name="cancel">Cancel</string>
+
+    <string name="smart_today">Today</string>
+    <string name="smart_scheduled">Scheduled</string>
+    <string name="smart_all">All</string>
+    <string name="smart_completed">Completed</string>
+    <string name="my_lists">My Lists</string>
+    <string name="no_lists">No lists yet. Pull down to sync.</string>
+    <string name="loading">Loading…</string>
+    <string name="read_only_list">Read-only list</string>
+    <string name="more_options">More options</string>
+    <string name="back">Back</string>
+    <string name="new_task">New Task</string>
+    <string name="no_tasks">No tasks</string>
+    <string name="show_completed">Show completed</string>
+    <string name="hide_completed">Hide completed</string>
+    <string name="task_completed">Completed</string>
+    <string name="undo">Undo</string>
+    <string name="task_mark_done">Mark “%1$s” as done</string>
+    <string name="task_mark_open">Mark “%1$s” as not done</string>
+    <string name="task_repeats">Repeats</string>
+    <string name="due_today">Today</string>
+    <string name="due_tomorrow">Tomorrow</string>
+    <string name="due_yesterday">Yesterday</string>
+    <string name="due_day_time" translatable="false">%1$s, %2$s</string>
 </resources>

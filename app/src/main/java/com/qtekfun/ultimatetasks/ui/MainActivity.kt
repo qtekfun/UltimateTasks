@@ -10,8 +10,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.qtekfun.ultimatetasks.ui.home.HomeScreen
 import com.qtekfun.ultimatetasks.ui.login.LoginScreen
+import com.qtekfun.ultimatetasks.ui.navigation.AppNavigation
 import com.qtekfun.ultimatetasks.ui.session.SessionViewModel
 import com.qtekfun.ultimatetasks.ui.theme.UltimateTasksTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
                     account == null -> LoginScreen()
 
-                    else -> HomeScreen(
+                    else -> AppNavigation(
                         accountName = account.displayName,
                         onLogOut = sessionViewModel::logOut
                     )
