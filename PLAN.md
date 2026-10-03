@@ -34,8 +34,10 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 
 ## Fase 3 — Interfaz (experiencia Apple)
 - [ ] **T13 Login + asistente de fiabilidad** (RF-01), incluyendo aviso de prueba.
-- [ ] **T14 Home**: búsqueda (sin funcionar aún), 4 botones de colores con contadores, "Mis listas", nueva tarea / añadir lista (RF-02).
-- [ ] **T15 Vista de lista**: checkbox redondo, título, notas, fecha, prioridad, etiquetas, iconos; completar con animación y deshacer; añadir en línea; mostrar completadas (RF-03, RF-04).
+- [x] **T14 Home**: búsqueda (sin funcionar aún), 4 botones de colores con contadores, "Mis listas", nueva tarea / añadir lista (RF-02).
+  - *Hecho sin la barra de búsqueda (llega con T24) ni "Añadir lista" (T20).*
+- [x] **T15 Vista de lista**: checkbox redondo, título, notas, fecha, prioridad, etiquetas, iconos; completar con animación y deshacer; añadir en línea; mostrar completadas (RF-03, RF-04).
+  - *Las tareas que se repiten no se pueden marcar hasta T10; desplegar y añadir a listas de solo lectura no aplica.*
 - [ ] **T16 Vistas inteligentes en la UI**: Hoy (vencidas arriba), Programados (agrupados por día), Todos (agrupados por lista), Completados (por fecha de completado).
 - [ ] **T17 Detalle de tarea** (RF-05): todos los campos, guardado automático, diálogo de conflicto.
 - [ ] **T18 Editor de recurrencia** (RF-06).

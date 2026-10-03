@@ -11,6 +11,7 @@ import com.qtekfun.ultimatetasks.data.local.dao.AccountDao
 import com.qtekfun.ultimatetasks.data.local.dao.CredentialsDao
 import com.qtekfun.ultimatetasks.data.local.dao.PendingOperationDao
 import com.qtekfun.ultimatetasks.data.local.dao.PendingOperationRetryDao
+import com.qtekfun.ultimatetasks.data.local.dao.SmartListDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskListDao
 import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
@@ -54,4 +55,6 @@ abstract class UltimateTasksDatabase : RoomDatabase() {
     abstract fun pendingOperationDao(): PendingOperationDao
 
     abstract fun pendingOperationRetryDao(): PendingOperationRetryDao
+
+    abstract fun smartListDao(): SmartListDao
 }
