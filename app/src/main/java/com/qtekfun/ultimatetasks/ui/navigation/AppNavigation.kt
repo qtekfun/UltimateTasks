@@ -7,6 +7,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import com.qtekfun.ultimatetasks.data.settings.OnboardingPrefs
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.detail.TaskDetailScreen
@@ -18,8 +20,8 @@ import com.qtekfun.ultimatetasks.ui.settings.ReliabilityWizardScreen
 import com.qtekfun.ultimatetasks.ui.settings.SettingsScreen
 
 /**
- * Home and what opens from it; back returns home. The reminders wizard shows once after
- * signing in (RF-01), then from Settings.
+ * Home and what opens from it; back returns home. Wide windows show it in panes (RF-15).
+ * The reminders wizard shows once after signing in (RF-01), then from Settings.
  */
 @Composable
 fun AppNavigation(
@@ -39,6 +41,8 @@ fun AppNavigation(
     }
     val source = nav.opened
     val task = nav.task
+    val width = LocalWindowInfo.current.containerSize.width
+    val panes = Panes.forWidth(with(LocalDensity.current) { width.toDp().value.toInt() })
     when {
         nav.wizard -> ReliabilityWizardScreen(onDone = {
             onboarding.markWizardShown()
@@ -58,6 +62,8 @@ fun AppNavigation(
             ReorderListsScreen(onBack = { nav.reorder = false })
         }
 
+        panes != Panes.ONE -> MultiPane(nav, panes)
+
         task != null -> {
             BackHandler { nav.task = null }
             TaskDetailScreen(taskId = task, onBack = { nav.task = null })
@@ -74,7 +80,7 @@ fun AppNavigation(
     }
 }
 
-private fun homeActions(nav: NavState) = HomeActions(
+internal fun homeActions(nav: NavState) = HomeActions(
     onOpen = { nav.opened = it },
     onSettings = { nav.settings = true },
     onNewTask = {

@@ -280,4 +280,5 @@
     <string name="wizard_alarm_recommended">Recommended on this phone: reminders are set like an alarm clock, which its battery saver does not delay.</string>
     <string name="wizard_done">Done</string>
     <string name="settings_wizard">Reminders wizard</string>
+    <string name="panes_choose_list">Choose a list</string>
 </resources>
