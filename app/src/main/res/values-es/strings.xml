@@ -228,4 +228,17 @@
     </plurals>
 
     <string name="group_overdue">Vencidas</string>
+    <string name="field_subtasks">Subtareas</string>
+    <string name="add_subtask">Añadir subtarea</string>
+
+    <plurals name="subtasks_show">
+        <item quantity="one">Mostrar %1$d subtarea</item>
+        <item quantity="other">Mostrar %1$d subtareas</item>
+        <item quantity="many">Mostrar %1$d subtareas</item>
+    </plurals>
+    <plurals name="subtasks_hide">
+        <item quantity="one">Ocultar %1$d subtarea</item>
+        <item quantity="other">Ocultar %1$d subtareas</item>
+        <item quantity="many">Ocultar %1$d subtareas</item>
+    </plurals>
 </resources>

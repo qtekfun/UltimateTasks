@@ -37,7 +37,7 @@ data class TaskDetailState(
 @HiltViewModel
 class TaskDetailViewModel @Inject constructor(
     private val editor: TaskEditor,
-    repository: TaskRepository
+    private val repository: TaskRepository
 ) : ViewModel() {
     private val taskId = MutableStateFlow<Long?>(null)
     private var pendingText: Job? = null
@@ -72,7 +72,16 @@ class TaskDetailViewModel @Inject constructor(
 
     /** Moving, deleting and settling conflicts. */
     val actions =
-        TaskDetailActions(editor) { id -> taskId.value?.let { viewModelScope.launch { id(it) } } }
+        TaskDetailActions(editor, repository) { id ->
+            taskId.value?.let { viewModelScope.launch { id(it) } }
+        }
+
+    /** The subtasks of the task shown (RF-07). */
+    val children: StateFlow<List<TaskEntity>> = taskId.filterNotNull()
+        .flatMapLatest { id ->
+            editor.observe(id).filterNotNull().flatMapLatest { editor.observeChildren(it) }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_MS), emptyList())
 
     /** Saves typing that has not been saved yet. */
     fun flush() {

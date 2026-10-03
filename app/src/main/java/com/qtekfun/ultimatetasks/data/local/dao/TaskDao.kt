@@ -24,6 +24,14 @@ interface TaskDao {
     @Query("SELECT * FROM task WHERE id = :id")
     fun observe(id: Long): Flow<TaskEntity?>
 
+    /** The subtasks of a task (RF-07), in manual order. */
+    @Query(
+        "SELECT * FROM task WHERE accountId = :accountId AND parentUid = :parentUid " +
+            "AND NOT deleted " +
+            "ORDER BY sortOrder IS NULL, sortOrder, id"
+    )
+    fun observeChildren(accountId: Long, parentUid: String): Flow<List<TaskEntity>>
+
     @Query("SELECT * FROM task WHERE accountId = :accountId AND uid = :uid")
     suspend fun byUid(accountId: Long, uid: String): List<TaskEntity>
 

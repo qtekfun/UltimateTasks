@@ -31,6 +31,9 @@ class TaskEditor @Inject constructor(
 
     fun observe(id: Long): Flow<TaskEntity?> = tasks.observe(id)
 
+    fun observeChildren(task: TaskEntity): Flow<List<TaskEntity>> =
+        tasks.observeChildren(task.accountId, task.uid)
+
     /** Saves [edit] of the current task; only the fields that really changed become dirty. */
     suspend fun update(id: Long, edit: (TaskEntity) -> TaskEntity) {
         val current = tasks.get(id) ?: return

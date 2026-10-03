@@ -134,7 +134,7 @@ class TaskRepository @Inject constructor(
     }
 
     /** Adds a task at the end of [listHref] (RF-03); blank titles are ignored. */
-    suspend fun create(listHref: String, title: String): Long? {
+    suspend fun create(listHref: String, title: String, parentUid: String? = null): Long? {
         val summary = title.trim()
         val accountId = session.activeAccount.first()?.id
         return if (summary.isEmpty() ||
@@ -142,11 +142,16 @@ class TaskRepository @Inject constructor(
         ) {
             null
         } else {
-            insert(accountId, listHref, summary)
+            insert(accountId, listHref, summary, parentUid)
         }
     }
 
-    private suspend fun insert(accountId: Long, listHref: String, summary: String): Long {
+    private suspend fun insert(
+        accountId: Long,
+        listHref: String,
+        summary: String,
+        parentUid: String?
+    ): Long {
         val uid = UUID.randomUUID().toString()
         val id = tasks.insert(
             TaskEntity(
@@ -155,6 +160,7 @@ class TaskRepository @Inject constructor(
                 href = listHref + uid + ".ics",
                 uid = uid,
                 summary = summary,
+                parentUid = parentUid,
                 modifiedAt = clock.instant(),
                 dirtyFields = TaskField.toBits(TaskField.entries.toSet())
             )
