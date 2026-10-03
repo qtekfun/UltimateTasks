@@ -34,7 +34,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [ ] **T12 Tests de sync offline**: caídas de red, cambios concurrentes, reintentos, app cerrada a mitad de sync.
 
 ## Fase 3 — Interfaz (experiencia Apple)
-- [ ] **T13 Login + asistente de fiabilidad** (RF-01), incluyendo aviso de prueba.
+- [x] **T13 Login + asistente de fiabilidad** (RF-01), incluyendo aviso de prueba.
 - [x] **T14 Home**: búsqueda (sin funcionar aún), 4 botones de colores con contadores, "Mis listas", nueva tarea / añadir lista (RF-02).
   - *Hecho sin la barra de búsqueda (llega con T24) ni "Añadir lista" (T20).*
 - [x] **T15 Vista de lista**: checkbox redondo, título, notas, fecha, prioridad, etiquetas, iconos; completar con animación y deshacer; añadir en línea; mostrar completadas (RF-03, RF-04).
