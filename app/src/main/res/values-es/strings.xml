@@ -295,4 +295,6 @@
     <string name="wizard_done">Hecho</string>
     <string name="settings_wizard">Asistente de avisos</string>
     <string name="panes_choose_list">Elige una lista</string>
+    <string name="task_open_details">Abrir detalles</string>
+    <string name="task_overdue_on">Vencida: %1$s</string>
 </resources>

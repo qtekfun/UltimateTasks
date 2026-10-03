@@ -281,4 +281,6 @@
     <string name="wizard_done">Done</string>
     <string name="settings_wizard">Reminders wizard</string>
     <string name="panes_choose_list">Choose a list</string>
+    <string name="task_open_details">Open details</string>
+    <string name="task_overdue_on">Overdue: %1$s</string>
 </resources>

@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -61,7 +63,11 @@ fun TaskRow(
     val now = Instant.now()
     val due = task.due?.let { DueDates.info(it, task.dueZone, now, zone) }
     Row(
-        Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = actions.onClick)
+        Modifier.fillMaxWidth().clickable(
+            role = Role.Button,
+            onClickLabel = stringResource(R.string.task_open_details),
+            onClick = actions.onClick
+        )
             .padding(start = (row.depth * INDENT).dp, end = 16.dp),
         verticalAlignment = Alignment.Top
     ) {
@@ -78,19 +84,7 @@ fun TaskRow(
             Modifier.weight(1f).padding(top = 12.dp, bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            Text(
-                text = buildAnnotatedString {
-                    val marks = priorityMarks(task.priority)
-                    if (marks.isNotEmpty()) {
-                        withStyle(SpanStyle(color = color, fontWeight = FontWeight.Bold)) {
-                            append("$marks ")
-                        }
-                    }
-                    append(task.summary)
-                },
-                style = MaterialTheme.typography.bodyLarge,
-                color = textColor(task.completed)
-            )
+            Title(task, color)
             if (task.notes.isNotBlank()) {
                 Text(
                     text = task.notes,
@@ -112,6 +106,24 @@ fun TaskRow(
     HorizontalDivider(Modifier.padding(start = (48 + row.depth * INDENT).dp))
 }
 
+/** Priority marks in the list colour, then the title. */
+@Composable
+private fun Title(task: TaskEntity, color: Color) {
+    Text(
+        text = buildAnnotatedString {
+            val marks = priorityMarks(task.priority)
+            if (marks.isNotEmpty()) {
+                withStyle(SpanStyle(color = color, fontWeight = FontWeight.Bold)) {
+                    append("$marks ")
+                }
+            }
+            append(task.summary)
+        },
+        style = MaterialTheme.typography.bodyLarge,
+        color = textColor(task.completed)
+    )
+}
+
 @Composable
 private fun Details(task: TaskEntity, due: String?, overdue: Boolean, listName: String?) {
     val parts = listOfNotNull(listName) + task.tags.map { "#$it" }
@@ -121,8 +133,11 @@ private fun Details(task: TaskEntity, due: String?, overdue: Boolean, listName: 
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         due?.let {
+            // The red colour alone says nothing to TalkBack.
+            val spoken = if (overdue) stringResource(R.string.task_overdue_on, it) else it
             Text(
                 text = it,
+                modifier = Modifier.semantics { contentDescription = spoken },
                 style = MaterialTheme.typography.bodySmall,
                 color = if (overdue) {
                     MaterialTheme.colorScheme.error

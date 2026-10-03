@@ -39,6 +39,7 @@ import com.qtekfun.ultimatetasks.domain.recurrence.CustomRepeat
 import com.qtekfun.ultimatetasks.domain.recurrence.RecurrenceRules
 import com.qtekfun.ultimatetasks.domain.task.DueEdits
 import com.qtekfun.ultimatetasks.domain.task.RepeatEdits
+import com.qtekfun.ultimatetasks.ui.components.LabelValue
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -120,12 +121,14 @@ private fun SwitchRow(
                 role = Role.Button
             ) { onChecked(true) }
         ) {
-            Text(label, Modifier.weight(1f))
-            value?.let {
-                Text(
-                    it,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(end = 12.dp)
+            if (value == null) {
+                Text(label)
+            } else {
+                LabelValue(
+                    label,
+                    value,
+                    Modifier.padding(end = 12.dp),
+                    MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -139,8 +142,7 @@ fun ValueRow(label: String, value: String) {
         Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, Modifier.weight(1f))
-        Text(value, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        LabelValue(label, value)
     }
 }
 
@@ -158,8 +160,7 @@ private fun ReminderRow(seconds: Long?, enabled: Boolean, onPick: (Long?) -> Uni
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(stringResource(R.string.field_early_reminder), Modifier.weight(1f))
-        Text(reminderLabel(seconds), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        LabelValue(stringResource(R.string.field_early_reminder), reminderLabel(seconds))
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             (listOf<Long?>(null) + EARLY_REMINDERS).forEach { option ->
                 DropdownMenuItem(
@@ -215,8 +216,7 @@ private fun RepeatRow(task: TaskEntity, editable: Boolean, viewModel: TaskDetail
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(stringResource(R.string.field_repeat), Modifier.weight(1f))
-        Text(repeatLabel(task.recurrence), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        LabelValue(stringResource(R.string.field_repeat), repeatLabel(task.recurrence))
     }
     if (menu) {
         RepeatDialog(
