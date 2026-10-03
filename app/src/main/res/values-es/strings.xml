@@ -246,4 +246,8 @@
     <string name="search_clear">Borrar búsqueda</string>
     <string name="search_include_completed">Incluir completadas</string>
     <string name="search_no_results">Sin resultados</string>
+
+    <string name="share_label">Nueva tarea</string>
+    <string name="share_sign_in_first">Inicia sesión en UltimateTasks primero.</string>
+    <string name="share_added">Tarea añadida</string>
 </resources>

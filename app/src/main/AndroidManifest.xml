@@ -38,6 +38,19 @@
             </intent-filter>
         </activity>
 
+        <!-- Share → UltimateTasks (RF-13): text or links become a new task. -->
+        <activity
+            android:name=".ui.share.ShareActivity"
+            android:exported="true"
+            android:label="@string/share_label"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name=".notify.ReminderReceiver"
             android:exported="false" />
