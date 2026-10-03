@@ -40,7 +40,8 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T15 Vista de lista**: checkbox redondo, título, notas, fecha, prioridad, etiquetas, iconos; completar con animación y deshacer; añadir en línea; mostrar completadas (RF-03, RF-04).
   - *Las tareas que se repiten no se pueden marcar hasta T10; desplegar y añadir a listas de solo lectura no aplica.*
 - [ ] **T16 Vistas inteligentes en la UI**: Hoy (vencidas arriba), Programados (agrupados por día), Todos (agrupados por lista), Completados (por fecha de completado).
-- [ ] **T17 Detalle de tarea** (RF-05): todos los campos, guardado automático, diálogo de conflicto.
+- [x] **T17 Detalle de tarea** (RF-05): todos los campos, guardado automático, diálogo de conflicto.
+  - *Resultado:* título, notas, URL, fecha y hora, aviso anticipado, prioridad, etiquetas, mover de lista, eliminar; guardado automático; conflictos y tareas borradas en el servidor. Repetir se muestra; su editor es T18.
 - [ ] **T18 Editor de recurrencia** (RF-06).
 - [ ] **T19 Subtareas** (RF-07): crear, indentar/desindentar, plegar.
 - [ ] **T20 Gestión de listas** (RF-08): crear, renombrar, color, icono, reordenar listas y tareas; borrar solo con el ajuste "Permitir borrar listas" activado.
