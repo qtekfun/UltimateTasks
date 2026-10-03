@@ -15,7 +15,7 @@ Binaries: https://github.com/qtekfun/UltimateTasks/releases/download/v%v/Ultimat
 Builds:
   - versionName: 1.0.0-rc.1
     versionCode: 1000001
-    commit: FULL_COMMIT_HASH_OF_THE_RELEASE
+    commit: 482c8078f50bdec1785c2c0ea35a3cd844538814
     subdir: app
     sudo:
       - apt-get update
