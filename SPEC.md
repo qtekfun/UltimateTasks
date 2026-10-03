@@ -79,8 +79,8 @@ Hoja/pantalla con, en este orden:
 - Crear subtarea desde el detalle o deslizando una tarea a la derecha (indentar) en la lista.
 
 ### RF-08 Gestión de listas
-- Crear lista (calendario CalDAV con soporte `VTODO`), renombrar, **color** (paleta de Apple; se guarda en el servidor como `calendar-color`), **icono** (catálogo propio; **solo local**, Nextcloud no lo guarda).
-- Borrar lista: confirmación explícita indicando cuántas tareas contiene. Requiere conexión.
+- **Crear lista** (siempre disponible; requiere conexión) (calendario CalDAV con soporte `VTODO`), renombrar, **color** (paleta de Apple; se guarda en el servidor como `calendar-color`), **icono** (catálogo propio; **solo local**, Nextcloud no lo guarda).
+- Borrar lista: **desactivado por defecto**, como en UltimateDeck; se activa en Ajustes ("Permitir borrar listas") y cada borrado pide confirmación indicando cuántas tareas contiene. Requiere conexión.
 - Reordenar listas arrastrando en la home (`calendar-order`).
 - Reordenar tareas arrastrando dentro de la lista (`X-APPLE-SORT-ORDER`, el que usa Nextcloud Tasks).
 - Las listas de solo lectura (compartidas sin permisos de escritura) se muestran con candado y sin edición.
@@ -117,7 +117,8 @@ Hoja/pantalla con, en este orden:
 - Tema claro/oscuro/sistema, negro AMOLED, Material You; idioma de la app (inglés/español).
 - **Lista por defecto** para tareas nuevas.
 - Listas visibles (RF-09); hora de aviso de las tareas de todo el día; modo alarma; asistente de fiabilidad; aviso de prueba.
-- Copia de seguridad cifrada de ajustes (y sesión opcional), como UltimateDeck.
+- **Permitir borrar listas** (desactivado por defecto; RF-08).
+- Copia de seguridad **igual que UltimateDeck**: exportar a un archivo los ajustes (incluidos visibilidad, iconos y orden local de listas) y, opcionalmente, la sesión cifrada con contraseña (AES-GCM); restaurable desde Ajustes y desde la pantalla de inicio de sesión.
 - Cuenta y cierre de sesión (borra datos locales); versión de la app abajo.
 
 ### RF-15 Tablet y pantallas grandes
@@ -185,3 +186,4 @@ Hoja/pantalla con, en este orden:
 - Visibilidad de listas manual en Ajustes, sin filtros automáticos; las ocultas desaparecen de todo, incluidos los avisos.
 - Completar como Apple; aviso a la hora + anticipado; asistente de fiabilidad tras el login.
 - Extras v1: búsqueda y compartir a la app; tablet incluida.
+- Crear listas siempre; borrarlas solo tras activarlo en Ajustes. Copias de seguridad como en UltimateDeck.
