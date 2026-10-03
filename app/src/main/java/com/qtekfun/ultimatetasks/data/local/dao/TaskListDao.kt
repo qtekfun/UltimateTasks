@@ -40,6 +40,13 @@ interface TaskListDao {
     )
     fun observeAll(accountId: Long): Flow<List<TaskListEntity>>
 
+    @Query("SELECT * FROM task_list WHERE accountId = :accountId")
+    suspend fun all(accountId: Long): List<TaskListEntity>
+
+    /** Where the next incremental pull of the list starts (T09). */
+    @Query("UPDATE task_list SET syncToken = :token WHERE accountId = :accountId AND href = :href")
+    suspend fun setSyncToken(accountId: Long, href: String, token: String?)
+
     @Query("UPDATE task_list SET visible = :visible WHERE accountId = :accountId AND href = :href")
     suspend fun setVisible(accountId: Long, href: String, visible: Boolean)
 

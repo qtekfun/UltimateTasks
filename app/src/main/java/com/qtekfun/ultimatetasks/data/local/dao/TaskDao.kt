@@ -31,6 +31,13 @@ interface TaskDao {
     )
     fun observeList(accountId: Long, listHref: String): Flow<List<TaskEntity>>
 
+    /** Every task of a list, deleted ones included, as the sync needs them. */
+    @Query("SELECT * FROM task WHERE accountId = :accountId AND listHref = :listHref")
+    suspend fun inList(accountId: Long, listHref: String): List<TaskEntity>
+
+    @Query("SELECT * FROM task WHERE accountId = :accountId AND href = :href")
+    suspend fun byHref(accountId: Long, href: String): TaskEntity?
+
     @Query("DELETE FROM task WHERE id = :id")
     suspend fun delete(id: Long)
 }

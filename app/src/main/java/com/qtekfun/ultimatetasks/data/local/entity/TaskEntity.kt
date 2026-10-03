@@ -3,6 +3,7 @@
 
 package com.qtekfun.ultimatetasks.data.local.entity
 
+import androidx.room3.ColumnInfo
 import androidx.room3.Entity
 import androidx.room3.ForeignKey
 import androidx.room3.Index
@@ -70,5 +71,14 @@ data class TaskEntity(
     /** Fields changed here and not yet accepted by the server (T08), as a bit set. */
     val dirtyFields: Int = 0,
     /** Deleted here, waiting for the server to delete it too. */
-    val deleted: Boolean = false
+    val deleted: Boolean = false,
+    /** The server title while the user chooses between it and the local one (SPEC §5, rule 1). */
+    @ColumnInfo(defaultValue = "NULL")
+    val conflictSummary: String? = null,
+    /** The server notes while the user chooses between them and the local ones. */
+    @ColumnInfo(defaultValue = "NULL")
+    val conflictNotes: String? = null,
+    /** Deleted on the server while changed here: the user keeps a copy or discards it (rule 3). */
+    @ColumnInfo(defaultValue = "0")
+    val deletedOnServer: Boolean = false
 )

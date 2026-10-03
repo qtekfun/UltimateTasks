@@ -90,4 +90,32 @@ class MigrationTest {
         assertEquals("ana", stored?.loginName)
         assertNull(afterDelete)
     }
+
+    @Test
+    fun `migrates version 2 to the latest with no conflicts pending`() = runTest {
+        val file = File(dir, "v2.db")
+        createFromSchema(
+            file,
+            version = 2,
+            extraSql = listOf(
+                "INSERT INTO account (id, serverUrl, userId, displayName) " +
+                    "VALUES (1, 'https://c.example/', 'ana', 'Ana')",
+                "INSERT INTO task_list (accountId, href, name, visible, writable) " +
+                    "VALUES (1, '/l/', 'List', 1, 1)",
+                "INSERT INTO task (id, accountId, listHref, href, uid, summary, notes, " +
+                    "completed, priority, tags, dirtyFields, deleted) " +
+                    "VALUES (100, 1, '/l/', '/l/t.ics', 't', 'Task', '', 0, 0, '', 1, 0)"
+            )
+        )
+
+        val db = open(file)
+        val task = db.taskDao().get(100)
+        db.close()
+
+        assertEquals("Task", task?.summary)
+        assertEquals(1, task?.dirtyFields)
+        assertNull(task?.conflictSummary)
+        assertNull(task?.conflictNotes)
+        assertEquals(false, task?.deletedOnServer)
+    }
 }
