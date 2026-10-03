@@ -31,7 +31,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T10 Motor de recurrencia**: presets, personalizada, siguiente repetición, completar recurrentes según la decisión de §9. **100% de cobertura.**
   - *Resultado:* reglas diarias a anuales con BYDAY, BYMONTHDAY, BYMONTH, BYSETPOS, COUNT y UNTIL; completar avanza la misma tarea; reglas no soportadas se muestran sin poder marcarse.
 - [x] **T11 Vistas inteligentes**: consultas Hoy / Programados / Todos / Completados y contadores, respetando listas visibles.
-- [ ] **T12 Tests de sync offline**: caídas de red, cambios concurrentes, reintentos, app cerrada a mitad de sync.
+- [x] **T12 Tests de sync offline**: caídas de red, cambios concurrentes, reintentos, app cerrada a mitad de sync.
 
 ## Fase 3 — Interfaz (experiencia Apple)
 - [x] **T13 Login + asistente de fiabilidad** (RF-01), incluyendo aviso de prueba.
