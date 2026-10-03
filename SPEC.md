@@ -23,7 +23,7 @@ App Android de tareas contra **Nextcloud** (CalDAV, componentes `VTODO`) con una
 - Login Flow v2 (copiado de UltimateDeck), credenciales cifradas con Keystore; restaurar copia de seguridad desde la pantalla de inicio.
 - Tras el login, **asistente de fiabilidad** (se puede repetir desde Ajustes):
   1. Permiso de notificaciones (Android 13+).
-  2. Alarmas exactas (`USE_EXACT_ALARM` / `SCHEDULE_EXACT_ALARM`, según T02b).
+  2. Alarmas exactas: `USE_EXACT_ALARM` (Android 13+, concedido al instalar) y `SCHEDULE_EXACT_ALARM` solo hasta Android 12L (decidido en T02b).
   3. Exención de optimización de batería (diálogo del sistema).
   4. Ajustes del fabricante detectado (inicio automático, "no cerrar en segundo plano"…) con instrucciones e intent directo cuando exista.
   5. **Aviso de prueba** en 10 s para comprobar que funciona.
@@ -171,12 +171,11 @@ Hoja/pantalla con, en este orden:
 5. **Listas de Deck vía CalDAV**: comportamiento de escritura (¿se pueden completar o editar desde CalDAV?) a verificar contra el servidor.
 
 ## 9. Decisiones abiertas
-- Librerías: WebDAV (candidata `dav4jvm`, MPL-2.0) e iCalendar (candidata `ical4j`, BSD-3) frente a implementación propia. **Se decide en T02 y se pregunta antes de añadirlas.**
+- Comportamiento real del servidor (listas de Deck escribibles, `sync-collection`, formato de `ATTACH`): se comprueba con `tools/caldav-probe.py` en T05.
 - Diseño adaptativo para tablet: `material3-adaptive` (Apache-2.0, nueva dependencia, a consultar) o layout propio.
 - Semántica de completar recurrentes (propuesta en RF-06), a validar contra Nextcloud Tasks web.
 - ¿Las listas ocultas se siguen sincronizando? Propuesta: sí, solo metadatos y tareas (barato), para mostrarlas al instante al hacerlas visibles.
 - Versión mínima de Nextcloud soportada.
-- `USE_EXACT_ALARM` (concedido al instalar, permitido a apps de recordatorios) frente a `SCHEDULE_EXACT_ALARM` (requiere que el usuario lo active).
 
 ### Decisiones tomadas (entrevista 2026-10-03)
 - Sync CalDAV propia; una cuenta; nombre UltimateTasks (`com.qtekfun.ultimatetasks`); repo `qtekfun/UltimateTasks`.
@@ -186,4 +185,12 @@ Hoja/pantalla con, en este orden:
 - Visibilidad de listas manual en Ajustes, sin filtros automáticos; las ocultas desaparecen de todo, incluidos los avisos.
 - Completar como Apple; aviso a la hora + anticipado; asistente de fiabilidad tras el login.
 - Extras v1: búsqueda y compartir a la app; tablet incluida.
+- **CalDAV e iCalendar propios (T02, 2026-10-03):** sin librerías externas.
+  - `ical4j` 4.x descartada: en Android necesita *desugaring* y silenciar `java.time.zone.ZoneRulesProvider`, que no existe (riesgo de fallos en zonas horarias); añade ~970 KB al APK de release y, en el móvil, normalizó el texto (mayúsculas en parámetros) y unió líneas con finales LF.
+  - `dav4jvm` descartada: solo se publica en JitPack y usa Ktor, un segundo cliente HTTP junto a OkHttp.
+  - Implementación propia en `data/ical`: lector y escritor que conservan byte a byte lo no modificado (corpus de DAVx5 + casos límite, CRLF y LF). CalDAV irá sobre OkHttp (T05); la recurrencia, en el motor propio de T10.
 - Crear listas siempre; borrarlas solo tras activarlo en Ajustes. Copias de seguridad como en UltimateDeck.
+- **Avisos (T02b, 2026-10-03):** se copia la solución de UltimateDeck (planificador puro, alarma exacta, modo alarma opcional con `setAlarmClock`, petición de exención de batería, reprogramación en arranque).
+  - Medido en el móvil del autor (OnePlus CPH2841, ColorOS, Android 16) sin exención de batería: las alarmas `setExactAndAllowWhileIdle` llegaron agrupadas, una 73 s tarde y otra 106 s **antes** de tiempo; `setAlarmClock` llegó al segundo. Por eso el asistente (RF-01) pide la exención de batería y ofrece el modo alarma.
+  - Permisos: `USE_EXACT_ALARM` en Android 13+ (concedido al instalar; F-Droid no tiene la restricción de Play) y `SCHEDULE_EXACT_ALARM` con `maxSdkVersion` 32.
+  - En ColorOS, `pm grant` de notificaciones por adb está bloqueado: los tests en dispositivo conceden el permiso a mano.

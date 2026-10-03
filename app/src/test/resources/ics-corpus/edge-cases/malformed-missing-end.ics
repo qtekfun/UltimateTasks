@@ -1,0 +1,9 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//UltimateTasks//corpus//EN
+BEGIN:VTODO
+UID:edge-2@ultimatetasks
+SUMMARY:Without a final END
+this line is not a content line
+STATUS:NEEDS-ACTION
+END:VEVENT
