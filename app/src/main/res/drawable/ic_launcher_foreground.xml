@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 UltimateTasks contributors
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<!-- A round checkbox, ticked, above two task lines: the app in one glance. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M42,30a12,12 0,1 1,0 24a12,12 0,1 1,0 -24z" />
+    <path
+        android:pathData="M36,42l4.5,4.5l8,-9"
+        android:strokeWidth="3.5"
+        android:strokeColor="#FF0B63CE"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M60,38h17M60,46h12"
+        android:strokeWidth="4"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M42,60a9,9 0,1 1,0 18a9,9 0,1 1,0 -18z"
+        android:strokeWidth="3"
+        android:strokeColor="#FFFFFFFF" />
+    <path
+        android:pathData="M60,66h17M60,73h12"
+        android:strokeWidth="4"
+        android:strokeColor="#B3FFFFFF"
+        android:strokeLineCap="round" />
+</vector>
