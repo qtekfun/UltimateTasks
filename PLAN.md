@@ -30,7 +30,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Verificación:* sync real en el móvil contra el servidor del autor (7 listas, 3 de Deck de solo lectura); detalles en `SPEC.md` §9.
 - [x] **T10 Motor de recurrencia**: presets, personalizada, siguiente repetición, completar recurrentes según la decisión de §9. **100% de cobertura.**
   - *Resultado:* reglas diarias a anuales con BYDAY, BYMONTHDAY, BYMONTH, BYSETPOS, COUNT y UNTIL; completar avanza la misma tarea; reglas no soportadas se muestran sin poder marcarse.
-- [ ] **T11 Vistas inteligentes**: consultas Hoy / Programados / Todos / Completados y contadores, respetando listas visibles.
+- [x] **T11 Vistas inteligentes**: consultas Hoy / Programados / Todos / Completados y contadores, respetando listas visibles.
 - [ ] **T12 Tests de sync offline**: caídas de red, cambios concurrentes, reintentos, app cerrada a mitad de sync.
 
 ## Fase 3 — Interfaz (experiencia Apple)
@@ -39,7 +39,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Hecho sin la barra de búsqueda (llega con T24) ni "Añadir lista" (T20).*
 - [x] **T15 Vista de lista**: checkbox redondo, título, notas, fecha, prioridad, etiquetas, iconos; completar con animación y deshacer; añadir en línea; mostrar completadas (RF-03, RF-04).
   - *Las tareas que se repiten no se pueden marcar hasta T10; desplegar y añadir a listas de solo lectura no aplica.*
-- [ ] **T16 Vistas inteligentes en la UI**: Hoy (vencidas arriba), Programados (agrupados por día), Todos (agrupados por lista), Completados (por fecha de completado).
+- [x] **T16 Vistas inteligentes en la UI**: Hoy (vencidas arriba), Programados (agrupados por día), Todos (agrupados por lista), Completados (por fecha de completado).
 - [x] **T17 Detalle de tarea** (RF-05): todos los campos, guardado automático, diálogo de conflicto.
   - *Resultado:* título, notas, URL, fecha y hora, aviso anticipado, prioridad, etiquetas, mover de lista, eliminar; guardado automático; conflictos y tareas borradas en el servidor. Repetir se muestra; su editor es T18.
 - [x] **T18 Editor de recurrencia** (RF-06).
