@@ -27,11 +27,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +40,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -74,48 +76,60 @@ import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.list.smartColor
 import com.qtekfun.ultimatetasks.ui.list.smartName
+import com.qtekfun.ultimatetasks.ui.lists.ListEditorDialog
+import com.qtekfun.ultimatetasks.ui.lists.ListMessages
+import com.qtekfun.ultimatetasks.ui.lists.ListsViewModel
 import com.qtekfun.ultimatetasks.ui.theme.ListColors
+import com.qtekfun.ultimatetasks.ui.theme.ListIcons
 import java.time.LocalDate
 
 /** The home screen of Apple Reminders (RF-02): four smart lists in color, then "My lists". */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    accountName: String,
-    onOpen: (TaskSource) -> Unit,
-    onSettings: () -> Unit,
-    onLogOut: () -> Unit,
-    viewModel: HomeViewModel = viewModel()
+    actions: HomeActions,
+    viewModel: HomeViewModel = viewModel(),
+    lists: ListsViewModel = viewModel()
 ) {
     val home by viewModel.home.collectAsStateWithLifecycle()
     val syncing by viewModel.syncing.collectAsStateWithLifecycle()
-    var confirmLogout by rememberSaveable { mutableStateOf(false) }
+    val settings by lists.settings.collectAsStateWithLifecycle()
+    val snackbar = remember { SnackbarHostState() }
+    var creating by rememberSaveable { mutableStateOf(false) }
     AskNotificationsOnce()
+    ListMessages(lists, snackbar)
+    val writable = home?.lists.orEmpty().map { it.list }.filter { it.writable }
+    val defaultList = (
+        writable.firstOrNull { it.href == settings.defaultList }
+            ?: writable.firstOrNull()
+        )?.href
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbar) },
+        bottomBar = {
+            HomeBottomBar(defaultList?.let { href -> { actions.onNewTask(href) } }) {
+                creating =
+                    true
+            }
+        },
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-        topBar = {
-            TopAppBar(
-                title = {},
-                actions = { HomeMenu(onSettings = onSettings, onLogOut = { confirmLogout = true }) }
-            )
-        }
+        topBar = { TopAppBar(title = {}, actions = { HomeMenu(actions) }) }
     ) { padding ->
         PullToRefreshBox(
             isRefreshing = syncing,
             onRefresh = viewModel::refresh,
             modifier = Modifier.padding(padding).fillMaxSize()
         ) {
-            HomeContent(home, onOpen)
+            HomeContent(home, actions.onOpen)
         }
     }
-    if (confirmLogout) {
-        LogoutDialog(
-            accountName = accountName,
-            onConfirm = {
-                confirmLogout = false
-                onLogOut()
+    if (creating) {
+        ListEditorDialog(
+            initial = null,
+            onSave = {
+                creating = false
+                lists.create(it)
             },
-            onDismiss = { confirmLogout = false }
+            onDismiss = { creating = false }
         )
     }
 }
@@ -297,42 +311,27 @@ private fun ListRow(summary: ListSummary, onClick: () -> Unit) {
 }
 
 @Composable
-private fun HomeMenu(onSettings: () -> Unit, onLogOut: () -> Unit) {
+private fun HomeMenu(actions: HomeActions) {
     var open by remember { mutableStateOf(false) }
     IconButton(onClick = {
         open = true
     }) { Icon(Icons.Default.MoreVert, stringResource(R.string.more_options)) }
     DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
         DropdownMenuItem(
-            text = { Text(stringResource(R.string.settings)) },
+            text = { Text(stringResource(R.string.lists_reorder)) },
             onClick = {
                 open = false
-                onSettings()
+                actions.onReorder()
             }
         )
         DropdownMenuItem(
-            text = { Text(stringResource(R.string.logout)) },
+            text = { Text(stringResource(R.string.settings)) },
             onClick = {
                 open = false
-                onLogOut()
+                actions.onSettings()
             }
         )
     }
-}
-
-@Composable
-private fun LogoutDialog(accountName: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.logout_confirm_title)) },
-        text = { Text(stringResource(R.string.logout_confirm_text, accountName)) },
-        confirmButton = {
-            TextButton(onClick = onConfirm) { Text(stringResource(R.string.logout)) }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
-        }
-    )
 }
 
 /** Reminders need the notification permission on Android 13+ (RF-10): asked once per start. */
@@ -350,5 +349,23 @@ private fun AskNotificationsOnce() {
             asked = true
             launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+}
+
+/** Apple's two buttons at the foot of the home screen: New task (default list) and Add list (RF-02). */
+@Composable
+private fun HomeBottomBar(onNewTask: (() -> Unit)?, onAddList: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (onNewTask != null) {
+            TextButton(onClick = onNewTask) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Text(stringResource(R.string.new_task), fontWeight = FontWeight.SemiBold)
+            }
+        }
+        Spacer(Modifier.weight(1f))
+        TextButton(onClick = onAddList) { Text(stringResource(R.string.list_add)) }
     }
 }

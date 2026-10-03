@@ -59,6 +59,9 @@ import com.qtekfun.ultimatetasks.domain.recurrence.RepeatingTasks
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
+import com.qtekfun.ultimatetasks.ui.lists.ListMenuItems
+import com.qtekfun.ultimatetasks.ui.lists.ListMessages
+import com.qtekfun.ultimatetasks.ui.lists.ListsViewModel
 import com.qtekfun.ultimatetasks.ui.theme.ListColors
 
 /** One list, or a smart list, as in Apple Reminders (RF-03, RF-04). */
@@ -68,15 +71,18 @@ fun TaskListScreen(
     source: TaskSource,
     onBack: () -> Unit,
     onOpenTask: (Long) -> Unit,
-    viewModel: TaskListViewModel = viewModel()
+    startAdding: Boolean = false,
+    viewModel: TaskListViewModel = viewModel(),
+    lists: ListsViewModel = viewModel()
 ) {
     LaunchedEffect(source) { viewModel.show(source) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val syncing by viewModel.syncing.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val color = colorOf(source, state.list?.color)
-    val adding = rememberSaveable { mutableStateOf(false) }
+    val adding = rememberSaveable { mutableStateOf(startAdding) }
     UndoSnackbar(state, snackbar, viewModel)
+    ListMessages(lists, snackbar)
     Scaffold(
         topBar = {
             TopAppBar(
@@ -86,7 +92,21 @@ fun TaskListScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
                     }
                 },
-                actions = { ListMenu(state.showCompleted, source, viewModel::toggleShowCompleted) }
+                actions = {
+                    ListMenu(state, source, viewModel::toggleShowCompleted) { menu ->
+                        state.list?.let {
+                            ListMenuItems(
+                                it,
+                                state.tasks.count { t ->
+                                    !t.completed
+                                },
+                                lists,
+                                menu,
+                                onBack
+                            )
+                        }
+                    }
+                }
             )
         },
         snackbarHost = { SnackbarHost(snackbar) },
@@ -237,7 +257,12 @@ private fun NewTaskRow(color: Color, onAdd: (String) -> Unit, onDone: () -> Unit
 }
 
 @Composable
-private fun ListMenu(showCompleted: Boolean, source: TaskSource, onToggle: () -> Unit) {
+private fun ListMenu(
+    state: TaskListState,
+    source: TaskSource,
+    onToggle: () -> Unit,
+    listItems: @Composable (closeMenu: () -> Unit) -> Unit
+) {
     if (source == TaskSource.Smart(SmartList.COMPLETED)) return
     var open by remember { mutableStateOf(false) }
     IconButton(onClick = {
@@ -246,17 +271,18 @@ private fun ListMenu(showCompleted: Boolean, source: TaskSource, onToggle: () ->
     DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
         DropdownMenuItem(
             text = {
-                Text(
-                    stringResource(
-                        if (showCompleted) R.string.hide_completed else R.string.show_completed
-                    )
-                )
+                val label = when {
+                    state.showCompleted -> R.string.hide_completed
+                    else -> R.string.show_completed
+                }
+                Text(stringResource(label))
             },
             onClick = {
                 open = false
                 onToggle()
             }
         )
+        if (source is TaskSource.List) listItems { open = false }
     }
 }
 
