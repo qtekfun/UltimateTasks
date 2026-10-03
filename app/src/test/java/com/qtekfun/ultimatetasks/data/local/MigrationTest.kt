@@ -8,9 +8,12 @@ import androidx.room3.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
 import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
+import com.qtekfun.ultimatetasks.data.local.entity.SnoozeEntity
 import io.mockk.every
 import io.mockk.mockk
 import java.io.File
+import java.time.Instant
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -117,5 +120,33 @@ class MigrationTest {
         assertNull(task?.conflictSummary)
         assertNull(task?.conflictNotes)
         assertEquals(false, task?.deletedOnServer)
+    }
+
+    @Test
+    fun `migrates version 3 to the latest with snoozes that go with their task`() = runTest {
+        val file = File(dir, "v3.db")
+        createFromSchema(
+            file,
+            version = 3,
+            extraSql = listOf(
+                "INSERT INTO account (id, serverUrl, userId, displayName) " +
+                    "VALUES (1, 'https://c.example/', 'ana', 'Ana')",
+                "INSERT INTO task_list (accountId, href, name, visible, writable) " +
+                    "VALUES (1, '/l/', 'List', 1, 1)",
+                "INSERT INTO task (id, accountId, listHref, href, uid, summary, notes, " +
+                    "completed, priority, tags, dirtyFields, deleted, deletedOnServer) " +
+                    "VALUES (100, 1, '/l/', '/l/t.ics', 't', 'Task', '', 0, 0, '', 0, 0, 0)"
+            )
+        )
+
+        val db = open(file)
+        db.reminderDao().snooze(SnoozeEntity(100, Instant.parse("2026-10-03T10:00:00Z")))
+        val snoozes = db.reminderDao().observeSnoozes().first()
+        db.taskDao().delete(100)
+        val afterDelete = db.reminderDao().observeSnoozes().first()
+        db.close()
+
+        assertEquals(listOf(100L), snoozes.map { it.taskId })
+        assertEquals(emptyList<SnoozeEntity>(), afterDelete)
     }
 }
