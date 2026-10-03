@@ -13,10 +13,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -199,11 +202,19 @@ private fun HomeContent(data: HomeData?, onOpen: (TaskSource) -> Unit) {
 @Composable
 private fun SmartGrid(counts: SmartCounts, onOpen: (TaskSource) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        // Tiles side by side keep the same height when one label wraps.
+        Row(
+            Modifier.height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             SmartTile(SmartList.TODAY, counts.today, onOpen, Modifier.weight(1f))
             SmartTile(SmartList.SCHEDULED, counts.scheduled, onOpen, Modifier.weight(1f))
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        // Tiles side by side keep the same height when one label wraps.
+        Row(
+            Modifier.height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             SmartTile(SmartList.ALL, counts.all, onOpen, Modifier.weight(1f))
             SmartTile(SmartList.COMPLETED, counts.completed, onOpen, Modifier.weight(1f))
         }
@@ -222,7 +233,7 @@ private fun SmartTile(
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surface,
-        modifier = modifier.heightIn(min = 84.dp).clickable(role = Role.Button) {
+        modifier = modifier.fillMaxHeight().heightIn(min = 84.dp).clickable(role = Role.Button) {
             onOpen(TaskSource.Smart(kind))
         }
     ) {
