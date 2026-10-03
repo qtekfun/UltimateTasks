@@ -31,4 +31,21 @@ object IcsText {
             }
         }
     }
+
+    /** A comma-separated list of escaped texts, such as CATEGORIES, unescaped and trimmed. */
+    fun splitList(value: String): List<String> {
+        val parts = mutableListOf<String>()
+        val current = StringBuilder()
+        var escaped = false
+        for (char in value) {
+            when {
+                escaped -> current.append('\\').append(char).also { escaped = false }
+                char == '\\' -> escaped = true
+                char == ',' -> parts.add(current.toString()).also { current.clear() }
+                else -> current.append(char)
+            }
+        }
+        parts.add(current.toString())
+        return parts.map { IcsText.unescape(it).trim() }.filter { it.isNotEmpty() }
+    }
 }
