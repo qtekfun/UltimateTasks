@@ -214,4 +214,6 @@
         <item quantity="one">Its %d task will be deleted too, here and on the server.</item>
         <item quantity="other">Its %d tasks will be deleted too, here and on the server.</item>
     </plurals>
+
+    <string name="group_overdue">Overdue</string>
 </resources>

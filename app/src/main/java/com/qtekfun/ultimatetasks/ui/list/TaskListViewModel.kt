@@ -9,9 +9,13 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.task.TaskRepository
 import com.qtekfun.ultimatetasks.domain.task.SmartList
+import com.qtekfun.ultimatetasks.domain.task.TaskGroup
+import com.qtekfun.ultimatetasks.domain.task.TaskGroups
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.sync.engine.SyncScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.Instant
+import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -32,6 +36,8 @@ data class TaskListState(
     val lists: Map<String, TaskListEntity> = emptyMap(),
     val tasks: List<TaskEntity> = emptyList(),
     val showCompleted: Boolean = false,
+    /** [tasks] in the sections of the view (T16). */
+    val groups: List<TaskGroup> = emptyList(),
     val lastCompleted: TaskEntity? = null
 )
 
@@ -67,13 +73,23 @@ class TaskListViewModel @Inject constructor(
             }
             // Completed in a smart list leaves the query at once: keep it on screen a moment.
             val missing = kept.values.filter { k -> visible.none { it.id == k.id } }
+            val shown = visible.map { kept[it.id] ?: it } + missing
             TaskListState(
                 source = current,
                 list = (current as? TaskSource.List)?.let { byHref[it.href] },
                 lists = byHref,
-                tasks = (visible.map { kept[it.id] ?: it } + missing),
+                tasks = shown,
                 showCompleted = showDone,
-                lastCompleted = last
+                lastCompleted = last,
+                groups = TaskGroups.group(
+                    current,
+                    shown,
+                    lists.map {
+                        it.href
+                    },
+                    Instant.now(),
+                    ZoneId.systemDefault()
+                )
             )
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_MS), TaskListState())
