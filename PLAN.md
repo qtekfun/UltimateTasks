@@ -46,7 +46,8 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Resultado:* presets y personalizado (cada N días/semanas/meses/años, días de la semana, mensual por día o "el 3er viernes"/"el último sábado", fin nunca/tras N/hasta fecha); la fecha salta a la primera repetición.
 - [ ] **T19 Subtareas** (RF-07): crear, indentar/desindentar, plegar.
 - [ ] **T20 Gestión de listas** (RF-08): crear, renombrar, color, icono, reordenar listas y tareas; borrar solo con el ajuste "Permitir borrar listas" activado.
-- [ ] **T21 Avisos y posponer** (RF-10): planificador (**100% de cobertura**), notificaciones con acciones, reprogramación en arranque/cambio de hora/actualización, modo alarma, posponer tarea.
+- [x] **T21 Avisos y posponer** (RF-10): planificador (**100% de cobertura**), notificaciones con acciones, reprogramación en arranque/cambio de hora/actualización, modo alarma, posponer tarea.
+  - *Resultado:* planificador puro (100 %), alarmas exactas o modo alarma, Completar/15 min/1 hora/Mañana, reprogramación en arranque, actualización y cambios de hora; Ajustes → Avisos con permisos, batería, modo alarma, hora de todo el día y aviso de prueba.
 - [ ] **T22 Ajustes** (RF-14): tema, idioma, lista por defecto, permitir borrar listas, listas visibles (RF-09), hora de las tareas de todo el día, modo alarma, asistente, cuenta, versión.
 - [ ] **T23 Copia de seguridad cifrada**: copiar de UltimateDeck y adaptar: ajustes + sesión opcional con contraseña, restaurable desde Ajustes y desde el login.
 - [ ] **T24 Búsqueda** (RF-12).
