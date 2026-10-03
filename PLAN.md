@@ -52,7 +52,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Resultado:* planificador puro (100 %), alarmas exactas o modo alarma, Completar/15 min/1 hora/Mañana, reprogramación en arranque, actualización y cambios de hora; Ajustes → Avisos con permisos, batería, modo alarma, hora de todo el día y aviso de prueba.
 - [x] **T22 Ajustes** (RF-14): tema, idioma, lista por defecto, permitir borrar listas, listas visibles (RF-09), hora de las tareas de todo el día, modo alarma, asistente, cuenta, versión.
 - [ ] **T23 Copia de seguridad cifrada**: copiar de UltimateDeck y adaptar: ajustes + sesión opcional con contraseña, restaurable desde Ajustes y desde el login.
-- [ ] **T24 Búsqueda** (RF-12).
+- [x] **T24 Búsqueda** (RF-12).
 - [ ] **T25 Compartir a la app** (RF-13).
 - [ ] **T26 Adjuntos** (RF-11): cámara/galería/archivos, cola de subida con reintentos, descarga bajo demanda.
 - [ ] **T27 Tablet** (RF-15): diseño adaptativo de 2–3 paneles.
