@@ -46,4 +46,60 @@
     <string name="due_today">Hoy</string>
     <string name="due_tomorrow">Mañana</string>
     <string name="due_yesterday">Ayer</string>
+
+    <string name="detail_title">Detalles</string>
+    <string name="delete_task">Eliminar tarea</string>
+    <string name="delete_task_confirm">¿Eliminar esta tarea?</string>
+    <string name="field_title">Título</string>
+    <string name="field_notes">Notas</string>
+    <string name="field_url">URL</string>
+    <string name="field_date">Fecha</string>
+    <string name="field_time">Hora</string>
+    <string name="field_early_reminder">Aviso anticipado</string>
+    <string name="field_repeat">Repetir</string>
+    <string name="field_priority">Prioridad</string>
+    <string name="field_tags">Etiquetas</string>
+    <string name="field_list">Lista</string>
+    <string name="add_tag">Añadir etiqueta</string>
+    <string name="remove_tag">Quitar la etiqueta %1$s</string>
+    <string name="priority_none">Ninguna</string>
+    <string name="priority_low">Baja</string>
+    <string name="priority_medium">Media</string>
+    <string name="priority_high">Alta</string>
+    <string name="none">Ninguno</string>
+    <string name="repeat_never">Nunca</string>
+    <string name="repeat_custom">Personalizado</string>
+    <string name="repeat_daily">Cada día</string>
+    <string name="repeat_weekly">Cada semana</string>
+    <string name="repeat_monthly">Cada mes</string>
+    <string name="repeat_yearly">Cada año</string>
+    <string name="ok">Aceptar</string>
+    <string name="read_only_note">Esta lista es de solo lectura: edítala donde se creó.</string>
+    <string name="conflict_title">Cambiada en los dos sitios</string>
+    <string name="conflict_text">%1$s se cambió aquí y en el servidor.\n\nLa tuya: %2$s\n\nLa del servidor: %3$s</string>
+    <string name="keep_mine">Quedarme la mía</string>
+    <string name="keep_server">Usar la del servidor</string>
+    <string name="deleted_on_server">Esta tarea se eliminó en el servidor mientras la cambiabas aquí.</string>
+    <string name="keep_copy">Conservar una copia</string>
+    <string name="discard">Descartar</string>
+    <plurals name="minutes_before">
+        <item quantity="one">%d minuto antes</item>
+        <item quantity="other">%d minutos antes</item>
+        <item quantity="many">%d minutos antes</item>
+    </plurals>
+    <plurals name="hours_before">
+        <item quantity="one">%d hora antes</item>
+        <item quantity="other">%d horas antes</item>
+        <item quantity="many">%d horas antes</item>
+    </plurals>
+    <plurals name="days_before">
+        <item quantity="one">%d día antes</item>
+        <item quantity="other">%d días antes</item>
+        <item quantity="many">%d días antes</item>
+    </plurals>
+    <plurals name="weeks_before">
+        <item quantity="one">%d semana antes</item>
+        <item quantity="other">%d semanas antes</item>
+        <item quantity="many">%d semanas antes</item>
+    </plurals>
 </resources>

@@ -49,4 +49,56 @@
     <string name="due_tomorrow">Tomorrow</string>
     <string name="due_yesterday">Yesterday</string>
     <string name="due_day_time" translatable="false">%1$s, %2$s</string>
+
+    <string name="detail_title">Details</string>
+    <string name="delete_task">Delete task</string>
+    <string name="delete_task_confirm">Delete this task?</string>
+    <string name="field_title">Title</string>
+    <string name="field_notes">Notes</string>
+    <string name="field_url">URL</string>
+    <string name="field_date">Date</string>
+    <string name="field_time">Time</string>
+    <string name="field_early_reminder">Early reminder</string>
+    <string name="field_repeat">Repeat</string>
+    <string name="field_priority">Priority</string>
+    <string name="field_tags">Tags</string>
+    <string name="field_list">List</string>
+    <string name="add_tag">Add tag</string>
+    <string name="remove_tag">Remove tag %1$s</string>
+    <string name="priority_none">None</string>
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
+    <string name="none">None</string>
+    <string name="repeat_never">Never</string>
+    <string name="repeat_custom">Custom</string>
+    <string name="repeat_daily">Daily</string>
+    <string name="repeat_weekly">Weekly</string>
+    <string name="repeat_monthly">Monthly</string>
+    <string name="repeat_yearly">Yearly</string>
+    <string name="ok">OK</string>
+    <string name="read_only_note">This list is read-only: edit it where it comes from.</string>
+    <string name="conflict_title">Changed on both sides</string>
+    <string name="conflict_text">%1$s was changed here and on the server.\n\nYours: %2$s\n\nServer: %3$s</string>
+    <string name="keep_mine">Keep mine</string>
+    <string name="keep_server">Use the server\'s</string>
+    <string name="deleted_on_server">This task was deleted on the server while you changed it here.</string>
+    <string name="keep_copy">Keep a copy</string>
+    <string name="discard">Discard</string>
+    <plurals name="minutes_before">
+        <item quantity="one">%d minute before</item>
+        <item quantity="other">%d minutes before</item>
+    </plurals>
+    <plurals name="hours_before">
+        <item quantity="one">%d hour before</item>
+        <item quantity="other">%d hours before</item>
+    </plurals>
+    <plurals name="days_before">
+        <item quantity="one">%d day before</item>
+        <item quantity="other">%d days before</item>
+    </plurals>
+    <plurals name="weeks_before">
+        <item quantity="one">%d week before</item>
+        <item quantity="other">%d weeks before</item>
+    </plurals>
 </resources>

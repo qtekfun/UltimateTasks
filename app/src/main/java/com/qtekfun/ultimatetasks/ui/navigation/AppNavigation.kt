@@ -11,6 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
+import com.qtekfun.ultimatetasks.ui.detail.TaskDetailScreen
 import com.qtekfun.ultimatetasks.ui.home.HomeScreen
 import com.qtekfun.ultimatetasks.ui.list.TaskListScreen
 
@@ -19,12 +20,23 @@ import com.qtekfun.ultimatetasks.ui.list.TaskListScreen
 fun AppNavigation(accountName: String, onLogOut: () -> Unit) {
     // Saved as text so it survives rotation and process death.
     var opened by rememberSaveable { mutableStateOf<String?>(null) }
+    var task by rememberSaveable { mutableStateOf<Long?>(null) }
     val source = opened?.let(::decode)
-    if (source == null) {
-        HomeScreen(accountName = accountName, onOpen = { opened = encode(it) }, onLogOut = onLogOut)
-    } else {
-        BackHandler { opened = null }
-        TaskListScreen(source = source, onBack = { opened = null })
+    val openTask = task
+    when {
+        openTask != null -> {
+            BackHandler { task = null }
+            TaskDetailScreen(taskId = openTask, onBack = { task = null })
+        }
+
+        source != null -> {
+            BackHandler { opened = null }
+            TaskListScreen(source = source, onBack = { opened = null }, onOpenTask = { task = it })
+        }
+
+        else -> HomeScreen(accountName = accountName, onOpen = {
+            opened = encode(it)
+        }, onLogOut = onLogOut)
     }
 }
 

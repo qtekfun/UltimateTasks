@@ -21,6 +21,9 @@ interface TaskDao {
     @Query("SELECT * FROM task WHERE id = :id")
     suspend fun get(id: Long): TaskEntity?
 
+    @Query("SELECT * FROM task WHERE id = :id")
+    fun observe(id: Long): Flow<TaskEntity?>
+
     @Query("SELECT * FROM task WHERE accountId = :accountId AND uid = :uid")
     suspend fun byUid(accountId: Long, uid: String): List<TaskEntity>
 
