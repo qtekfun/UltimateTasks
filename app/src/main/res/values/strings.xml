@@ -283,4 +283,7 @@
     <string name="panes_choose_list">Choose a list</string>
     <string name="task_open_details">Open details</string>
     <string name="task_overdue_on">Overdue: %1$s</string>
+    <string name="task_state_done">Done</string>
+    <string name="task_state_open">Not done</string>
+    <string name="task_priority_spoken">%1$s priority. %2$s</string>
 </resources>

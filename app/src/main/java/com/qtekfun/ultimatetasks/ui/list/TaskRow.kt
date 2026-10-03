@@ -26,9 +26,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +71,7 @@ fun TaskRow(
             role = Role.Button,
             onClickLabel = stringResource(R.string.task_open_details),
             onClick = actions.onClick
-        )
+        ).spokenAsOne(task, actions.onCheckedChange)
             .padding(start = (row.depth * INDENT).dp, end = 16.dp),
         verticalAlignment = Alignment.Top
     ) {
@@ -78,7 +82,9 @@ fun TaskRow(
                 if (task.completed) R.string.task_mark_open else R.string.task_mark_done,
                 task.summary
             ),
-            onCheckedChange = actions.onCheckedChange
+            onCheckedChange = actions.onCheckedChange,
+            // Done or not is the row's state, and marking it one of its actions.
+            modifier = Modifier.clearAndSetSemantics {}
         )
         Column(
             Modifier.weight(1f).padding(top = 12.dp, bottom = 12.dp),
@@ -106,10 +112,54 @@ fun TaskRow(
     HorizontalDivider(Modifier.padding(start = (48 + row.depth * INDENT).dp))
 }
 
-/** Priority marks in the list colour, then the title. */
+/**
+ * TalkBack reads the task as one element (SPEC §6): its state, and marking it done or not done
+ * as an action, instead of a separate checkbox.
+ */
+@Composable
+private fun Modifier.spokenAsOne(
+    task: TaskEntity,
+    onCheckedChange: ((Boolean) -> Unit)?
+): Modifier {
+    val state =
+        stringResource(if (task.completed) R.string.task_state_done else R.string.task_state_open)
+    val mark = stringResource(
+        if (task.completed) R.string.task_mark_open else R.string.task_mark_done,
+        task.summary
+    )
+    return semantics {
+        stateDescription = state
+        if (onCheckedChange != null) {
+            customActions = listOf(
+                CustomAccessibilityAction(mark) {
+                    onCheckedChange(!task.completed)
+                    true
+                }
+            )
+        }
+    }
+}
+
+/** Priority marks in the list colour, then the title; the marks are spoken as words. */
 @Composable
 private fun Title(task: TaskEntity, color: Color) {
+    val level = when (priorityMarks(task.priority).length) {
+        HIGH_MARKS -> R.string.priority_high
+        MEDIUM_MARKS -> R.string.priority_medium
+        LOW_MARKS -> R.string.priority_low
+        else -> null
+    }
+    val spoken = level?.let {
+        stringResource(R.string.task_priority_spoken, stringResource(it), task.summary)
+    }
     Text(
+        modifier = if (spoken ==
+            null
+        ) {
+            Modifier
+        } else {
+            Modifier.semantics { contentDescription = spoken }
+        },
         text = buildAnnotatedString {
             val marks = priorityMarks(task.priority)
             if (marks.isNotEmpty()) {
@@ -208,6 +258,10 @@ private fun MoveButtons(name: String, onMove: (Int) -> Unit) {
         onMove(1)
     }) { Icon(Icons.Default.KeyboardArrowDown, stringResource(R.string.move_down, name)) }
 }
+
+private const val HIGH_MARKS = 3
+private const val MEDIUM_MARKS = 2
+private const val LOW_MARKS = 1
 
 /** Indent of a subtask, in dp (RF-07). */
 private const val INDENT = 32
