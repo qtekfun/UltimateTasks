@@ -15,7 +15,8 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Resultado:* se copia la solución de UltimateDeck; medidas y permisos en `SPEC.md` §9.
 
 ## Fase 1 — Datos y red
-- [ ] **T03 Modelo de dominio y Room**: cuenta, lista (color, icono local, orden, visible, sync-token), tarea (campos de RF-05, padre, orden, `.ics` original, ETag, campos sucios), etiqueta, adjunto, aviso pospuesto, cola de operaciones. Migraciones con test.
+- [x] **T03 Modelo de dominio y Room**: cuenta, lista (color, icono local, orden, visible, sync-token), tarea (campos de RF-05, padre, orden, `.ics` original, ETag, campos sucios), etiqueta, adjunto, aviso pospuesto, cola de operaciones. Migraciones con test.
+  - *Resultado:* cuenta, lista, tarea (con el `.ics` del servidor como base de la fusión), cola y DAOs con tests. Adjuntos y avisos pospuestos llegan con sus tareas (T26, T21) mediante migraciones.
 - [ ] **T04 Mapeo iCalendar ⇄ dominio**: `VTODO` ↔ tarea conservando lo desconocido; `PRIORITY`, `CATEGORIES`, `RELATED-TO`, `VALARM`, `RRULE`, `DUE` con/sin hora y zonas horarias.
   - *Verificación:* corpus de ida y vuelta + tests por propiedad.
 - [ ] **T05 Cliente CalDAV**: descubrimiento, listar colecciones, `sync-collection`/ctag, GET/PUT/DELETE/MOVE con ETags, MKCALENDAR, PROPPATCH (nombre, color, orden). Tests con MockWebServer (4xx/5xx, timeouts, 412). Fijar versión mínima de Nextcloud. Ejecutar `tools/caldav-probe.py` contra el servidor (listas de Deck, `sync-collection`, ETags, `ATTACH`) y añadir las tareas capturadas al corpus.
