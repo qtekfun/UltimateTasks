@@ -153,7 +153,7 @@ Hoja/pantalla con, en este orden:
 - **Transparencia:** `PRIVACY.md` explica cada permiso (avisos, alarmas exactas, batería, cámara…) y por qué.
 
 ### Medidas (T28, 2026-10-03)
-Móvil de pruebas (1080×2400, Android 15/16), build release minificada firmada con la clave de depuración, datos locales reales (7 listas, ~80 tareas).
+Pixel 8 (1080×2400, Android 17), build release minificada firmada con la clave de depuración, datos locales reales (7 listas, ~80 tareas).
 - **Arranque en frío** (`am start -W`, 10 veces tras `force-stop`): mediana **126 ms**, máximo **138 ms** (objetivo < 1,5 s).
 - **Scroll** de "Todos" (`dumpsys gfxinfo`, 16 desplazamientos): 378 frames, **0,26 %** con tirones; p50 5 ms, p90 6 ms, p99 10 ms (60 fps = 16,7 ms).
 - **Fuente al 200 %**: inicio, lista, detalle y ajustes sin cortes ni solapes (filas etiqueta/valor reparten el ancho; la prioridad pasa a chips).
