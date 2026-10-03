@@ -28,7 +28,8 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T08 Resolutor de conflictos**: reglas de `SPEC.md` §5 con fusión a tres bandas. **100% de cobertura.**
 - [x] **T09 Motor de sincronización**: pull incremental, push de la cola, WorkManager periódico, al abrir/volver/tirar para refrescar.
   - *Verificación:* sync real en el móvil contra el servidor del autor (7 listas, 3 de Deck de solo lectura); detalles en `SPEC.md` §9.
-- [ ] **T10 Motor de recurrencia**: presets, personalizada, siguiente repetición, completar recurrentes según la decisión de §9. **100% de cobertura.**
+- [x] **T10 Motor de recurrencia**: presets, personalizada, siguiente repetición, completar recurrentes según la decisión de §9. **100% de cobertura.**
+  - *Resultado:* reglas diarias a anuales con BYDAY, BYMONTHDAY, BYMONTH, BYSETPOS, COUNT y UNTIL; completar avanza la misma tarea; reglas no soportadas se muestran sin poder marcarse.
 - [ ] **T11 Vistas inteligentes**: consultas Hoy / Programados / Todos / Completados y contadores, respetando listas visibles.
 - [ ] **T12 Tests de sync offline**: caídas de red, cambios concurrentes, reintentos, app cerrada a mitad de sync.
 
