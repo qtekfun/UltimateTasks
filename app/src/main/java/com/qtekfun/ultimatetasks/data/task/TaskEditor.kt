@@ -52,6 +52,11 @@ class TaskEditor @Inject constructor(
         send(current, QueuedOperation.UpdateTask)
     }
 
+    /** Saves a new manual order (RF-03): task id to `X-APPLE-SORT-ORDER`. */
+    suspend fun reorder(orders: Map<Long, Long>) = orders.forEach { (id, order) ->
+        update(id) { it.copy(sortOrder = order) }
+    }
+
     /** Moves the task to another list: a new resource there, same name (RF-05). */
     suspend fun move(id: Long, listHref: String) {
         val task = tasks.get(id) ?: return

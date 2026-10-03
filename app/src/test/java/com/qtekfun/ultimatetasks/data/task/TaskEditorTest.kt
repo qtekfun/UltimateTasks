@@ -141,4 +141,14 @@ class TaskEditorTest {
         assertNull(tasks.get(task.id))
         editor.keepCopy(99)
     }
+
+    @Test
+    fun `a new manual order is saved and queued`() = runTest {
+        val task = task()
+        editor.reorder(mapOf(task.id to 2000L, 99L to 1000L))
+        val saved = tasks.get(task.id)!!
+        assertEquals(2000L, saved.sortOrder)
+        assertEquals(TaskField.ORDER.bit, saved.dirtyFields)
+        assertEquals(listOf(QueuedOperation.UpdateTask), queued(task))
+    }
 }

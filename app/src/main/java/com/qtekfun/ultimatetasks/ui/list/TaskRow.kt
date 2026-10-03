@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -106,7 +107,7 @@ fun TaskRow(
                 listName
             )
         }
-        actions.onToggleChildren?.let { FoldButton(collapsed, row.children, it) }
+        RowEnd(row, actions, collapsed)
     }
     HorizontalDivider(Modifier.padding(start = (48 + row.depth * INDENT).dp))
 }
@@ -169,6 +170,28 @@ private fun FoldButton(collapsed: Boolean, count: Int, onClick: () -> Unit) {
         val label = if (collapsed) R.plurals.subtasks_show else R.plurals.subtasks_hide
         Icon(icon, pluralStringResource(label, count, count))
     }
+}
+
+/** Move buttons in Reorder mode, otherwise the fold button of a parent. */
+@Composable
+private fun RowEnd(row: TaskRowItem, actions: TaskRowActions, collapsed: Boolean) {
+    val move = actions.onMove
+    if (move != null) {
+        MoveButtons(row.task.summary, move)
+    } else {
+        actions.onToggleChildren?.let { FoldButton(collapsed, row.children, it) }
+    }
+}
+
+/** Up and down, to change the manual order (RF-03). */
+@Composable
+private fun MoveButtons(name: String, onMove: (Int) -> Unit) {
+    IconButton(onClick = {
+        onMove(-1)
+    }) { Icon(Icons.Default.KeyboardArrowUp, stringResource(R.string.move_up, name)) }
+    IconButton(onClick = {
+        onMove(1)
+    }) { Icon(Icons.Default.KeyboardArrowDown, stringResource(R.string.move_down, name)) }
 }
 
 /** Indent of a subtask, in dp (RF-07). */

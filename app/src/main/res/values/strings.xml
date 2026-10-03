@@ -255,4 +255,11 @@
     <string name="backup_wrong_password">Wrong password.</string>
     <string name="settings_backup">Backup</string>
 
+
+    <string name="sort_manual">Manual order</string>
+    <string name="sort_due">By due date</string>
+    <string name="sort_priority">By priority</string>
+    <string name="sort_title">By title</string>
+    <string name="reorder">Reorder</string>
+    <string name="reorder_done">Done reordering</string>
 </resources>
