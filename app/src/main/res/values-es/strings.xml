@@ -294,4 +294,5 @@
     <string name="wizard_alarm_recommended">Recomendado en este móvil: los avisos se programan como un despertador, que su ahorro de batería no retrasa.</string>
     <string name="wizard_done">Hecho</string>
     <string name="settings_wizard">Asistente de avisos</string>
+    <string name="panes_choose_list">Elige una lista</string>
 </resources>
