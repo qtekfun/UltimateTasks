@@ -59,6 +59,6 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 
 ## Fase 4 — Pulido y publicación
 - [x] **T28 Accesibilidad y rendimiento**: TalkBack, 48 dp, fuente al 200%, contraste; medidas de arranque y scroll anotadas en `SPEC.md`.
-- [ ] **T29 Tests de UI** en el móvil: login falso, completar con deshacer, crear en línea, Hoy.
+- [x] **T29 Tests de UI** en el móvil: login falso, completar con deshacer, crear en línea, Hoy.
 - [ ] **T30 Documentación**: `README.md` con capturas, `PRIVACY.md` (cada permiso explicado), `CONTRIBUTING.md`, `CHANGELOG.md`.
 - [ ] **T31 Release y F-Droid**: versión en `gradle.properties`, firma por variables de entorno, build reproducible, workflow de release por tag, metadatos fastlane en/es, receta `fdroid/` y `RELEASING.md` (copiado y adaptado de UltimateDeck).
