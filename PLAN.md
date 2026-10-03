@@ -25,7 +25,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 
 ## Fase 2 — Sincronización y lógica
 - [x] **T07 Cola de operaciones**: idempotente, backoff, persistente. **100% de cobertura.**
-- [ ] **T08 Resolutor de conflictos**: reglas de `SPEC.md` §5 con fusión a tres bandas. **100% de cobertura.**
+- [x] **T08 Resolutor de conflictos**: reglas de `SPEC.md` §5 con fusión a tres bandas. **100% de cobertura.**
 - [ ] **T09 Motor de sincronización**: pull incremental, push de la cola, WorkManager periódico, al abrir/volver/tirar para refrescar.
 - [ ] **T10 Motor de recurrencia**: presets, personalizada, siguiente repetición, completar recurrentes según la decisión de §9. **100% de cobertura.**
 - [ ] **T11 Vistas inteligentes**: consultas Hoy / Programados / Todos / Completados y contadores, respetando listas visibles.
