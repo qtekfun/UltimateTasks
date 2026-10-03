@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.domain.auth.LoginError
 import com.qtekfun.ultimatetasks.domain.auth.LoginState
+import com.qtekfun.ultimatetasks.ui.settings.RestoreBackupButton
 
 /** Minimal login (T06): the server address, then Nextcloud Login Flow v2 in the browser. */
 @Composable
@@ -106,6 +107,8 @@ private fun LoginProgress(
                 )
             }
             Button(onClick = onLogIn) { Text(stringResource(R.string.login_button)) }
+            // Moving to a new phone: settings and, optionally, the session from a backup (T23).
+            RestoreBackupButton()
         }
 
         is LoginState.WaitingForBrowser -> {

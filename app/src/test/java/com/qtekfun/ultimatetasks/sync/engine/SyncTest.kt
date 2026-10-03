@@ -13,6 +13,8 @@ import com.qtekfun.ultimatetasks.data.remote.Credentials
 import com.qtekfun.ultimatetasks.data.remote.caldav.CalDav
 import com.qtekfun.ultimatetasks.data.remote.caldav.CalDavProvider
 import com.qtekfun.ultimatetasks.data.remote.caldav.DavResult
+import com.qtekfun.ultimatetasks.data.settings.FakePreferences
+import com.qtekfun.ultimatetasks.data.settings.PendingListPrefs
 import com.qtekfun.ultimatetasks.sync.conflict.TaskField
 import com.qtekfun.ultimatetasks.sync.queue.ExecutionResult
 import com.qtekfun.ultimatetasks.sync.queue.FixedRandom
@@ -44,7 +46,7 @@ class SyncTest {
     private val db = inMemoryDatabase()
     private val clock = MutableClock()
     private val queue = OperationQueue(db, clock, FixedRandom(0.5))
-    private val pull = PullSync(db, queue)
+    private val pull = PullSync(db, queue, PendingListPrefs(FakePreferences()))
     private val tasks = db.taskDao()
     private lateinit var account: AccountEntity
     private lateinit var dav: CalDav

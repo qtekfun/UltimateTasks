@@ -60,6 +60,23 @@ class SettingsRepository @Inject constructor(
         putInt(KEY_ALL_DAY_HOUR, hour.coerceIn(0, LAST_HOUR))
     }
 
+    /** Applies every setting at once, from a backup (T23). */
+    fun restore(restored: AppSettings) = preferences.edit {
+        putString(KEY_THEME, restored.theme.name)
+        putBoolean(KEY_AMOLED, restored.amoled)
+        putBoolean(KEY_DYNAMIC_COLOR, restored.dynamicColor)
+        if (restored.defaultList ==
+            null
+        ) {
+            remove(KEY_DEFAULT_LIST)
+        } else {
+            putString(KEY_DEFAULT_LIST, restored.defaultList)
+        }
+        putBoolean(KEY_ALLOW_DELETING_LISTS, restored.allowDeletingLists)
+        putBoolean(KEY_ALARM_CLOCK, restored.alarmClock)
+        putInt(KEY_ALL_DAY_HOUR, restored.allDayHour.coerceIn(0, LAST_HOUR))
+    }
+
     private fun read(): AppSettings {
         val defaults = AppSettings()
         val theme = preferences.getString(KEY_THEME, null)

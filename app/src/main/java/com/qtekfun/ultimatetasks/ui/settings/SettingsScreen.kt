@@ -83,6 +83,8 @@ fun SettingsScreen(
             AppearanceSection(settings, viewModel.repository)
             SectionTitle(stringResource(R.string.settings_reminders))
             RemindersSection(settings, viewModel)
+            SectionTitle(stringResource(R.string.settings_backup))
+            BackupSection()
             SectionTitle(stringResource(R.string.settings_account))
             AccountSection(accountName, onLogOut)
             Text(

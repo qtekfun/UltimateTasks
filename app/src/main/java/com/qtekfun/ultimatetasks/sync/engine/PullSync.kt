@@ -14,6 +14,7 @@ import com.qtekfun.ultimatetasks.data.remote.caldav.DavCollection
 import com.qtekfun.ultimatetasks.data.remote.caldav.DavResource
 import com.qtekfun.ultimatetasks.data.remote.caldav.DavResult
 import com.qtekfun.ultimatetasks.data.remote.caldav.then
+import com.qtekfun.ultimatetasks.data.settings.PendingListPrefs
 import com.qtekfun.ultimatetasks.sync.queue.OperationQueue
 import javax.inject.Inject
 
@@ -24,7 +25,8 @@ import javax.inject.Inject
  */
 class PullSync @Inject constructor(
     private val database: UltimateTasksDatabase,
-    queue: OperationQueue
+    queue: OperationQueue,
+    private val pending: PendingListPrefs
 ) {
     private val accounts = database.accountDao()
     private val lists = database.taskListDao()
@@ -67,14 +69,16 @@ class PullSync @Inject constructor(
         val known = lists.all(accountId).associateBy { it.href }
         val saved = collections.map { collection ->
             val old = known[collection.href]
+            // A list new here may have preferences waiting from a restored backup.
+            val restored = if (old == null) pending.take(collection.href) else null
             TaskListEntity(
                 accountId = accountId,
                 href = collection.href,
                 name = collection.name,
                 color = collection.color,
-                icon = old?.icon,
+                icon = old?.icon ?: restored?.icon,
                 sortOrder = collection.order,
-                visible = old?.visible ?: true,
+                visible = old?.visible ?: restored?.visible ?: true,
                 writable = collection.writable,
                 syncToken = old?.syncToken,
                 // The ctag of the last pull; the server's current one is compared with it.
