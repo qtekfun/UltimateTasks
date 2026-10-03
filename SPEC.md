@@ -171,7 +171,7 @@ Hoja/pantalla con, en este orden:
 5. **Listas de Deck vía CalDAV**: comportamiento de escritura (¿se pueden completar o editar desde CalDAV?) a verificar contra el servidor.
 
 ## 9. Decisiones abiertas
-- Comportamiento real del servidor (listas de Deck escribibles, `sync-collection`, formato de `ATTACH`): se comprueba con `tools/caldav-probe.py` en T05.
+- Formato de `ATTACH` que muestra la web de Nextcloud: se comprueba en T26 (adjuntos).
 - Diseño adaptativo para tablet: `material3-adaptive` (Apache-2.0, nueva dependencia, a consultar) o layout propio.
 - Semántica de completar recurrentes (propuesta en RF-06), a validar contra Nextcloud Tasks web.
 - ¿Las listas ocultas se siguen sincronizando? Propuesta: sí, solo metadatos y tareas (barato), para mostrarlas al instante al hacerlas visibles.
@@ -194,3 +194,7 @@ Hoja/pantalla con, en este orden:
   - Medido en el móvil del autor (OnePlus CPH2841, ColorOS, Android 16) sin exención de batería: las alarmas `setExactAndAllowWhileIdle` llegaron agrupadas, una 73 s tarde y otra 106 s **antes** de tiempo; `setAlarmClock` llegó al segundo. Por eso el asistente (RF-01) pide la exención de batería y ofrece el modo alarma.
   - Permisos: `USE_EXACT_ALARM` en Android 13+ (concedido al instalar; F-Droid no tiene la restricción de Play) y `SCHEDULE_EXACT_ALARM` con `maxSdkVersion` 32.
   - En ColorOS, `pm grant` de notificaciones por adb está bloqueado: los tests en dispositivo conceden el permiso a mano.
+- **Servidor real (T09, 2026-10-03, contra el Nextcloud del autor):**
+  - Las listas de tareas normales admiten `sync-collection` (token de sincronización) y escritura.
+  - Las listas que publica Deck ("Deck: <tablero>") son de **solo lectura** por CalDAV, responden `sync-collection` con HTTP 415 y no envían `getctag`: se descargan enteras (solo ETags y las tareas cambiadas) en cada sync. La app las muestra como listas de solo lectura (RF-08).
+  - El parser DOM de Android no admite la opción `disallow-doctype-decl`; se activa solo donde existe (no resuelve entidades externas en ningún caso).

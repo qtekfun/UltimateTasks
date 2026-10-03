@@ -63,8 +63,9 @@ internal object DavXml {
     fun multistatus(body: String): Multistatus? = runCatching {
         val factory = DocumentBuilderFactory.newInstance().apply {
             isNamespaceAware = true
-            // No external entities: the body comes from the network.
-            setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+            // No DOCTYPE, so no external entities: the body comes from the network. Android's
+            // parser does not support the feature, but it never resolves external entities.
+            runCatching { setFeature("http://apache.org/xml/features/disallow-doctype-decl", true) }
         }
         val root = factory.newDocumentBuilder().parse(
             InputSource(StringReader(body))

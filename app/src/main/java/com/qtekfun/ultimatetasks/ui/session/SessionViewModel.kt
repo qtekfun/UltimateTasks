@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.qtekfun.ultimatetasks.data.auth.AccountSession
 import com.qtekfun.ultimatetasks.data.local.entity.AccountEntity
 import com.qtekfun.ultimatetasks.domain.auth.Logout
+import com.qtekfun.ultimatetasks.sync.engine.SyncScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,8 @@ data class SessionState(val ready: Boolean = false, val account: AccountEntity? 
 @HiltViewModel
 class SessionViewModel @Inject constructor(
     private val session: AccountSession,
-    private val logout: Logout
+    private val logout: Logout,
+    private val scheduler: SyncScheduler
 ) : ViewModel() {
     private val mutableState = MutableStateFlow(SessionState())
     val state: StateFlow<SessionState> = mutableState.asStateFlow()
@@ -33,6 +35,11 @@ class SessionViewModel @Inject constructor(
         viewModelScope.launch {
             session.restore()
             session.activeAccount.collect { account ->
+                val previous = mutableState.value
+                // Sync when the app opens or right after login; stop at logout.
+                if (!previous.ready || (account != null) != (previous.account != null)) {
+                    if (account != null) scheduler.start() else scheduler.stop()
+                }
                 mutableState.value = SessionState(ready = true, account = account)
             }
         }

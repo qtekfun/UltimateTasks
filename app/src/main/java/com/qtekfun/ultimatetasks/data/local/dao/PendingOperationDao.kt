@@ -34,6 +34,9 @@ interface PendingOperationDao {
     @Query("DELETE FROM pending_operation WHERE id IN (:ids)")
     suspend fun delete(ids: List<Long>)
 
+    @Query("DELETE FROM pending_operation WHERE accountId = :accountId AND taskId = :taskId")
+    suspend fun deleteForTask(accountId: Long, taskId: Long)
+
     @Query("SELECT COUNT(*) FROM pending_operation WHERE accountId = :accountId")
     fun observeCount(accountId: Long): Flow<Int>
 }
