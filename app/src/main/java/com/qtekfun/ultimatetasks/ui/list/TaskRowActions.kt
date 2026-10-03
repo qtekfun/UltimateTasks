@@ -8,5 +8,7 @@ class TaskRowActions(
     val onCheckedChange: ((Boolean) -> Unit)?,
     val onClick: () -> Unit,
     /** Folds or unfolds the subtasks; null for rows without them. */
-    val onToggleChildren: (() -> Unit)? = null
+    val onToggleChildren: (() -> Unit)? = null,
+    /** In Reorder mode, moves the task up (-1) or down (+1); null otherwise. */
+    val onMove: ((Int) -> Unit)? = null
 )

@@ -96,6 +96,11 @@ fun TaskListScreen(
                 },
                 actions = {
                     ListMenu(state, source, viewModel::toggleShowCompleted) { menu ->
+                        SortMenuItems(
+                            viewModel.ordering,
+                            writable = state.list?.writable == true,
+                            closeMenu = menu
+                        )
                         state.list?.let {
                             ListMenuItems(
                                 it,
@@ -174,13 +179,16 @@ private fun TaskListContent(
     onOpenTask: (Long) -> Unit
 ) {
     val color = colorOf(source, state.list?.color)
+    val reordering by viewModel.ordering.reordering.collectAsStateWithLifecycle()
     LazyColumn(Modifier.fillMaxSize()) {
         item { ListTitle(titleOf(source, state.list?.name)) }
         state.groups.forEach { group ->
             if (group.key != GroupKey.None) {
                 item(key = "header:${group.key}") { GroupHeader(group.key, state) }
             }
-            items(Subtasks.arrange(group.tasks, state.collapsed), key = { it.task.id }) { row ->
+            val rows = Subtasks.arrange(group.tasks, state.collapsed)
+            val topLevel = rows.filter { it.depth == 0 }.map { it.task }
+            items(rows, key = { it.task.id }) { row ->
                 val task = row.task
                 val list = state.lists[task.listHref]
                 TaskRow(
@@ -202,7 +210,11 @@ private fun TaskListContent(
                         onToggleChildren = { viewModel.toggleCollapsed(task.uid) }.takeIf {
                             row.children >
                                 0
+                        },
+                        onMove = { step: Int ->
+                            viewModel.ordering.move(topLevel, topLevel.indexOf(task), step)
                         }
+                            .takeIf { reordering && row.depth == 0 }
                     ),
                     collapsed = task.uid in state.collapsed
                 )
@@ -216,16 +228,7 @@ private fun TaskListContent(
                 })
             }
         }
-        if (state.tasks.isEmpty() && !adding.value) {
-            item {
-                Box(Modifier.fillMaxWidth().padding(48.dp), contentAlignment = Alignment.Center) {
-                    Text(
-                        stringResource(R.string.no_tasks),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
+        if (state.tasks.isEmpty() && !adding.value) item { EmptyTasks() }
     }
 }
 
@@ -293,7 +296,16 @@ private fun ListMenu(
                 onToggle()
             }
         )
-        if (source is TaskSource.List) listItems { open = false }
+        if (source is TaskSource.List) {
+            listItems { open = false }
+        }
+    }
+}
+
+@Composable
+private fun EmptyTasks() {
+    Box(Modifier.fillMaxWidth().padding(48.dp), contentAlignment = Alignment.Center) {
+        Text(stringResource(R.string.no_tasks), color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

@@ -269,4 +269,11 @@
     <string name="backup_wrong_password">Contraseña incorrecta.</string>
     <string name="settings_backup">Copia de seguridad</string>
 
+
+    <string name="sort_manual">Orden manual</string>
+    <string name="sort_due">Por fecha</string>
+    <string name="sort_priority">Por prioridad</string>
+    <string name="sort_title">Por título</string>
+    <string name="reorder">Reordenar</string>
+    <string name="reorder_done">Terminar de reordenar</string>
 </resources>

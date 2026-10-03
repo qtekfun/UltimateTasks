@@ -7,10 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
+import com.qtekfun.ultimatetasks.data.settings.ListSortPrefs
+import com.qtekfun.ultimatetasks.data.task.TaskEditor
 import com.qtekfun.ultimatetasks.data.task.TaskRepository
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskGroup
 import com.qtekfun.ultimatetasks.domain.task.TaskGroups
+import com.qtekfun.ultimatetasks.domain.task.TaskSorting
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.sync.engine.SyncScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,8 +50,13 @@ data class TaskListState(
 @HiltViewModel
 class TaskListViewModel @Inject constructor(
     private val repository: TaskRepository,
-    private val scheduler: SyncScheduler
+    private val scheduler: SyncScheduler,
+    sortPrefs: ListSortPrefs,
+    editor: TaskEditor
 ) : ViewModel() {
+    /** Sort order and manual reordering of the list shown (RF-03). */
+    val ordering = ListOrdering(sortPrefs, editor) { block -> viewModelScope.launch { block() } }
+
     private val source = MutableStateFlow<TaskSource?>(null)
     private val showCompleted = MutableStateFlow(false)
     private val lingering = MutableStateFlow<Map<Long, TaskEntity>>(emptyMap())
@@ -67,8 +75,16 @@ class TaskListViewModel @Inject constructor(
             repository.observeLists(),
             showCompleted,
             lingering,
-            combine(lastCompleted, collapsed, ::Pair)
-        ) { tasks, lists, showDone, kept, (last, folded) ->
+            combine(lastCompleted, collapsed, ordering.sort, ::Triple)
+        ) { unsorted, lists, showDone, kept, (last, folded, sort) ->
+            val tasks = if (current is TaskSource.List) {
+                TaskSorting.sort(
+                    unsorted,
+                    sort
+                )
+            } else {
+                unsorted
+            }
             val byHref = lists.associateBy { it.href }
             val visible = when {
                 current == TaskSource.Smart(SmartList.COMPLETED) || showDone -> tasks
@@ -100,6 +116,7 @@ class TaskListViewModel @Inject constructor(
 
     fun show(new: TaskSource) {
         if (source.value != new) {
+            ordering.show((new as? TaskSource.List)?.href)
             source.value = new
             lingering.value = emptyMap()
             lastCompleted.value = null
