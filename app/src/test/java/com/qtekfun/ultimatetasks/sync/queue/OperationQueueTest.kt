@@ -261,20 +261,6 @@ class OperationQueueTest {
     }
 
     @Test
-    fun `every upload is its own operation`() = runTest {
-        val id = account()
-        queue.enqueue(id, 1, QueuedOperation.UploadAttachment(1))
-        queue.enqueue(id, 1, QueuedOperation.UploadAttachment(2))
-        assertEquals(
-            listOf(
-                1L to QueuedOperation.UploadAttachment(1),
-                1L to QueuedOperation.UploadAttachment(2)
-            ),
-            operations(id)
-        )
-    }
-
-    @Test
     fun `an update does not merge into a waiting move`() = runTest {
         val id = account()
         queue.enqueue(id, 1, MoveTask("/a/", "/b/"))
@@ -302,16 +288,5 @@ class OperationQueueTest {
         ).forEach {
             assertEquals(it, QueuedOperation.decode(QueuedOperation.encode(it)))
         }
-    }
-
-    @Test
-    fun `an upload without its id is unreadable`() {
-        assertThrows<SerializationException> {
-            QueuedOperation.decode("""{"op":"upload_attachment"}""")
-        }
-        assertEquals(
-            QueuedOperation.UploadAttachment(3),
-            QueuedOperation.decode(QueuedOperation.encode(QueuedOperation.UploadAttachment(3)))
-        )
     }
 }

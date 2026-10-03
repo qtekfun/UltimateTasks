@@ -9,8 +9,8 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
 import com.qtekfun.ultimatetasks.data.ical.IcsAttachment
 import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
-import com.qtekfun.ultimatetasks.data.local.entity.PendingUploadEntity
 import com.qtekfun.ultimatetasks.data.local.entity.SnoozeEntity
+import com.qtekfun.ultimatetasks.data.local.model.OperationType
 import io.mockk.every
 import io.mockk.mockk
 import java.io.File
@@ -172,14 +172,31 @@ class MigrationTest {
 
         val db = open(file)
         val task = db.taskDao().get(100)
-        db.uploadDao().insert(
-            PendingUploadEntity(taskId = 100, uri = "/f", name = "f", mimeType = null)
-        )
-        db.taskDao().delete(100)
-        val uploads = db.uploadDao().observeForTask(100).first()
         db.close()
 
         assertEquals(emptyList<IcsAttachment>(), task?.attachments)
-        assertEquals(emptyList<PendingUploadEntity>(), uploads)
+    }
+
+    @Test
+    fun `migrates version 5 to the latest dropping waiting uploads`() = runTest {
+        val file = File(dir, "v5.db")
+        createFromSchema(
+            file,
+            version = 5,
+            extraSql = listOf(
+                "INSERT INTO account (id, serverUrl, userId, displayName) " +
+                    "VALUES (1, 'https://c.example/', 'ana', 'Ana')",
+                "INSERT INTO pending_operation (accountId, type, taskId, payload, " +
+                    "createdAt, attempts, " +
+                    "nextAttemptAt, failed) VALUES (1, 'UPLOAD', 100, '{}', 0, 0, 0, 0), " +
+                    "(1, 'UPDATE', 100, '{}', 0, 0, 0, 0)"
+            )
+        )
+
+        val db = open(file)
+        val types = db.pendingOperationDao().all(1).map { it.type }
+        db.close()
+
+        assertEquals(listOf(OperationType.UPDATE), types)
     }
 }

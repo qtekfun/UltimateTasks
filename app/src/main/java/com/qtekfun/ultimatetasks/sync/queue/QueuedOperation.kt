@@ -44,13 +44,6 @@ sealed interface QueuedOperation {
         override val type get() = OperationType.DELETE
     }
 
-    /** Uploads the file of a pending upload and links it to the task (RF-11). */
-    @Serializable
-    @SerialName("upload_attachment")
-    data class UploadAttachment(val uploadId: Long) : QueuedOperation {
-        override val type get() = OperationType.UPLOAD
-    }
-
     companion object {
         /** Payload JSON; the class name goes in "op" to keep it apart from the fields. */
         val json: Json = Json {

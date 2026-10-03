@@ -5,10 +5,8 @@ package com.qtekfun.ultimatetasks.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.qtekfun.ultimatetasks.data.local.entity.PendingUploadEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
-import com.qtekfun.ultimatetasks.data.task.TaskAttachments
 import com.qtekfun.ultimatetasks.data.task.TaskEditor
 import com.qtekfun.ultimatetasks.data.task.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,8 +37,7 @@ data class TaskDetailState(
 @HiltViewModel
 class TaskDetailViewModel @Inject constructor(
     private val editor: TaskEditor,
-    private val repository: TaskRepository,
-    private val attachments: TaskAttachments
+    private val repository: TaskRepository
 ) : ViewModel() {
     private val taskId = MutableStateFlow<Long?>(null)
     private var pendingText: Job? = null
@@ -77,17 +74,6 @@ class TaskDetailViewModel @Inject constructor(
     val actions =
         TaskDetailActions(editor, repository) { id ->
             taskId.value?.let { viewModelScope.launch { id(it) } }
-        }
-
-    /** Files of the task still uploading or failed (RF-11). */
-    val uploads: StateFlow<List<PendingUploadEntity>> = taskId.filterNotNull()
-        .flatMapLatest { attachments.observeUploads(it) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_MS), emptyList())
-
-    /** Attaching and unlinking files (RF-11). */
-    val files =
-        DetailFiles(attachments) { action ->
-            taskId.value?.let { id -> viewModelScope.launch { action(id) } }
         }
 
     /** The subtasks of the task shown (RF-07). */
