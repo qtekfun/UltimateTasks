@@ -3,6 +3,7 @@
 
 package com.qtekfun.ultimatetasks.ui.list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -44,13 +46,20 @@ fun TaskRow(
     task: TaskEntity,
     color: Color,
     listName: String?,
-    writable: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    /** Null when the task cannot be checked here (read-only list, unknown repetition). */
+    onCheckedChange: ((Boolean) -> Unit)?,
+    onClick: () -> Unit
 ) {
     val zone = ZoneId.systemDefault()
     val now = Instant.now()
     val due = task.due?.let { DueDates.info(it, task.dueZone, now, zone) }
-    Row(Modifier.fillMaxWidth().padding(end = 16.dp), verticalAlignment = Alignment.Top) {
+    Row(
+        Modifier.fillMaxWidth().clickable(
+            role = Role.Button,
+            onClick = onClick
+        ).padding(end = 16.dp),
+        verticalAlignment = Alignment.Top
+    ) {
         RoundCheckbox(
             checked = task.completed,
             color = color,
@@ -58,7 +67,7 @@ fun TaskRow(
                 if (task.completed) R.string.task_mark_open else R.string.task_mark_done,
                 task.summary
             ),
-            onCheckedChange = if (writable) onCheckedChange else null
+            onCheckedChange = onCheckedChange
         )
         Column(
             Modifier.weight(1f).padding(top = 12.dp, bottom = 12.dp),

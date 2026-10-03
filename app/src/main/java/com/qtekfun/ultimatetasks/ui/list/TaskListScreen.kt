@@ -35,6 +35,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,6 +67,7 @@ import com.qtekfun.ultimatetasks.ui.theme.ListColors
 fun TaskListScreen(
     source: TaskSource,
     onBack: () -> Unit,
+    onOpenTask: (Long) -> Unit,
     viewModel: TaskListViewModel = viewModel()
 ) {
     LaunchedEffect(source) { viewModel.show(source) }
@@ -73,7 +75,7 @@ fun TaskListScreen(
     val syncing by viewModel.syncing.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val color = colorOf(source, state.list?.color)
-    var adding by rememberSaveable { mutableStateOf(false) }
+    val adding = rememberSaveable { mutableStateOf(false) }
     UndoSnackbar(state, snackbar, viewModel)
     Scaffold(
         topBar = {
@@ -92,7 +94,7 @@ fun TaskListScreen(
             if (source is TaskSource.List &&
                 state.list?.writable == true
             ) {
-                NewTaskButton(color) { adding = true }
+                NewTaskButton(color) { adding.value = true }
             }
         }
     ) { padding ->
@@ -101,7 +103,7 @@ fun TaskListScreen(
             onRefresh = viewModel::refresh,
             modifier = Modifier.padding(padding).fillMaxSize()
         ) {
-            TaskListContent(state, source, adding, viewModel, onAddDone = { adding = false })
+            TaskListContent(state, source, adding, viewModel, onOpenTask)
         }
     }
 }
@@ -145,9 +147,9 @@ private fun NewTaskButton(color: Color, onClick: () -> Unit) {
 private fun TaskListContent(
     state: TaskListState,
     source: TaskSource,
-    adding: Boolean,
+    adding: MutableState<Boolean>,
     viewModel: TaskListViewModel,
-    onAddDone: () -> Unit
+    onOpenTask: (Long) -> Unit
 ) {
     val color = colorOf(source, state.list?.color)
     LazyColumn(Modifier.fillMaxSize()) {
@@ -168,14 +170,22 @@ private fun TaskListContent(
                 color = if (source is TaskSource.List) color else ListColors.of(list?.color),
                 listName = if (source is TaskSource.List) null else list?.name,
                 // Repeating rules the app cannot follow are left to other clients.
-                writable = (list?.writable ?: false) && RepeatingTasks.understood(task.recurrence),
-                onCheckedChange = { viewModel.setCompleted(task, it) }
+                onCheckedChange = { done: Boolean -> viewModel.setCompleted(task, done) }
+                    .takeIf {
+                        list?.writable == true && RepeatingTasks.understood(task.recurrence)
+                    },
+                onClick = { onOpenTask(task.id) }
             )
         }
-        if (adding) {
-            item(key = "new") { NewTaskRow(color, onAdd = viewModel::add, onDone = onAddDone) }
+        if (adding.value) {
+            item(key = "new") {
+                NewTaskRow(color, onAdd = viewModel::add, onDone = {
+                    adding.value =
+                        false
+                })
+            }
         }
-        if (state.tasks.isEmpty() && !adding) {
+        if (state.tasks.isEmpty() && !adding.value) {
             item {
                 Box(Modifier.fillMaxWidth().padding(48.dp), contentAlignment = Alignment.Center) {
                     Text(
