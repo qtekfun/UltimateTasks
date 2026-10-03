@@ -3,16 +3,12 @@
 
 package com.qtekfun.ultimatetasks.ui.settings
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,16 +55,9 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { refresh++ }
     val notifications = remember(refresh) { ReminderPermissions.notificationsAllowed(context) }
     val exempt = remember(refresh) { ReminderPermissions.batteryExempt(context) }
-    val askNotifications =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { refresh++ }
+    val askNotifications = rememberNotificationRequest { refresh++ }
     DetailCard {
-        StatusRow(stringResource(R.string.settings_notifications), notifications) {
-            if (Build.VERSION.SDK_INT >=
-                Build.VERSION_CODES.TIRAMISU
-            ) {
-                askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
-            }
-        }
+        StatusRow(stringResource(R.string.settings_notifications), notifications, askNotifications)
         HorizontalDivider(Modifier.padding(start = 16.dp))
         StatusRow(stringResource(R.string.settings_battery), exempt) {
             ReminderPermissions.askBatteryExemption(context)

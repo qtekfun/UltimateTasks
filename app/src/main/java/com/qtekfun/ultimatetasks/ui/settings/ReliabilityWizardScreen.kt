@@ -3,10 +3,7 @@
 
 package com.qtekfun.ultimatetasks.ui.settings
 
-import android.Manifest
 import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,9 +17,12 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -103,13 +103,21 @@ private fun WizardSteps(maker: PhoneMaker) {
     val notifications = remember(refresh) { ReminderPermissions.notificationsAllowed(context) }
     val exact = remember(refresh) { ReminderPermissions.exactAlarmsAllowed(context) }
     val exempt = remember(refresh) { ReminderPermissions.batteryExempt(context) }
-    val askNotifications =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { refresh++ }
-    WizardStep(R.string.settings_notifications, R.string.wizard_notifications_why, notifications) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+    val askNotifications = rememberNotificationRequest { refresh++ }
+    // As in UltimateDeck: the system dialog comes up on its own the first time.
+    var asked by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (!asked && !notifications && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            asked = true
+            askNotifications()
         }
     }
+    WizardStep(
+        R.string.settings_notifications,
+        R.string.wizard_notifications_why,
+        notifications,
+        askNotifications
+    )
     WizardStep(R.string.wizard_exact, R.string.wizard_exact_why, exact) {
         ReminderPermissions.askExactAlarms(context)
     }

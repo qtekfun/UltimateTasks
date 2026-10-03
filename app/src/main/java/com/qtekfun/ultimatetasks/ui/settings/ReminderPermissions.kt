@@ -58,6 +58,13 @@ object ReminderPermissions {
         }
     }
 
+    /** The app's notification settings, for when the system no longer shows its dialog. */
+    fun openNotificationSettings(context: Context) = open(
+        context,
+        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+    )
+
     /** The app's page in the system settings, where makers put autostart and background options. */
     fun openAppSettings(context: Context) = open(
         context,
