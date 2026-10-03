@@ -3,6 +3,11 @@
 
 package com.qtekfun.ultimatetasks.ui.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +46,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,12 +56,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qtekfun.ultimatetasks.R
@@ -75,18 +83,20 @@ import java.time.LocalDate
 fun HomeScreen(
     accountName: String,
     onOpen: (TaskSource) -> Unit,
+    onSettings: () -> Unit,
     onLogOut: () -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
     val home by viewModel.home.collectAsStateWithLifecycle()
     val syncing by viewModel.syncing.collectAsStateWithLifecycle()
     var confirmLogout by rememberSaveable { mutableStateOf(false) }
+    AskNotificationsOnce()
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         topBar = {
             TopAppBar(
                 title = {},
-                actions = { HomeMenu(onLogOut = { confirmLogout = true }) }
+                actions = { HomeMenu(onSettings = onSettings, onLogOut = { confirmLogout = true }) }
             )
         }
     ) { padding ->
@@ -287,12 +297,19 @@ private fun ListRow(summary: ListSummary, onClick: () -> Unit) {
 }
 
 @Composable
-private fun HomeMenu(onLogOut: () -> Unit) {
+private fun HomeMenu(onSettings: () -> Unit, onLogOut: () -> Unit) {
     var open by remember { mutableStateOf(false) }
     IconButton(onClick = {
         open = true
     }) { Icon(Icons.Default.MoreVert, stringResource(R.string.more_options)) }
     DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.settings)) },
+            onClick = {
+                open = false
+                onSettings()
+            }
+        )
         DropdownMenuItem(
             text = { Text(stringResource(R.string.logout)) },
             onClick = {
@@ -316,4 +333,22 @@ private fun LogoutDialog(accountName: String, onConfirm: () -> Unit, onDismiss: 
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
         }
     )
+}
+
+/** Reminders need the notification permission on Android 13+ (RF-10): asked once per start. */
+@Composable
+private fun AskNotificationsOnce() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+    val context = LocalContext.current
+    var asked by rememberSaveable { mutableStateOf(false) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    LaunchedEffect(Unit) {
+        val granted =
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+        if (!granted && !asked) {
+            asked = true
+            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
 }

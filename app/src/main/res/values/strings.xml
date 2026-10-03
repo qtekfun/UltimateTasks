@@ -160,4 +160,22 @@
         <item quantity="one">time</item>
         <item quantity="other">times</item>
     </plurals>
+
+    <string name="settings">Settings</string>
+    <string name="settings_reminders">Reminders</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_battery">No battery restrictions</string>
+    <string name="settings_ok">Allowed</string>
+    <string name="settings_allow">Allow</string>
+    <string name="settings_alarm_mode">Alarm mode</string>
+    <string name="settings_alarm_mode_hint">Reminders are set like an alarm clock, so no battery saver can delay them. Shows the alarm icon in the status bar.</string>
+    <string name="settings_all_day_hour">All-day tasks remind at</string>
+    <string name="settings_test">Send a test reminder</string>
+    <string name="settings_test_title">Test reminder</string>
+    <string name="reminder_channel">Reminders</string>
+    <string name="reminder_text">%1$s · %2$s</string>
+    <string name="reminder_complete">Complete</string>
+    <string name="reminder_snooze_15">15 min</string>
+    <string name="reminder_snooze_hour">1 hour</string>
+    <string name="reminder_tomorrow">Tomorrow</string>
 </resources>

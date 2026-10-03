@@ -11,12 +11,14 @@ import com.qtekfun.ultimatetasks.data.local.dao.AccountDao
 import com.qtekfun.ultimatetasks.data.local.dao.CredentialsDao
 import com.qtekfun.ultimatetasks.data.local.dao.PendingOperationDao
 import com.qtekfun.ultimatetasks.data.local.dao.PendingOperationRetryDao
+import com.qtekfun.ultimatetasks.data.local.dao.ReminderDao
 import com.qtekfun.ultimatetasks.data.local.dao.SmartListDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskDao
 import com.qtekfun.ultimatetasks.data.local.dao.TaskListDao
 import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
 import com.qtekfun.ultimatetasks.data.local.entity.AccountEntity
 import com.qtekfun.ultimatetasks.data.local.entity.PendingOperationEntity
+import com.qtekfun.ultimatetasks.data.local.entity.SnoozeEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 
@@ -27,7 +29,8 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
         AccountCredentialsEntity::class,
         TaskListEntity::class,
         TaskEntity::class,
-        PendingOperationEntity::class
+        PendingOperationEntity::class,
+        SnoozeEntity::class
     ],
     version = UltimateTasksDatabase.VERSION,
     exportSchema = true
@@ -35,13 +38,13 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 @ColumnTypeConverters(Converters::class)
 abstract class UltimateTasksDatabase : RoomDatabase() {
     companion object {
-        const val VERSION = 3
+        const val VERSION = 4
 
         /**
          * Migrations from each released version to the next. There is no destructive fallback:
          * raising [VERSION] requires adding its migration here (checked by DatabaseSchemaTest).
          */
-        val MIGRATIONS: Array<Migration> = arrayOf(Migration1To2, Migration2To3)
+        val MIGRATIONS: Array<Migration> = arrayOf(Migration1To2, Migration2To3, Migration3To4)
     }
 
     abstract fun accountDao(): AccountDao
@@ -57,4 +60,6 @@ abstract class UltimateTasksDatabase : RoomDatabase() {
     abstract fun pendingOperationRetryDao(): PendingOperationRetryDao
 
     abstract fun smartListDao(): SmartListDao
+
+    abstract fun reminderDao(): ReminderDao
 }

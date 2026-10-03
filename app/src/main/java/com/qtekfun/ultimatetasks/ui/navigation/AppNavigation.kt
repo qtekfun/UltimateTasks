@@ -5,6 +5,7 @@ package com.qtekfun.ultimatetasks.ui.navigation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -14,16 +15,34 @@ import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.detail.TaskDetailScreen
 import com.qtekfun.ultimatetasks.ui.home.HomeScreen
 import com.qtekfun.ultimatetasks.ui.list.TaskListScreen
+import com.qtekfun.ultimatetasks.ui.settings.SettingsScreen
 
 /** Home, and the list or smart list opened from it; back returns home. */
 @Composable
-fun AppNavigation(accountName: String, onLogOut: () -> Unit) {
+fun AppNavigation(
+    accountName: String,
+    onLogOut: () -> Unit,
+    link: Long?,
+    onLinkOpened: () -> Unit
+) {
     // Saved as text so it survives rotation and process death.
     var opened by rememberSaveable { mutableStateOf<String?>(null) }
     var task by rememberSaveable { mutableStateOf<Long?>(null) }
+    var settings by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(link) {
+        if (link != null) {
+            task = link
+            onLinkOpened()
+        }
+    }
     val source = opened?.let(::decode)
     val openTask = task
     when {
+        settings -> {
+            BackHandler { settings = false }
+            SettingsScreen(onBack = { settings = false })
+        }
+
         openTask != null -> {
             BackHandler { task = null }
             TaskDetailScreen(taskId = openTask, onBack = { task = null })
@@ -34,9 +53,12 @@ fun AppNavigation(accountName: String, onLogOut: () -> Unit) {
             TaskListScreen(source = source, onBack = { opened = null }, onOpenTask = { task = it })
         }
 
-        else -> HomeScreen(accountName = accountName, onOpen = {
-            opened = encode(it)
-        }, onLogOut = onLogOut)
+        else -> HomeScreen(
+            accountName = accountName,
+            onOpen = { opened = encode(it) },
+            onSettings = { settings = true },
+            onLogOut = onLogOut
+        )
     }
 }
 
