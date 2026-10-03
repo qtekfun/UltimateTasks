@@ -85,6 +85,7 @@ fun TaskDetailScreen(
             TextSection(task, state.editable, viewModel)
             DateSection(task, state.editable, viewModel)
             DetailsSection(task, state.editable, viewModel)
+            SubtasksSection(task, state, viewModel)
             ListSection(state, viewModel)
         }
     }

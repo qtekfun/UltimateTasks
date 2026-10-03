@@ -58,6 +58,7 @@ import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.domain.recurrence.RepeatingTasks
 import com.qtekfun.ultimatetasks.domain.task.GroupKey
 import com.qtekfun.ultimatetasks.domain.task.SmartList
+import com.qtekfun.ultimatetasks.domain.task.Subtasks
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
 import com.qtekfun.ultimatetasks.ui.lists.ListMenuItems
@@ -174,37 +175,36 @@ private fun TaskListContent(
 ) {
     val color = colorOf(source, state.list?.color)
     LazyColumn(Modifier.fillMaxSize()) {
-        item {
-            Text(
-                text = titleOf(source, state.list?.name),
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 8.dp).semantics {
-                    heading()
-                }
-            )
-        }
+        item { ListTitle(titleOf(source, state.list?.name)) }
         state.groups.forEach { group ->
             if (group.key != GroupKey.None) {
                 item(key = "header:${group.key}") { GroupHeader(group.key, state) }
             }
-            items(group.tasks, key = { it.id }) { task ->
+            items(Subtasks.arrange(group.tasks, state.collapsed), key = { it.task.id }) { row ->
+                val task = row.task
                 val list = state.lists[task.listHref]
                 TaskRow(
-                    task = task,
+                    row = row,
                     color = if (source is TaskSource.List) color else ListColors.of(list?.color),
                     // Grouped by list, the list name is already the header.
                     listName = list?.name.takeIf {
                         source !is TaskSource.List &&
                             group.key !is GroupKey.InList
                     },
-                    // Repeating rules the app cannot follow are left to other clients.
-                    onCheckedChange = { done: Boolean -> viewModel.setCompleted(task, done) }
-                        .takeIf {
-                            list?.writable == true &&
-                                RepeatingTasks.understood(task.recurrence)
-                        },
-                    onClick = { onOpenTask(task.id) }
+                    actions = TaskRowActions(
+                        // Repeating rules the app cannot follow are left to other clients.
+                        onCheckedChange = { done: Boolean -> viewModel.setCompleted(task, done) }
+                            .takeIf {
+                                list?.writable == true &&
+                                    RepeatingTasks.understood(task.recurrence)
+                            },
+                        onClick = { onOpenTask(task.id) },
+                        onToggleChildren = { viewModel.toggleCollapsed(task.uid) }.takeIf {
+                            row.children >
+                                0
+                        }
+                    ),
+                    collapsed = task.uid in state.collapsed
                 )
             }
         }
@@ -297,27 +297,15 @@ private fun ListMenu(
     }
 }
 
+/** The big title of the list, in a neutral color (requested). */
 @Composable
-private fun titleOf(source: TaskSource, listName: String?): String = when (source) {
-    is TaskSource.List -> listName.orEmpty()
-    is TaskSource.Smart -> stringResource(smartName(source.kind))
-}
-
-fun smartName(kind: SmartList): Int = when (kind) {
-    SmartList.TODAY -> R.string.smart_today
-    SmartList.SCHEDULED -> R.string.smart_scheduled
-    SmartList.ALL -> R.string.smart_all
-    SmartList.COMPLETED -> R.string.smart_completed
-}
-
-fun smartColor(kind: SmartList): Color = when (kind) {
-    SmartList.TODAY -> ListColors.Blue
-    SmartList.SCHEDULED -> ListColors.Red
-    SmartList.ALL -> ListColors.Graphite
-    SmartList.COMPLETED -> ListColors.Gray
-}
-
-private fun colorOf(source: TaskSource, listColor: String?): Color = when (source) {
-    is TaskSource.List -> ListColors.of(listColor)
-    is TaskSource.Smart -> smartColor(source.kind)
+private fun ListTitle(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.headlineLarge,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 8.dp).semantics {
+            heading()
+        }
+    )
 }

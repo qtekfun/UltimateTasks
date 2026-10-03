@@ -44,7 +44,8 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Resultado:* título, notas, URL, fecha y hora, aviso anticipado, prioridad, etiquetas, mover de lista, eliminar; guardado automático; conflictos y tareas borradas en el servidor. Repetir se muestra; su editor es T18.
 - [x] **T18 Editor de recurrencia** (RF-06).
   - *Resultado:* presets y personalizado (cada N días/semanas/meses/años, días de la semana, mensual por día o "el 3er viernes"/"el último sábado", fin nunca/tras N/hasta fecha); la fecha salta a la primera repetición.
-- [ ] **T19 Subtareas** (RF-07): crear, indentar/desindentar, plegar.
+- [x] **T19 Subtareas** (RF-07): crear, indentar/desindentar, plegar.
+  - *Resultado:* subtareas sangradas bajo su padre (un nivel), plegables; sección Subtareas en el detalle para verlas, marcarlas y añadirlas. Indentar deslizando queda pendiente.
 - [x] **T20 Gestión de listas** (RF-08): crear, renombrar, color, icono, reordenar listas y tareas; borrar solo con el ajuste "Permitir borrar listas" activado.
   - *Resultado:* crear, editar (nombre, color, icono local), reordenar listas con botones subir/bajar y borrar (si se permite en Ajustes); "Nueva tarea" y "Añadir lista" en la pantalla de inicio. Reordenar tareas dentro de la lista queda pendiente (orden manual del servidor se respeta).
 - [x] **T21 Avisos y posponer** (RF-10): planificador (**100% de cobertura**), notificaciones con acciones, reprogramación en arranque/cambio de hora/actualización, modo alarma, posponer tarea.

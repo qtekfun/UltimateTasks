@@ -38,7 +38,9 @@ data class TaskListState(
     val showCompleted: Boolean = false,
     /** [tasks] in the sections of the view (T16). */
     val groups: List<TaskGroup> = emptyList(),
-    val lastCompleted: TaskEntity? = null
+    val lastCompleted: TaskEntity? = null,
+    /** Parents whose subtasks are folded away (RF-07); only while the screen lives. */
+    val collapsed: Set<String> = emptySet()
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -51,6 +53,7 @@ class TaskListViewModel @Inject constructor(
     private val showCompleted = MutableStateFlow(false)
     private val lingering = MutableStateFlow<Map<Long, TaskEntity>>(emptyMap())
     private val lastCompleted = MutableStateFlow<TaskEntity?>(null)
+    private val collapsed = MutableStateFlow<Set<String>>(emptySet())
 
     val syncing: StateFlow<Boolean> = scheduler.syncing().stateIn(
         viewModelScope,
@@ -64,8 +67,8 @@ class TaskListViewModel @Inject constructor(
             repository.observeLists(),
             showCompleted,
             lingering,
-            lastCompleted
-        ) { tasks, lists, showDone, kept, last ->
+            combine(lastCompleted, collapsed, ::Pair)
+        ) { tasks, lists, showDone, kept, (last, folded) ->
             val byHref = lists.associateBy { it.href }
             val visible = when {
                 current == TaskSource.Smart(SmartList.COMPLETED) || showDone -> tasks
@@ -81,6 +84,7 @@ class TaskListViewModel @Inject constructor(
                 tasks = shown,
                 showCompleted = showDone,
                 lastCompleted = last,
+                collapsed = folded,
                 groups = TaskGroups.group(
                     current,
                     shown,
@@ -101,6 +105,8 @@ class TaskListViewModel @Inject constructor(
             lastCompleted.value = null
         }
     }
+
+    fun toggleCollapsed(uid: String) = collapsed.update { if (uid in it) it - uid else it + uid }
 
     fun toggleShowCompleted() = showCompleted.update { !it }
 

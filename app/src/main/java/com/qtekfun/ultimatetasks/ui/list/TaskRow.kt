@@ -11,15 +11,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
@@ -31,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.domain.task.DueDates
+import com.qtekfun.ultimatetasks.domain.task.TaskRowItem
 import com.qtekfun.ultimatetasks.domain.task.priorityMarks
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
 import java.time.Instant
@@ -40,24 +45,23 @@ import java.time.ZoneId
 /**
  * A task as in Apple Reminders (RF-03): round checkbox, priority marks and title, two lines of
  * notes, then the due date (red when overdue), repetition, tags and, in smart lists, the list.
+ * Subtasks are indented under their parent, which can fold them (RF-07).
  */
 @Composable
 fun TaskRow(
-    task: TaskEntity,
+    row: TaskRowItem,
     color: Color,
     listName: String?,
-    /** Null when the task cannot be checked here (read-only list, unknown repetition). */
-    onCheckedChange: ((Boolean) -> Unit)?,
-    onClick: () -> Unit
+    actions: TaskRowActions,
+    collapsed: Boolean = false
 ) {
+    val task = row.task
     val zone = ZoneId.systemDefault()
     val now = Instant.now()
     val due = task.due?.let { DueDates.info(it, task.dueZone, now, zone) }
     Row(
-        Modifier.fillMaxWidth().clickable(
-            role = Role.Button,
-            onClick = onClick
-        ).padding(end = 16.dp),
+        Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = actions.onClick)
+            .padding(start = (row.depth * INDENT).dp, end = 16.dp),
         verticalAlignment = Alignment.Top
     ) {
         RoundCheckbox(
@@ -67,7 +71,7 @@ fun TaskRow(
                 if (task.completed) R.string.task_mark_open else R.string.task_mark_done,
                 task.summary
             ),
-            onCheckedChange = onCheckedChange
+            onCheckedChange = actions.onCheckedChange
         )
         Column(
             Modifier.weight(1f).padding(top = 12.dp, bottom = 12.dp),
@@ -102,8 +106,9 @@ fun TaskRow(
                 listName
             )
         }
+        actions.onToggleChildren?.let { FoldButton(collapsed, row.children, it) }
     }
-    HorizontalDivider(Modifier.padding(start = 48.dp))
+    HorizontalDivider(Modifier.padding(start = (48 + row.depth * INDENT).dp))
 }
 
 @Composable
@@ -152,3 +157,19 @@ private fun textColor(completed: Boolean): Color {
     val colors = MaterialTheme.colorScheme
     return if (completed) colors.onSurfaceVariant else colors.onSurface
 }
+
+/** Folds or unfolds the subtasks of a parent (RF-07). */
+@Composable
+private fun FoldButton(collapsed: Boolean, count: Int, onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        val icon = when {
+            collapsed -> Icons.AutoMirrored.Filled.KeyboardArrowRight
+            else -> Icons.Default.KeyboardArrowDown
+        }
+        val label = if (collapsed) R.plurals.subtasks_show else R.plurals.subtasks_hide
+        Icon(icon, pluralStringResource(label, count, count))
+    }
+}
+
+/** Indent of a subtask, in dp (RF-07). */
+private const val INDENT = 32

@@ -196,4 +196,15 @@ class TaskRepositoryTest {
         account.value = null
         ListRepository(db, session, mockk(), mockk(relaxed = true)).setVisible("/b/", true)
     }
+
+    @Test
+    fun `subtasks are created under their parent and observed with it`() = runTest {
+        val id = setUp()
+        val parent = db.taskDao().byUid(id, "today").single()
+        val child = db.taskDao().get(repository.create(parent.listHref, "Hija", parent.uid)!!)!!
+        assertEquals(parent.uid, child.parentUid)
+        db.taskDao().observeChildren(id, parent.uid).test {
+            assertEquals(listOf("Hija"), awaitItem().map { it.summary })
+        }
+    }
 }
