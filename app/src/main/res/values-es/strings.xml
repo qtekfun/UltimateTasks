@@ -171,4 +171,22 @@
         <item quantity="other">veces</item>
         <item quantity="many">veces</item>
     </plurals>
+
+    <string name="settings">Ajustes</string>
+    <string name="settings_reminders">Avisos</string>
+    <string name="settings_notifications">Notificaciones</string>
+    <string name="settings_battery">Sin restricciones de batería</string>
+    <string name="settings_ok">Permitido</string>
+    <string name="settings_allow">Permitir</string>
+    <string name="settings_alarm_mode">Modo alarma</string>
+    <string name="settings_alarm_mode_hint">Los avisos se programan como un despertador, así ningún ahorro de batería puede retrasarlos. Muestra el icono de alarma en la barra de estado.</string>
+    <string name="settings_all_day_hour">Las tareas de todo el día avisan a las</string>
+    <string name="settings_test">Enviar un aviso de prueba</string>
+    <string name="settings_test_title">Aviso de prueba</string>
+    <string name="reminder_channel">Avisos</string>
+    <string name="reminder_text">%1$s · %2$s</string>
+    <string name="reminder_complete">Completar</string>
+    <string name="reminder_snooze_15">15 min</string>
+    <string name="reminder_snooze_hour">1 hora</string>
+    <string name="reminder_tomorrow">Mañana</string>
 </resources>
