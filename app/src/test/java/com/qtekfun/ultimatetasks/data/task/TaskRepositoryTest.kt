@@ -154,4 +154,34 @@ class TaskRepositoryTest {
         account.value = null
         assertNull(repository.create("/a/", "Sin cuenta"))
     }
+
+    @Test
+    fun `completing a repeating task moves it to its next date, undo puts it back`() = runTest {
+        val id = setUp()
+        val original = db.taskDao().byUid(id, "today").single()
+        val weekly = original.copy(due = "2026-10-06T11:00", recurrence = "FREQ=WEEKLY;BYDAY=TU,TH")
+        db.taskDao().update(weekly)
+        repository.setCompleted(weekly, true)
+        val moved = db.taskDao().get(weekly.id)!!
+        assertEquals("2026-10-08T11:00", moved.due)
+        assertEquals(false, moved.completed)
+        assertEquals(
+            setOf(TaskField.DUE, TaskField.START, TaskField.RECURRENCE),
+            TaskField.fromBits(moved.dirtyFields)
+        )
+        repository.restore(weekly)
+        assertEquals("2026-10-06T11:00", db.taskDao().get(weekly.id)!!.due)
+        db.taskDao().delete(weekly.id)
+        repository.restore(weekly)
+        assertNull(db.taskDao().get(weekly.id))
+    }
+
+    @Test
+    fun `the last occurrence of a series completes the task`() = runTest {
+        val id = setUp()
+        val last = db.taskDao().byUid(id, "today").single().copy(recurrence = "FREQ=DAILY;COUNT=1")
+        db.taskDao().update(last)
+        repository.setCompleted(last, true)
+        assertTrue(db.taskDao().get(last.id)!!.completed)
+    }
 }

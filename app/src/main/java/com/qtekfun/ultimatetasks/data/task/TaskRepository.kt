@@ -8,6 +8,7 @@ import com.qtekfun.ultimatetasks.data.local.UltimateTasksDatabase
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.local.model.SmartCounts
+import com.qtekfun.ultimatetasks.domain.recurrence.RepeatingTasks
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.sync.conflict.TaskField
@@ -87,18 +88,52 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    /** Marks a task done or open (RF-04). */
+    /**
+     * Marks a task done or open (RF-04). A repeating task is not completed but moved to its
+     * next occurrence (RF-06), unless its series ended.
+     */
     suspend fun setCompleted(task: TaskEntity, completed: Boolean) {
         val now = clock.instant()
-        tasks.update(
+        val next = task.recurrence?.takeIf { completed }?.let {
+            RepeatingTasks.next(
+                task.due,
+                task.start,
+                it,
+                LocalDate.now(clock.withZone(ZoneId.systemDefault()))
+            )
+        }
+        val updated = if (next != null) {
+            task.copy(
+                due = next.due,
+                start = next.start,
+                recurrence = next.recurrence,
+                dirtyFields = task.dirtyFields or REPEAT_FIELDS,
+                modifiedAt = now
+            )
+        } else {
             task.copy(
                 completed = completed,
                 completedAt = if (completed) now else null,
                 dirtyFields = task.dirtyFields or TaskField.COMPLETION.bit,
                 modifiedAt = now
             )
-        )
+        }
+        tasks.update(updated)
         changed(task)
+    }
+
+    /** Puts back a task as it was before a change, for Undo; the server gets that state. */
+    suspend fun restore(previous: TaskEntity) {
+        val current = tasks.get(previous.id) ?: return
+        tasks.update(
+            previous.copy(
+                ics = current.ics,
+                etag = current.etag,
+                dirtyFields = current.dirtyFields or previous.dirtyFields,
+                modifiedAt = clock.instant()
+            )
+        )
+        changed(previous)
     }
 
     /** Adds a task at the end of [listHref] (RF-03); blank titles are ignored. */
@@ -138,6 +173,12 @@ class TaskRepository @Inject constructor(
     }
 
     /** Due dates are local text, so "today" is the device's local date. */
+    private companion object {
+        val REPEAT_FIELDS = TaskField.toBits(
+            setOf(TaskField.DUE, TaskField.START, TaskField.RECURRENCE)
+        )
+    }
+
     private fun tomorrow(): String =
         LocalDate.now(clock.withZone(ZoneId.systemDefault())).plusDays(1).toString()
 }

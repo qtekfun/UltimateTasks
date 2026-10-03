@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qtekfun.ultimatetasks.R
+import com.qtekfun.ultimatetasks.domain.recurrence.RepeatingTasks
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
@@ -166,8 +167,8 @@ private fun TaskListContent(
                 task = task,
                 color = if (source is TaskSource.List) color else ListColors.of(list?.color),
                 listName = if (source is TaskSource.List) null else list?.name,
-                // Completing a repeating task must schedule its next time: that comes with T10.
-                writable = (list?.writable ?: false) && task.recurrence == null,
+                // Repeating rules the app cannot follow are left to other clients.
+                writable = (list?.writable ?: false) && RepeatingTasks.understood(task.recurrence),
                 onCheckedChange = { viewModel.setCompleted(task, it) }
             )
         }

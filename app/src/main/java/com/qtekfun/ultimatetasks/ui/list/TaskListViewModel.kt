@@ -88,14 +88,16 @@ class TaskListViewModel @Inject constructor(
 
     fun toggleShowCompleted() = showCompleted.update { !it }
 
-    /** Completing keeps the task on screen ~2 s, as Apple does, with an undo (RF-04). */
+    /**
+     * Completing keeps the task on screen ~2 s, as Apple does, with an undo (RF-04). A repeating
+     * task shows as done for that moment, then moves to its next date.
+     */
     fun setCompleted(task: TaskEntity, completed: Boolean) {
         viewModelScope.launch {
             repository.setCompleted(task, completed)
             if (completed) {
-                val done = task.copy(completed = true)
-                lingering.update { it + (task.id to done) }
-                lastCompleted.value = done
+                lingering.update { it + (task.id to task.copy(completed = true)) }
+                lastCompleted.value = task
                 delay(LINGER_MS)
                 lingering.update { it - task.id }
             } else {
@@ -104,10 +106,12 @@ class TaskListViewModel @Inject constructor(
         }
     }
 
+    /** Puts the task back exactly as it was, dates of a repeating task included. */
     fun undo() {
         val task = lastCompleted.value ?: return
         lastCompleted.value = null
-        setCompleted(task, completed = false)
+        lingering.update { it - task.id }
+        viewModelScope.launch { repository.restore(task) }
     }
 
     fun dismissUndo() {
