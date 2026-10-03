@@ -115,7 +115,6 @@ class TaskRepositoryTest {
         repository.observeTasks(TaskSource.List("/b/")).test {
             assertEquals(listOf("later", "undated", "done"), awaitItem().map { it.uid })
         }
-        repository.observeList("/b/").test { assertEquals("B", awaitItem()?.name) }
     }
 
     @Test
@@ -183,5 +182,18 @@ class TaskRepositoryTest {
         db.taskDao().update(last)
         repository.setCompleted(last, true)
         assertTrue(db.taskDao().get(last.id)!!.completed)
+    }
+
+    @Test
+    fun `hiding a list takes it out of the home screen and its counts`() = runTest {
+        setUp()
+        ListRepository(db, session).setVisible("/b/", false)
+        repository.observeHome().test {
+            val home = awaitItem()
+            assertEquals(listOf("A"), home.lists.map { it.list.name })
+            assertEquals(SmartCounts(today = 2, scheduled = 2, all = 2, completed = 0), home.counts)
+        }
+        account.value = null
+        ListRepository(db, session).setVisible("/b/", true)
     }
 }

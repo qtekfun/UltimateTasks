@@ -61,6 +61,8 @@ android {
 
     buildFeatures {
         compose = true
+        // The version shown at the foot of Settings.
+        buildConfig = true
     }
 
     testOptions {

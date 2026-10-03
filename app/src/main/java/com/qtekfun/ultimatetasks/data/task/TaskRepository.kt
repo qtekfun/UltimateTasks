@@ -69,9 +69,6 @@ class TaskRepository @Inject constructor(
         }
     }
 
-    fun observeList(href: String): Flow<TaskListEntity?> =
-        observeLists().map { lists -> lists.firstOrNull { it.href == href } }
-
     fun observeLists(): Flow<List<TaskListEntity>> =
         accountId.flatMapLatest { database.taskListDao().observeAll(it) }
 

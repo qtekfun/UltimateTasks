@@ -178,4 +178,23 @@
     <string name="reminder_snooze_15">15 min</string>
     <string name="reminder_snooze_hour">1 hour</string>
     <string name="reminder_tomorrow">Tomorrow</string>
+
+    <string name="settings_lists">Lists</string>
+    <string name="settings_visible_lists">Visible lists</string>
+    <string name="settings_visible_lists_hint">Hidden lists leave the home screen, Today, Scheduled, All, Completed, search and reminders. They keep syncing, so showing them again is instant.</string>
+    <string name="settings_default_list">Default list</string>
+    <string name="settings_allow_deleting_lists">Allow deleting lists</string>
+    <string name="settings_allow_deleting_lists_hint">Off by default, so a list is never deleted by accident.</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_amoled">Pure black</string>
+    <string name="settings_amoled_hint">Black backgrounds in dark mode, for OLED screens.</string>
+    <string name="settings_dynamic_color">Wallpaper colors</string>
+    <string name="settings_language">Language</string>
+    <string name="language_system">System language</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_version">UltimateTasks %1$s</string>
 </resources>

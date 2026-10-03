@@ -13,6 +13,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
+private const val KEY_THEME = "theme"
+private const val KEY_AMOLED = "amoled"
+private const val KEY_DYNAMIC_COLOR = "dynamic_color"
+private const val KEY_DEFAULT_LIST = "default_list"
+private const val KEY_ALLOW_DELETING_LISTS = "allow_deleting_lists"
 private const val KEY_ALARM_CLOCK = "alarm_clock"
 private const val KEY_ALL_DAY_HOUR = "all_day_hour"
 private const val LAST_HOUR = 23
@@ -35,6 +40,20 @@ class SettingsRepository @Inject constructor(
         awaitClose { preferences.unregisterOnSharedPreferenceChangeListener(listener) }
     }.distinctUntilChanged()
 
+    fun setTheme(theme: ThemeMode) = preferences.edit { putString(KEY_THEME, theme.name) }
+
+    fun setAmoled(on: Boolean) = preferences.edit { putBoolean(KEY_AMOLED, on) }
+
+    fun setDynamicColor(on: Boolean) = preferences.edit { putBoolean(KEY_DYNAMIC_COLOR, on) }
+
+    fun setDefaultList(href: String?) = preferences.edit {
+        if (href == null) remove(KEY_DEFAULT_LIST) else putString(KEY_DEFAULT_LIST, href)
+    }
+
+    fun setAllowDeletingLists(on: Boolean) = preferences.edit {
+        putBoolean(KEY_ALLOW_DELETING_LISTS, on)
+    }
+
     fun setAlarmClock(on: Boolean) = preferences.edit { putBoolean(KEY_ALARM_CLOCK, on) }
 
     fun setAllDayHour(hour: Int) = preferences.edit {
@@ -43,7 +62,16 @@ class SettingsRepository @Inject constructor(
 
     private fun read(): AppSettings {
         val defaults = AppSettings()
+        val theme = preferences.getString(KEY_THEME, null)
         return AppSettings(
+            theme = ThemeMode.entries.firstOrNull { it.name == theme } ?: defaults.theme,
+            amoled = preferences.getBoolean(KEY_AMOLED, defaults.amoled),
+            dynamicColor = preferences.getBoolean(KEY_DYNAMIC_COLOR, defaults.dynamicColor),
+            defaultList = preferences.getString(KEY_DEFAULT_LIST, null),
+            allowDeletingLists = preferences.getBoolean(
+                KEY_ALLOW_DELETING_LISTS,
+                defaults.allowDeletingLists
+            ),
             alarmClock = preferences.getBoolean(KEY_ALARM_CLOCK, defaults.alarmClock),
             allDayHour = preferences.getInt(KEY_ALL_DAY_HOUR, defaults.allDayHour)
         )

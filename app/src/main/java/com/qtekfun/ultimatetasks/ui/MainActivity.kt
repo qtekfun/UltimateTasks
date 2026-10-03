@@ -13,15 +13,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.qtekfun.ultimatetasks.data.settings.AppSettings
+import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.notify.TaskLink
 import com.qtekfun.ultimatetasks.ui.login.LoginScreen
 import com.qtekfun.ultimatetasks.ui.navigation.AppNavigation
 import com.qtekfun.ultimatetasks.ui.session.SessionViewModel
+import com.qtekfun.ultimatetasks.ui.theme.ThemeOptions
 import com.qtekfun.ultimatetasks.ui.theme.UltimateTasksTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+
     /** A task to open, from a reminder notification (RF-10). */
     private var link by mutableStateOf<Long?>(null)
 
@@ -30,7 +37,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         link = TaskLink.from(intent)
         setContent {
-            UltimateTasksTheme {
+            val settings by settingsRepository.settings.collectAsStateWithLifecycle(AppSettings())
+            UltimateTasksTheme(
+                ThemeOptions(settings.theme, settings.amoled, settings.dynamicColor)
+            ) {
                 val sessionViewModel: SessionViewModel = viewModel()
                 val session by sessionViewModel.state.collectAsStateWithLifecycle()
                 val account = session.account
