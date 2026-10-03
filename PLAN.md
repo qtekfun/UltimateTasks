@@ -9,7 +9,8 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
   - *Verificación:* PR de prueba en verde; una dependencia de Play Services añadida a propósito la hace fallar.
 - [ ] **T02 Prototipo CalDAV + iCalendar**: evaluar `dav4jvm` + `ical4j` frente a implementación propia (tamaño del APK, funcionamiento en API 26, licencias). Corpus `.ics` real (Nextcloud Tasks, Apple, Thunderbird, tasks.org, Deck) con ida y vuelta sin pérdidas. Comprobar contra el servidor: descubrimiento, `sync-collection`, listas de Deck (¿escribibles?), formato `ATTACH` que muestra la web.
   - *Verificación:* tests del corpus; decisiones anotadas en `SPEC.md` §9 (preguntar antes de añadir dependencias).
-- [ ] **T02b Prototipo de fiabilidad de avisos**: alarma exacta, modo alarma, exención de batería y aviso de prueba en el móvil del autor (ColorOS) con la app cerrada y el móvil en reposo. Elegir `USE_EXACT_ALARM` o `SCHEDULE_EXACT_ALARM`.
+- [x] **T02b Prototipo de fiabilidad de avisos**: alarma exacta, modo alarma, exención de batería y aviso de prueba en el móvil del autor (ColorOS) con la app cerrada y el móvil en reposo. Elegir `USE_EXACT_ALARM` o `SCHEDULE_EXACT_ALARM`.
+  - *Resultado:* se copia la solución de UltimateDeck; medidas y permisos en `SPEC.md` §9.
   - *Verificación:* informe con retrasos medidos; decisión en `SPEC.md` §9.
 
 ## Fase 1 — Datos y red
