@@ -54,8 +54,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T23 Copia de seguridad cifrada**: copiar de UltimateDeck y adaptar: ajustes + sesión opcional con contraseña, restaurable desde Ajustes y desde el login.
 - [x] **T24 Búsqueda** (RF-12).
 - [x] **T25 Compartir a la app** (RF-13).
-- [x] **T26 Adjuntos** (RF-11): cámara/galería/archivos, cola de subida con reintentos, descarga bajo demanda.
-  - *Resultado:* galería y archivos (cámara pendiente), copia local, subida en la cola a Files/Tasks con reintentos, enlace ATTACH estilo Nextcloud Calendar; abrir en el navegador. Formato a validar en la web.
+- ~~**T26 Adjuntos**~~: implementada y retirada (2026-10-03): Nextcloud Tasks no muestra adjuntos. Ver `SPEC.md` §4.
 - [ ] **T27 Tablet** (RF-15): diseño adaptativo de 2–3 paneles.
 
 ## Fase 4 — Pulido y publicación

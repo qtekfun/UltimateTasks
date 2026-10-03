@@ -42,7 +42,7 @@ App Android de tareas contra **Nextcloud** (CalDAV, componentes `VTODO`) con una
 
 ### RF-03 Vista de lista
 - Título grande con el color de la lista; tareas en orden manual.
-- Cada tarea: **checkbox redondo** (borde del color de la lista; relleno al completar), título, descripción (2 líneas máx.), y debajo la fecha/hora programada (en rojo si está vencida), icono de repetición si es recurrente, prioridad como `!`/`!!`/`!!!` antes del título, etiquetas como `#etiqueta`, clip si tiene adjuntos.
+- Cada tarea: **checkbox redondo** (borde del color de la lista; relleno al completar), título, descripción (2 líneas máx.), y debajo la fecha/hora programada (en rojo si está vencida), icono de repetición si es recurrente, prioridad como `!`/`!!`/`!!!` antes del título, etiquetas como `#etiqueta`.
 - Subtareas indentadas bajo su padre, plegables.
 - **Añadir en línea**: tocar el hueco bajo la última tarea crea una nueva y abre el teclado; Intro crea otra a continuación (como Apple).
 - Deslizar: completar / posponer / borrar (con deshacer).
@@ -64,7 +64,7 @@ Hoja/pantalla con, en este orden:
 - **Prioridad**: ninguna / baja / media / alta → `PRIORITY` 0 / 9 / 5 / 1 (mismo mapeo que Apple y Nextcloud Tasks).
 - **Etiquetas** (`CATEGORIES`), con autocompletado de las existentes.
 - **Lista** (mover a otra lista = mover el recurso CalDAV).
-- **Subtareas** (RF-07) y **adjuntos** (RF-11).
+- **Subtareas** (RF-07).
 - Guardado automático; cambios offline van a la cola.
 
 ### RF-06 Recurrencia
@@ -102,11 +102,6 @@ Hoja/pantalla con, en este orden:
   - Botón "Enviar aviso de prueba" en Ajustes.
 - Lógica de planificación pura en `domain`, **100% de cobertura**.
 
-### RF-11 Adjuntos
-- Añadir desde cámara, galería o archivos; ver, compartir y quitar.
-- Se suben a Nextcloud Files y se enlazan en el `VTODO` con `ATTACH` (formato exacto a decidir en T02; preferible el mismo que usa Nextcloud Calendar para que se vean en la web).
-- Subida en cola con reintentos y estados visibles; descarga bajo demanda.
-
 ### RF-12 Búsqueda
 - Barra en la home. Busca en título, notas y etiquetas de las listas visibles; resultados agrupados por lista, con opción de incluir completadas.
 
@@ -126,6 +121,7 @@ Hoja/pantalla con, en este orden:
 
 ## 4. Fuera de alcance (v1)
 - **Avisos por ubicación** (llegar/salir de un sitio).
+- **Adjuntos**: la app Tasks de Nextcloud no los muestra, así que tampoco se gestionan aquí (decidido el 2026-10-03 tras probarlos). Los `ATTACH` de otros clientes se conservan intactos.
 - **Gestionar listas compartidas** (compartir con otros usuarios, permisos). Las listas compartidas contigo sí se ven y se usan.
 - Bandera / vista "Marcadas".
 - Lenguaje natural para fechas al escribir.
@@ -167,11 +163,9 @@ Hoja/pantalla con, en este orden:
 1. **iCalendar y WebDAV**: elegir librerías libres que funcionen en Android y conserven lo desconocido, o escribir un parser propio. Se prototipa primero (T02).
 2. **Recurrencia**: semántica de completar recurrentes entre clientes (Nextcloud Tasks, Apple, Thunderbird) y RRULE complejas.
 3. **Avisos en capas de fabricantes**: no hay garantía total; se mitiga con el asistente, modo alarma y aviso de prueba, y se documenta por fabricante.
-4. **Adjuntos**: no hay un formato estándar de facto entre Nextcloud Tasks y Calendar; hay que verificar qué muestra la web.
 5. **Listas de Deck vía CalDAV**: comportamiento de escritura (¿se pueden completar o editar desde CalDAV?) a verificar contra el servidor.
 
 ## 9. Decisiones abiertas
-- Formato de `ATTACH` que muestra la web de Nextcloud: se comprueba en T26 (adjuntos).
 - Diseño adaptativo para tablet: `material3-adaptive` (Apache-2.0, nueva dependencia, a consultar) o layout propio.
 - Semántica de completar recurrentes (propuesta en RF-06), a validar contra Nextcloud Tasks web.
 - ¿Las listas ocultas se siguen sincronizando? Propuesta: sí, solo metadatos y tareas (barato), para mostrarlas al instante al hacerlas visibles.
@@ -181,7 +175,7 @@ Hoja/pantalla con, en este orden:
 - Sync CalDAV propia; una cuenta; nombre UltimateTasks (`com.qtekfun.ultimatetasks`); repo `qtekfun/UltimateTasks`.
 - Código común copiado y adaptado desde UltimateDeck (no librería compartida).
 - Recurrencia con presets + personalizada; posponer = aviso (local) y fecha (sincronizada).
-- Campos: hora opcional, subtareas, prioridad, etiquetas, URL, adjuntos.
+- Campos: hora opcional, subtareas, prioridad, etiquetas, URL. Los adjuntos se implementaron y se retiraron (Nextcloud Tasks no los muestra).
 - Visibilidad de listas manual en Ajustes, sin filtros automáticos; las ocultas desaparecen de todo, incluidos los avisos.
 - Completar como Apple; aviso a la hora + anticipado; asistente de fiabilidad tras el login.
 - Extras v1: búsqueda y compartir a la app; tablet incluida.
