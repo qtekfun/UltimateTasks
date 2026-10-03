@@ -28,17 +28,6 @@ internal class DavHttp(
 ) {
     fun url(href: String): HttpUrl = requireNotNull(server.resolve(href)) { "Not a URL: $href" }
 
-    /** A PUT of raw bytes, for files (RF-11). */
-    suspend fun sendBytes(
-        href: String,
-        bytes: ByteArray,
-        contentType: String
-    ): DavResult<DavAnswer> = execute(
-        Request.Builder().url(
-            url(href)
-        ).put(bytes.toRequestBody(contentType.toMediaType())).build()
-    )
-
     suspend fun send(
         method: String,
         href: String,

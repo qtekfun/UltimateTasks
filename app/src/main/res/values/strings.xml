@@ -255,10 +255,4 @@
     <string name="backup_wrong_password">Wrong password.</string>
     <string name="settings_backup">Backup</string>
 
-    <string name="field_attachments">Attachments</string>
-    <string name="attachment_remove">Remove %1$s</string>
-    <string name="attachment_uploading">Uploading…</string>
-    <string name="attachment_failed">Could not upload</string>
-    <string name="attachment_from_gallery">From gallery</string>
-    <string name="attachment_from_files">From files</string>
 </resources>

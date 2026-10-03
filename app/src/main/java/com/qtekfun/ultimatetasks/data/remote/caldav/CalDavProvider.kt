@@ -13,7 +13,7 @@ import okhttp3.Credentials
 import okhttp3.OkHttpClient
 
 /** The CalDAV reads and writes of one account. */
-class CalDav(val read: CalDavClient, val write: CalDavWrites, val files: NextcloudFiles)
+class CalDav(val read: CalDavClient, val write: CalDavWrites)
 
 /** Builds the CalDAV client of an account, authenticated with its app password. */
 class CalDavProvider @Inject constructor(
@@ -40,8 +40,7 @@ class CalDavProvider @Inject constructor(
         }.build()
         return CalDav(
             CalDavClient(client, server.url.root, io),
-            CalDavWrites(client, server.url.root, io),
-            NextcloudFiles(client, server.url.root, io, account.userId)
+            CalDavWrites(client, server.url.root, io)
         )
     }
 }
