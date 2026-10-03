@@ -20,7 +20,7 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T04 Mapeo iCalendar ⇄ dominio**: `VTODO` ↔ tarea conservando lo desconocido; `PRIORITY`, `CATEGORIES`, `RELATED-TO`, `VALARM`, `RRULE`, `DUE` con/sin hora y zonas horarias.
   - *Verificación:* corpus de ida y vuelta + tests por propiedad.
 - [ ] **T05 Cliente CalDAV**: descubrimiento, listar colecciones, `sync-collection`/ctag, GET/PUT/DELETE/MOVE con ETags, MKCALENDAR, PROPPATCH (nombre, color, orden). Tests con MockWebServer (4xx/5xx, timeouts, 412). Fijar versión mínima de Nextcloud. Ejecutar `tools/caldav-probe.py` contra el servidor (listas de Deck, `sync-collection`, ETags, `ATTACH`) y añadir las tareas capturadas al corpus.
-- [ ] **T06 Login Flow v2**: copiar de UltimateDeck (Keystore, cierre de sesión que limpia datos).
+- [x] **T06 Login Flow v2**: copiar de UltimateDeck (Keystore, cierre de sesión que limpia datos).
 
 ## Fase 2 — Sincronización y lógica
 - [ ] **T07 Cola de operaciones**: idempotente, backoff, persistente. **100% de cobertura.**
