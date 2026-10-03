@@ -1,0 +1,32 @@
+Categories:
+  - Task
+License: GPL-3.0-or-later
+AuthorName: qtekfun
+SourceCode: https://github.com/qtekfun/UltimateTasks
+IssueTracker: https://github.com/qtekfun/UltimateTasks/issues
+Changelog: https://github.com/qtekfun/UltimateTasks/blob/HEAD/CHANGELOG.md
+
+AutoName: UltimateTasks
+
+RepoType: git
+Repo: https://github.com/qtekfun/UltimateTasks.git
+Binaries: https://github.com/qtekfun/UltimateTasks/releases/download/v%v/UltimateTasks-%v.apk
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 10099
+    commit: FULL_COMMIT_HASH_OF_THE_RELEASE
+    subdir: app
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-21-jdk-headless
+      - update-java-alternatives -a
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: SHA256_OF_THE_RELEASE_CERTIFICATE
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
+CurrentVersion: 0.1.0
+CurrentVersionCode: 10099
