@@ -1,0 +1,1 @@
+Reminders that survive phones which stop apps in the background: missed reminders come back, a silent heartbeat sets alarms again, an optional robust mode keeps the app alive, a real test reminder tells whether it arrived on time, and a guide for OPPO, Xiaomi, vivo and other phones.
