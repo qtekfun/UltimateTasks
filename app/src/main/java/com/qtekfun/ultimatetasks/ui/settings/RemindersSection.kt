@@ -70,6 +70,15 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
             StatusRow(stringResource(R.string.settings_unused_apps), unused) {
                 PhoneSettings.askUnusedAppsExemption(context)
             }
+            // The switch is on the app's info page, which says nothing about why it matters.
+            if (!unused) {
+                Text(
+                    stringResource(R.string.wizard_unused_why),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+                )
+            }
         }
         HorizontalDivider(Modifier.padding(start = 16.dp))
         SwitchSetting(

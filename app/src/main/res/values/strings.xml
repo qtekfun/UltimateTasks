@@ -287,5 +287,5 @@
     <string name="task_priority_spoken">%1$s priority. %2$s</string>
     <string name="wizard_open_maker_settings">Open phone settings</string>
     <string name="settings_unused_apps">Keep running if unused</string>
-    <string name="wizard_unused_why">Android pauses apps you do not open for a while and removes their permissions, reminders included. Turn off “Pause app activity if unused”.</string>
+    <string name="wizard_unused_why">Android pauses apps you do not open for a while and removes their permissions, reminders included. The button opens the app’s info page: at the bottom, turn off “Manage app if unused” (on other phones, “Pause app activity if unused”).</string>
 </resources>
