@@ -9,13 +9,21 @@ import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.qtekfun.ultimatetasks.notify.MissedReminderRecovery
 import javax.inject.Inject
 import javax.inject.Provider
 
-/** Runs a sync in the background; WorkManager retries it with backoff when it fails. */
-class SyncWorker(context: Context, params: WorkerParameters, private val engine: SyncEngine) :
-    CoroutineWorker(context, params) {
-    override suspend fun doWork(): Result = when (engine.sync().also(::log)) {
+/**
+ * Runs a sync in the background; WorkManager retries it with backoff when it fails. [afterSync]
+ * then runs whatever the outcome: tasks may have changed (T32, missed reminders).
+ */
+class SyncWorker(
+    context: Context,
+    params: WorkerParameters,
+    private val engine: SyncEngine,
+    private val afterSync: suspend () -> Unit = {}
+) : CoroutineWorker(context, params) {
+    override suspend fun doWork(): Result = when (engine.sync().also(::log).also { afterSync() }) {
         is SyncOutcome.Ok, SyncOutcome.NoAccount -> Result.success()
 
         SyncOutcome.Offline, is SyncOutcome.Error -> Result.retry()
@@ -35,14 +43,16 @@ class SyncWorker(context: Context, params: WorkerParameters, private val engine:
 }
 
 /** Creates workers with their dependencies, without an extra Hilt-WorkManager library. */
-class SyncWorkerFactory @Inject constructor(private val engine: Provider<SyncEngine>) :
-    WorkerFactory() {
+class SyncWorkerFactory @Inject constructor(
+    private val engine: Provider<SyncEngine>,
+    private val recovery: Provider<MissedReminderRecovery>
+) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
     ): ListenableWorker? = if (workerClassName == SyncWorker::class.java.name) {
-        SyncWorker(appContext, workerParameters, engine.get())
+        SyncWorker(appContext, workerParameters, engine.get()) { recovery.get().recover() }
     } else {
         null
     }

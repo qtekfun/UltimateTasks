@@ -9,6 +9,7 @@ import com.qtekfun.ultimatetasks.data.local.entity.AccountEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.local.inMemoryDatabase
 import com.qtekfun.ultimatetasks.data.remote.Credentials
+import com.qtekfun.ultimatetasks.data.settings.AppSettings
 import com.qtekfun.ultimatetasks.data.settings.FakePreferences
 import com.qtekfun.ultimatetasks.data.settings.PendingListPrefs
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
@@ -55,6 +56,7 @@ class SettingsBackupTest {
         oldPhone.setTheme(ThemeMode.DARK)
         oldPhone.setAmoled(true)
         oldPhone.setAllDayHour(8)
+        oldPhone.setMissedWindowHours(6)
         oldPhone.setDefaultList("/a/")
         oldPhone.setAllowDeletingLists(true)
         oldPhone.setAlarmClock(true)
@@ -86,6 +88,21 @@ class SettingsBackupTest {
         assertEquals(ThemeMode.DARK, restored.theme)
         assertTrue(restored.amoled && restored.alarmClock && restored.allowDeletingLists)
         assertEquals(8 to "/a/", restored.allDayHour to restored.defaultList)
+        assertEquals(6, restored.missedWindowHours)
+    }
+
+    @Test
+    fun `a backup from before missed reminders restores their default window`() = runTest {
+        val old = exported(
+            withSession = false
+        ).replace(Regex(",?\\s*\"missedWindowHours\"\\s*:\\s*\\d+"), "")
+        assertFalse("missedWindowHours" in old)
+        val (restorer, _) = restorer(null)
+        assertEquals(RestoreResult.Restored(0), restorer.restore(old, null))
+        assertEquals(
+            AppSettings.DEFAULT_MISSED_WINDOW_HOURS,
+            newPhone.settings.first().missedWindowHours
+        )
     }
 
     @Test

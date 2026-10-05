@@ -62,3 +62,10 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 - [x] **T29 Tests de UI** en el móvil: login falso, completar con deshacer, crear en línea, Hoy.
 - [x] **T30 Documentación**: `README.md` con capturas, `PRIVACY.md` (cada permiso explicado), `CONTRIBUTING.md`, `CHANGELOG.md`.
 - [ ] **T31 Release y F-Droid** (preparado; falta la clave de firma, los secretos `UT_*` y completar la receta tras el primer tag): versión en `gradle.properties`, firma por variables de entorno, build reproducible, workflow de release por tag, metadatos fastlane en/es, receta `fdroid/` y `RELEASING.md` (copiado y adaptado de UltimateDeck).
+
+## Fase 5 — Fiabilidad de avisos
+Móviles que matan las apps en segundo plano (ColorOS, MIUI, OriginOS, MagicOS). Solo local: sin servidores ni push.
+- [x] **T32 Recuperación de avisos vencidos** (RF-10): registrar qué avisos se mostraron y mostrar los que pasaron sin mostrarse (ventana configurable, por defecto 24 h), al arrancar, tras cada sync y al recibir cualquier aviso.
+  - *Resultado:* `MissedReminders` y `ReminderPlanner.planAll` en domain (100 %), tabla `shown_reminder` (Room v7), notificación «No llegó a su hora», ajuste «Recuperar avisos perdidos» incluido en la copia; sin avalancha al actualizar.
+- [ ] **T33 Alarma de latido y aviso de prueba real**: alarma periódica (30 min, solo con avisos pendientes) que replanifica y recupera sin notificar; el aviso de prueba programa una alarma real a +1 min y muestra si llegó a tiempo.
+- [ ] **T34 Modo robusto**: servicio en primer plano `specialUse` opcional (recomendado en móviles con ROM agresiva) que mantiene vivo el proceso y ejecuta el latido; arranque en boot si está activo; explicado en `PRIVACY.md`.

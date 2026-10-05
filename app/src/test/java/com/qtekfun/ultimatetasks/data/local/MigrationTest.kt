@@ -9,6 +9,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
 import com.qtekfun.ultimatetasks.data.ical.IcsAttachment
 import com.qtekfun.ultimatetasks.data.local.entity.AccountCredentialsEntity
+import com.qtekfun.ultimatetasks.data.local.entity.ShownReminderEntity
 import com.qtekfun.ultimatetasks.data.local.entity.SnoozeEntity
 import com.qtekfun.ultimatetasks.data.local.model.OperationType
 import io.mockk.every
@@ -198,5 +199,23 @@ class MigrationTest {
         db.close()
 
         assertEquals(listOf(OperationType.UPDATE), types)
+    }
+
+    @Test
+    fun `migrates version 6 to the latest with no reminder shown yet`() = runTest {
+        val file = File(dir, "v6.db")
+        createFromSchema(file, version = 6)
+
+        val db = open(file)
+        val dao = db.shownReminderDao()
+        val before = dao.shown()
+        dao.markShown(
+            listOf(ShownReminderEntity(2, Instant.ofEpochSecond(60), Instant.ofEpochSecond(61)))
+        )
+        val after = dao.shown()
+        db.close()
+
+        assertEquals(emptyList<ShownReminderEntity>(), before)
+        assertEquals(listOf(2L to Instant.ofEpochSecond(60)), after.map { it.reminderId to it.at })
     }
 }

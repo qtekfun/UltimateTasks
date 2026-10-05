@@ -17,7 +17,7 @@ import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import com.qtekfun.ultimatetasks.notify.ReminderReceiver
+import com.qtekfun.ultimatetasks.notify.ReminderNotifier
 
 /** What the system must allow for reminders to arrive on time (RF-01, RF-10). */
 object ReminderPermissions {
@@ -28,7 +28,7 @@ object ReminderPermissions {
      */
     fun notificationsAllowed(context: Context): Boolean {
         val manager = NotificationManagerCompat.from(context)
-        val channel = manager.getNotificationChannel(ReminderReceiver.CHANNEL)
+        val channel = manager.getNotificationChannel(ReminderNotifier.CHANNEL)
         return notificationPermissionGranted(context) && manager.areNotificationsEnabled() &&
             channel?.importance != NotificationManager.IMPORTANCE_NONE
     }

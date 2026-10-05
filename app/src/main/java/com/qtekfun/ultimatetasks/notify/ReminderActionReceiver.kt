@@ -35,7 +35,7 @@ class ReminderActionReceiver : BroadcastReceiver() {
         val action =
             ReminderAction.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_ACTION) }
                 ?: return
-        NotificationManagerCompat.from(context).cancel(ReminderReceiver.notificationId(taskId))
+        NotificationManagerCompat.from(context).cancel(ReminderNotifier.notificationId(taskId))
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
