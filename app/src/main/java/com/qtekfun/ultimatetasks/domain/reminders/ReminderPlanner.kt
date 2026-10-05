@@ -33,10 +33,24 @@ object ReminderPlanner {
         allDayHour: Int,
         now: Instant,
         zone: ZoneId
+    ): List<Reminder> {
+        // A snooze that already rang no longer hides the due time (it may have changed since).
+        val snoozed = snoozes.filterValues { it.isAfter(now) }
+        return planAll(tasks, snoozed, allDayHour, zone).filter { it.at.isAfter(now) }
+    }
+
+    /**
+     * Every reminder of [tasks], past ones included, to find those that never showed (T32).
+     * A snooze, past or future, reminds instead of the due time.
+     */
+    fun planAll(
+        tasks: List<DueTaskRow>,
+        snoozes: Map<Long, Instant>,
+        allDayHour: Int,
+        zone: ZoneId
     ): List<Reminder> = tasks.flatMap { task ->
         val due = dueInstant(task, allDayHour, zone) ?: return@flatMap emptyList()
-        // A snooze that already rang no longer hides the due time (it may have changed since).
-        val main = snoozes[task.id]?.takeIf { it.isAfter(now) } ?: due
+        val main = snoozes[task.id] ?: due
         val early = task.reminderBefore?.takeIf { it > 0 }?.let { due.minusSeconds(it) }
         listOfNotNull(
             Reminder(task.id * 2, task.id, task.summary, task.listName, due, main, early = false),
@@ -52,7 +66,7 @@ object ReminderPlanner {
                 )
             }
         )
-    }.filter { it.at.isAfter(now) }
+    }
 
     /** When the task is due; an all-day task, at [allDayHour] of its day in [zone]. */
     fun dueInstant(task: DueTaskRow, allDayHour: Int, zone: ZoneId): Instant? = runCatching {
