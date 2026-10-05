@@ -39,7 +39,9 @@ data class BackupSettings(
     val defaultList: String? = null,
     val allowDeletingLists: Boolean,
     val alarmClock: Boolean,
-    val allDayHour: Int
+    val allDayHour: Int,
+    // Older backups have none: the default applies.
+    val missedWindowHours: Int = AppSettings.DEFAULT_MISSED_WINDOW_HOURS
 )
 
 @Serializable
@@ -165,7 +167,8 @@ private fun AppSettings.toBackup() = BackupSettings(
     defaultList = defaultList,
     allowDeletingLists = allowDeletingLists,
     alarmClock = alarmClock,
-    allDayHour = allDayHour
+    allDayHour = allDayHour,
+    missedWindowHours = missedWindowHours
 )
 
 private fun BackupSettings.toSettings(): AppSettings = AppSettings(
@@ -175,5 +178,6 @@ private fun BackupSettings.toSettings(): AppSettings = AppSettings(
     defaultList = defaultList,
     allowDeletingLists = allowDeletingLists,
     alarmClock = alarmClock,
-    allDayHour = allDayHour
+    allDayHour = allDayHour,
+    missedWindowHours = missedWindowHours
 )

@@ -302,4 +302,13 @@
     <string name="wizard_open_maker_settings">Abrir ajustes del móvil</string>
     <string name="settings_unused_apps">Seguir activa aunque no se use</string>
     <string name="wizard_unused_why">Android pausa las apps que no abres en un tiempo y les quita los permisos, también los avisos. El botón abre la información de la app: al final de la página, desactiva «Gestionar la aplicación si no se usa» (en otros móviles, «Pausar actividad de la app si no se usa»).</string>
+    <string name="reminder_missed_text">%1$s · no llegó a su hora (%2$s)</string>
+    <string name="settings_missed_window">Recuperar avisos perdidos</string>
+    <string name="settings_missed_window_hint">Si el móvil paró la app a la hora de un aviso, se muestra cuando vuelve a funcionar.</string>
+    <string name="settings_missed_window_off">Nunca</string>
+    <plurals name="settings_missed_window_hours">
+        <item quantity="one">Última %d hora</item>
+        <item quantity="other">Últimas %d horas</item>
+        <item quantity="many">Últimas %d horas</item>
+    </plurals>
 </resources>

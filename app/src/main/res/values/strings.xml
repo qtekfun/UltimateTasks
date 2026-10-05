@@ -288,4 +288,12 @@
     <string name="wizard_open_maker_settings">Open phone settings</string>
     <string name="settings_unused_apps">Keep running if unused</string>
     <string name="wizard_unused_why">Android pauses apps you do not open for a while and removes their permissions, reminders included. The button opens the app’s info page: at the bottom, turn off “Manage app if unused” (on other phones, “Pause app activity if unused”).</string>
+    <string name="reminder_missed_text">%1$s · missed at %2$s</string>
+    <string name="settings_missed_window">Bring back missed reminders</string>
+    <string name="settings_missed_window_hint">If the phone stopped the app at reminder time, they show when it runs again.</string>
+    <string name="settings_missed_window_off">Never</string>
+    <plurals name="settings_missed_window_hours">
+        <item quantity="one">Last %d hour</item>
+        <item quantity="other">Last %d hours</item>
+    </plurals>
 </resources>

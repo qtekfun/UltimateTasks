@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -76,16 +77,7 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
             settings.alarmClock,
             viewModel::setAlarmClock
         )
-        HorizontalDivider(Modifier.padding(start = 16.dp))
-        Row(
-            Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(start = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(stringResource(R.string.settings_all_day_hour), Modifier.weight(1f))
-            Choice(hourLabel(settings.allDayHour), (0..LAST_HOUR).toList(), {
-                hourLabel(it)
-            }, viewModel::setAllDayHour)
-        }
+        ReminderTimes(settings, viewModel)
         val maker = PhoneMaker.of(Build.MANUFACTURER)
         if (maker != PhoneMaker.OTHER) {
             HorizontalDivider(Modifier.padding(start = 16.dp))
@@ -103,6 +95,48 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
             Text(stringResource(R.string.settings_test))
         }
     }
+}
+
+/** When all-day tasks remind, and how far back missed reminders come back (T32). */
+@Composable
+private fun ReminderTimes(settings: AppSettings, viewModel: SettingsViewModel) {
+    HorizontalDivider(Modifier.padding(start = 16.dp))
+    Row(
+        Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(start = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(stringResource(R.string.settings_all_day_hour), Modifier.weight(1f))
+        Choice(hourLabel(settings.allDayHour), (0..LAST_HOUR).toList(), {
+            hourLabel(it)
+        }, viewModel::setAllDayHour)
+    }
+    HorizontalDivider(Modifier.padding(start = 16.dp))
+    Row(
+        Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(start = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.settings_missed_window))
+            Text(
+                stringResource(R.string.settings_missed_window_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Choice(
+            missedWindowLabel(settings.missedWindowHours),
+            AppSettings.MISSED_WINDOW_CHOICES,
+            { missedWindowLabel(it) },
+            viewModel::setMissedWindowHours
+        )
+    }
+}
+
+@Composable
+private fun missedWindowLabel(hours: Int): String = if (hours == 0) {
+    stringResource(R.string.settings_missed_window_off)
+} else {
+    pluralStringResource(R.plurals.settings_missed_window_hours, hours, hours)
 }
 
 /** Android 11+ pauses unused apps; the switch is on the app's info page, which explains nothing. */

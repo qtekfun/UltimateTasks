@@ -46,6 +46,8 @@ class SettingsViewModel @Inject constructor(
 
     fun setAllDayHour(hour: Int) = repository.setAllDayHour(hour)
 
+    fun setMissedWindowHours(hours: Int) = repository.setMissedWindowHours(hours)
+
     private companion object {
         const val STOP_MS = 5_000L
     }

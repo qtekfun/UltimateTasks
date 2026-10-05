@@ -20,6 +20,7 @@ private const val KEY_DEFAULT_LIST = "default_list"
 private const val KEY_ALLOW_DELETING_LISTS = "allow_deleting_lists"
 private const val KEY_ALARM_CLOCK = "alarm_clock"
 private const val KEY_ALL_DAY_HOUR = "all_day_hour"
+private const val KEY_MISSED_WINDOW = "missed_window_hours"
 private const val LAST_HOUR = 23
 
 /**
@@ -60,6 +61,10 @@ class SettingsRepository @Inject constructor(
         putInt(KEY_ALL_DAY_HOUR, hour.coerceIn(0, LAST_HOUR))
     }
 
+    fun setMissedWindowHours(hours: Int) = preferences.edit {
+        putInt(KEY_MISSED_WINDOW, hours.coerceAtLeast(0))
+    }
+
     /** Applies every setting at once, from a backup (T23). */
     fun restore(restored: AppSettings) = preferences.edit {
         putString(KEY_THEME, restored.theme.name)
@@ -75,6 +80,7 @@ class SettingsRepository @Inject constructor(
         putBoolean(KEY_ALLOW_DELETING_LISTS, restored.allowDeletingLists)
         putBoolean(KEY_ALARM_CLOCK, restored.alarmClock)
         putInt(KEY_ALL_DAY_HOUR, restored.allDayHour.coerceIn(0, LAST_HOUR))
+        putInt(KEY_MISSED_WINDOW, restored.missedWindowHours.coerceAtLeast(0))
     }
 
     private fun read(): AppSettings {
@@ -90,7 +96,8 @@ class SettingsRepository @Inject constructor(
                 defaults.allowDeletingLists
             ),
             alarmClock = preferences.getBoolean(KEY_ALARM_CLOCK, defaults.alarmClock),
-            allDayHour = preferences.getInt(KEY_ALL_DAY_HOUR, defaults.allDayHour)
+            allDayHour = preferences.getInt(KEY_ALL_DAY_HOUR, defaults.allDayHour),
+            missedWindowHours = preferences.getInt(KEY_MISSED_WINDOW, defaults.missedWindowHours)
         )
     }
 
