@@ -80,6 +80,7 @@ fun ReliabilityWizardScreen(onDone: () -> Unit, viewModel: SettingsViewModel = v
                     viewModel::setAlarmClock
                 )
             }
+            DetailCard { RobustModeSetting(settings.robustMode, viewModel::setRobustMode) }
             val testTitle = stringResource(R.string.settings_test_title)
             OutlinedButton(onClick = {
                 ReminderReceiver.test(context, testTitle)

@@ -40,6 +40,8 @@ data class BackupSettings(
     val allowDeletingLists: Boolean,
     val alarmClock: Boolean,
     val allDayHour: Int,
+    /** Missing in backups made before robust mode existed. */
+    val robustMode: Boolean = false,
     // Older backups have none: the default applies.
     val missedWindowHours: Int = AppSettings.DEFAULT_MISSED_WINDOW_HOURS
 )
@@ -168,6 +170,7 @@ private fun AppSettings.toBackup() = BackupSettings(
     allowDeletingLists = allowDeletingLists,
     alarmClock = alarmClock,
     allDayHour = allDayHour,
+    robustMode = robustMode,
     missedWindowHours = missedWindowHours
 )
 
@@ -179,5 +182,6 @@ private fun BackupSettings.toSettings(): AppSettings = AppSettings(
     allowDeletingLists = allowDeletingLists,
     alarmClock = alarmClock,
     allDayHour = allDayHour,
+    robustMode = robustMode,
     missedWindowHours = missedWindowHours
 )

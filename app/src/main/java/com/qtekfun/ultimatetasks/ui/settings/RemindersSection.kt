@@ -77,6 +77,8 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
             settings.alarmClock,
             viewModel::setAlarmClock
         )
+        HorizontalDivider(Modifier.padding(start = 16.dp))
+        RobustModeSetting(settings.robustMode, viewModel::setRobustMode)
         ReminderTimes(settings, viewModel)
         val maker = PhoneMaker.of(Build.MANUFACTURER)
         if (maker != PhoneMaker.OTHER) {

@@ -101,6 +101,7 @@ Hoja/pantalla con, en este orden:
   - Canal de notificación de importancia alta; agrupación cuando hay varias.
   - Botón "Enviar aviso de prueba" en Ajustes.
   - **Avisos perdidos (T32):** algunas ROM (ColorOS, MIUI, OriginOS, MagicOS) congelan o detienen la app y sus alarmas se pierden. La app guarda qué avisos se mostraron (id + hora del aviso) y, al arrancar, al terminar cada sync y al recibir cualquier aviso, muestra los que ya pasaron sin mostrarse dentro de una ventana configurable (6 h, **24 h** por defecto, 48 h o nunca), con el texto «No llegó a su hora (10:30)». La primera vez tras actualizar solo registra lo pasado, sin mostrarlo.
+  - **Modo robusto (T34):** opcional, desactivado por defecto y recomendado en móviles con ROM agresiva (`PhoneMaker` distinto de `OTHER`), en Ajustes → Avisos y en el asistente. Un servicio en primer plano (`specialUse`) con una notificación fija de importancia mínima mantiene vivo el proceso para que el sistema no lo mate y no se pierdan las alarmas; la notificación explica para qué sirve y permite desactivarlo. Solo ejecuta el latido cada 30 min; **no usa la red**. Funciona mientras el modo esté activo y haya sesión, y arranca tras reiniciar o actualizar la app si lo está.
 - Lógica de planificación pura en `domain`, **100% de cobertura** (planificador y selección de avisos perdidos).
 
 #### Diagnóstico en el móvil
@@ -207,6 +208,10 @@ Pixel 8 (1080×2400, Android 17), build release minificada firmada con la clave 
   - Se registra cada aviso mostrado por id y hora del aviso (el id `2·tarea` se reutiliza cuando cambia la fecha), en Room (v7, tabla `shown_reminder`); los registros se borran pasadas 48 h.
   - Ventana por defecto 24 h: un aviso de hace más de un día ya no ayuda y molestaría. Una posposición vencida cuenta como la hora del aviso para recuperarla.
   - Al actualizar a esta versión no había registro: la primera ejecución marca lo pasado como mostrado para no inundar de avisos.
+- **Modo robusto (T34, 2026-10-05):** servicio en primer plano de tipo `specialUse` porque ninguno de los tipos con nombre encaja (no reproduce, no sincroniza datos, no usa ubicación); la justificación va en `PROPERTY_SPECIAL_USE_FGS_SUBTYPE`. F-Droid no tiene la revisión de tipos de Play.
+  - Opcional y apagado por defecto: muestra una notificación fija y no es necesario en móviles con Android estándar (Pixel).
+  - Android 12+ no deja arrancarlo desde segundo plano salvo excepciones: se arranca al activar el modo (app en pantalla), al iniciar sesión y desde `BOOT_COMPLETED`/`MY_PACKAGE_REPLACED` (permitidos para `specialUse`, también en Android 15); si el sistema lo rechaza en otro momento, se arranca la próxima vez que se pueda.
+  - El trabajo periódico va tras la interfaz `ReminderBeat` (por ahora replanificar los avisos), para que el latido de T33 se conecte cambiando solo el binding.
 - **Servidor real (T09, 2026-10-03, contra el Nextcloud del autor):**
   - Las listas de tareas normales admiten `sync-collection` (token de sincronización) y escritura.
   - Las listas que publica Deck ("Deck: <tablero>") son de **solo lectura** por CalDAV, responden `sync-collection` con HTTP 415 y no envían `getctag`: se descargan enteras (solo ETags y las tareas cambiadas) en cada sync. La app las muestra como listas de solo lectura (RF-08).

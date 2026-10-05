@@ -12,6 +12,7 @@ import com.qtekfun.ultimatetasks.data.remote.Credentials
 import com.qtekfun.ultimatetasks.data.settings.AppSettings
 import com.qtekfun.ultimatetasks.data.settings.FakePreferences
 import com.qtekfun.ultimatetasks.data.settings.PendingListPrefs
+import com.qtekfun.ultimatetasks.data.settings.SettingFlag
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.data.settings.ThemeMode
 import io.mockk.coEvery
@@ -54,12 +55,13 @@ class SettingsBackupTest {
         )
         coEvery { store.load(1) } returns Credentials("ana", "app-password")
         oldPhone.setTheme(ThemeMode.DARK)
-        oldPhone.setAmoled(true)
+        oldPhone.setFlag(SettingFlag.AMOLED, true)
         oldPhone.setAllDayHour(8)
         oldPhone.setMissedWindowHours(6)
         oldPhone.setDefaultList("/a/")
-        oldPhone.setAllowDeletingLists(true)
-        oldPhone.setAlarmClock(true)
+        oldPhone.setFlag(SettingFlag.ALLOW_DELETING_LISTS, true)
+        oldPhone.setFlag(SettingFlag.ALARM_CLOCK, true)
+        oldPhone.setFlag(SettingFlag.ROBUST_MODE, true)
         val session = mockk<AccountSession>(relaxed = true)
         return SettingsBackup(
             oldPhone,
@@ -87,6 +89,7 @@ class SettingsBackupTest {
         val restored = newPhone.settings.first()
         assertEquals(ThemeMode.DARK, restored.theme)
         assertTrue(restored.amoled && restored.alarmClock && restored.allowDeletingLists)
+        assertTrue(restored.robustMode)
         assertEquals(8 to "/a/", restored.allDayHour to restored.defaultList)
         assertEquals(6, restored.missedWindowHours)
     }
@@ -103,6 +106,15 @@ class SettingsBackupTest {
             AppSettings.DEFAULT_MISSED_WINDOW_HOURS,
             newPhone.settings.first().missedWindowHours
         )
+    }
+
+    @Test
+    fun `a backup made before robust mode existed restores it off`() = runTest {
+        val backup = exported(withSession = false)
+        assertTrue("\"robustMode\":true" in backup)
+        val (restorer, _) = restorer(null)
+        restorer.restore(backup.replace(",\"robustMode\":true", ""), null)
+        assertEquals(false, newPhone.settings.first().robustMode)
     }
 
     @Test
