@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.data.settings.AppSettings
+import com.qtekfun.ultimatetasks.domain.reminders.PhoneMaker
 import com.qtekfun.ultimatetasks.notify.ReminderReceiver
 import com.qtekfun.ultimatetasks.ui.detail.Choice
 import com.qtekfun.ultimatetasks.ui.detail.DetailCard
@@ -55,12 +57,17 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { refresh++ }
     val notifications = remember(refresh) { ReminderPermissions.notificationsAllowed(context) }
     val exempt = remember(refresh) { ReminderPermissions.batteryExempt(context) }
+    val unused = remember(refresh) { ReminderPermissions.unusedAppsExempt(context) }
     val askNotifications = rememberNotificationRequest { refresh++ }
     DetailCard {
         StatusRow(stringResource(R.string.settings_notifications), notifications, askNotifications)
         HorizontalDivider(Modifier.padding(start = 16.dp))
         StatusRow(stringResource(R.string.settings_battery), exempt) {
             ReminderPermissions.askBatteryExemption(context)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            HorizontalDivider(Modifier.padding(start = 16.dp))
+            UnusedAppsRow(unused)
         }
         HorizontalDivider(Modifier.padding(start = 16.dp))
         SwitchSetting(
@@ -79,6 +86,11 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
                 hourLabel(it)
             }, viewModel::setAllDayHour)
         }
+        val maker = PhoneMaker.of(Build.MANUFACTURER)
+        if (maker != PhoneMaker.OTHER) {
+            HorizontalDivider(Modifier.padding(start = 16.dp))
+            MakerAdvice(maker)
+        }
         HorizontalDivider(Modifier.padding(start = 16.dp))
         TextButton(onClick = onWizard, modifier = Modifier.padding(horizontal = 8.dp)) {
             Text(stringResource(R.string.settings_wizard))
@@ -90,6 +102,23 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
         }, modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.settings_test))
         }
+    }
+}
+
+/** Android 11+ pauses unused apps; the switch is on the app's info page, which explains nothing. */
+@Composable
+private fun UnusedAppsRow(exempt: Boolean) {
+    val context = LocalContext.current
+    StatusRow(stringResource(R.string.settings_unused_apps), exempt) {
+        PhoneSettings.askUnusedAppsExemption(context)
+    }
+    if (!exempt) {
+        Text(
+            stringResource(R.string.wizard_unused_why),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+        )
     }
 }
 

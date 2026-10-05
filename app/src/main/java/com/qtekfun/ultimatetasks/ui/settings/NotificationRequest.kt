@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 /**
  * Asks to show notifications with the system dialog. Once the user has refused it twice the
  * system no longer shows it, so the app's notification settings open instead. Before Android 13
- * there is no dialog: notifications are switched on in those settings.
+ * there is no dialog, and notifications blocked in the settings are switched on there too.
  */
 @Composable
 fun rememberNotificationRequest(onResult: () -> Unit): () -> Unit {
@@ -31,7 +31,10 @@ fun rememberNotificationRequest(onResult: () -> Unit): () -> Unit {
             onResult()
         }
     return {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // Granted but switched off in the settings: only the settings can turn them back on.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            !ReminderPermissions.notificationPermissionGranted(context)
+        ) {
             launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
             ReminderPermissions.openNotificationSettings(context)
