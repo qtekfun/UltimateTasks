@@ -19,6 +19,7 @@ private const val KEY_DYNAMIC_COLOR = "dynamic_color"
 private const val KEY_DEFAULT_LIST = "default_list"
 private const val KEY_ALLOW_DELETING_LISTS = "allow_deleting_lists"
 private const val KEY_ALARM_CLOCK = "alarm_clock"
+private const val KEY_ROBUST_MODE = "robust_mode"
 private const val KEY_ALL_DAY_HOUR = "all_day_hour"
 private const val LAST_HOUR = 23
 
@@ -56,6 +57,8 @@ class SettingsRepository @Inject constructor(
 
     fun setAlarmClock(on: Boolean) = preferences.edit { putBoolean(KEY_ALARM_CLOCK, on) }
 
+    fun setRobustMode(on: Boolean) = preferences.edit { putBoolean(KEY_ROBUST_MODE, on) }
+
     fun setAllDayHour(hour: Int) = preferences.edit {
         putInt(KEY_ALL_DAY_HOUR, hour.coerceIn(0, LAST_HOUR))
     }
@@ -74,6 +77,7 @@ class SettingsRepository @Inject constructor(
         }
         putBoolean(KEY_ALLOW_DELETING_LISTS, restored.allowDeletingLists)
         putBoolean(KEY_ALARM_CLOCK, restored.alarmClock)
+        putBoolean(KEY_ROBUST_MODE, restored.robustMode)
         putInt(KEY_ALL_DAY_HOUR, restored.allDayHour.coerceIn(0, LAST_HOUR))
     }
 
@@ -90,6 +94,7 @@ class SettingsRepository @Inject constructor(
                 defaults.allowDeletingLists
             ),
             alarmClock = preferences.getBoolean(KEY_ALARM_CLOCK, defaults.alarmClock),
+            robustMode = preferences.getBoolean(KEY_ROBUST_MODE, defaults.robustMode),
             allDayHour = preferences.getInt(KEY_ALL_DAY_HOUR, defaults.allDayHour)
         )
     }

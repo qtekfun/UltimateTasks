@@ -16,6 +16,11 @@ data class AppSettings(
     val allowDeletingLists: Boolean = false,
     /** Aggressive mode: reminders are set like an alarm clock, which no battery saver delays. */
     val alarmClock: Boolean = false,
+    /**
+     * Robust mode: a foreground service keeps the process alive on phones that kill apps in the
+     * background, so their alarms are not lost. Off by default: it shows a fixed notification.
+     */
+    val robustMode: Boolean = false,
     /** When all-day tasks remind (RF-10), as an hour of the day. */
     val allDayHour: Int = DEFAULT_ALL_DAY_HOUR
 ) {

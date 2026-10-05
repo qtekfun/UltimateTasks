@@ -44,6 +44,8 @@ class SettingsViewModel @Inject constructor(
 
     fun setAlarmClock(on: Boolean) = repository.setAlarmClock(on)
 
+    fun setRobustMode(on: Boolean) = repository.setRobustMode(on)
+
     fun setAllDayHour(hour: Int) = repository.setAllDayHour(hour)
 
     private companion object {

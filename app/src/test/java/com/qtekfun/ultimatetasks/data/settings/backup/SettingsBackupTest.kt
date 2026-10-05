@@ -58,6 +58,7 @@ class SettingsBackupTest {
         oldPhone.setDefaultList("/a/")
         oldPhone.setAllowDeletingLists(true)
         oldPhone.setAlarmClock(true)
+        oldPhone.setRobustMode(true)
         val session = mockk<AccountSession>(relaxed = true)
         return SettingsBackup(
             oldPhone,
@@ -85,7 +86,17 @@ class SettingsBackupTest {
         val restored = newPhone.settings.first()
         assertEquals(ThemeMode.DARK, restored.theme)
         assertTrue(restored.amoled && restored.alarmClock && restored.allowDeletingLists)
+        assertTrue(restored.robustMode)
         assertEquals(8 to "/a/", restored.allDayHour to restored.defaultList)
+    }
+
+    @Test
+    fun `a backup made before robust mode existed restores it off`() = runTest {
+        val backup = exported(withSession = false)
+        assertTrue("\"robustMode\":true" in backup)
+        val (restorer, _) = restorer(null)
+        restorer.restore(backup.replace(",\"robustMode\":true", ""), null)
+        assertEquals(false, newPhone.settings.first().robustMode)
     }
 
     @Test
