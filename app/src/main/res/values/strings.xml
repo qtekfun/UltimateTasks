@@ -170,7 +170,7 @@
     <string name="settings_alarm_mode">Alarm mode</string>
     <string name="settings_alarm_mode_hint">Reminders are set like an alarm clock, so no battery saver can delay them. Shows the alarm icon in the status bar.</string>
     <string name="settings_all_day_hour">All-day tasks remind at</string>
-    <string name="settings_test">Send a test reminder</string>
+    <string name="settings_test">Test a reminder (arrives in 1 minute)</string>
     <string name="settings_test_title">Test reminder</string>
     <string name="reminder_channel">Reminders</string>
     <string name="reminder_text">%1$s · %2$s</string>
@@ -302,5 +302,12 @@
     <plurals name="settings_missed_window_hours">
         <item quantity="one">Last %d hour</item>
         <item quantity="other">Last %d hours</item>
+    </plurals>
+    <string name="test_waiting">Set for %1$s. Leave the app if you like and wait for it…</string>
+    <string name="test_on_time">It arrived at %1$s, on time.</string>
+    <string name="test_missing">It did not arrive (it was due at %1$s). Check the steps above.</string>
+    <plurals name="test_late">
+        <item quantity="one">It arrived at %1$s, %2$d minute late.</item>
+        <item quantity="other">It arrived at %1$s, %2$d minutes late.</item>
     </plurals>
 </resources>

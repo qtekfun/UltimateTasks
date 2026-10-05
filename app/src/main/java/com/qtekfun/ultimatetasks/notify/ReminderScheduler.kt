@@ -24,7 +24,10 @@ private const val KEY_SCHEDULED = "scheduled"
  * Alarms of a previous plan that are no longer wanted are cancelled.
  */
 @Singleton
-class ReminderScheduler @Inject constructor(@ApplicationContext private val context: Context) {
+class ReminderScheduler @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val heartbeat: HeartbeatScheduler
+) {
     private val alarms = context.getSystemService(AlarmManager::class.java)
     private val preferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 
@@ -38,22 +41,35 @@ class ReminderScheduler @Inject constructor(@ApplicationContext private val cont
             it.toLongOrNull()
         }
         (previous - wanted.keys).forEach { alarms.cancel(pendingIntent(it, null)) }
-        val exact = canScheduleExact()
-        wanted.values.forEach { reminder ->
-            val intent = pendingIntent(reminder.id, reminder)
-            val at = reminder.at.toEpochMilli()
-            when {
-                exact && alarmClock -> alarms.setAlarmClock(
-                    AlarmManager.AlarmClockInfo(at, openTask(reminder.taskId)),
-                    intent
-                )
-
-                exact -> alarms.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, intent)
-
-                else -> alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, intent)
-            }
-        }
+        wanted.values.forEach { set(it, alarmClock) }
         preferences.edit { putStringSet(KEY_SCHEDULED, wanted.keys.map(Long::toString).toSet()) }
+        // No reminder left, or logged out: the heartbeat stops too (T33).
+        heartbeat.update(reminders)
+    }
+
+    /**
+     * One alarm outside the plan, the same way as the planned ones: the test reminder (T33)
+     * checks the real delivery, so it must not take a shortcut.
+     */
+    fun scheduleOne(reminder: Reminder, alarmClock: Boolean) = set(reminder, alarmClock)
+
+    private fun set(reminder: Reminder, alarmClock: Boolean) {
+        val intent = pendingIntent(reminder.id, reminder)
+        val at = reminder.at.toEpochMilli()
+        when {
+            canScheduleExact() && alarmClock -> alarms.setAlarmClock(
+                AlarmManager.AlarmClockInfo(at, openTask(reminder.taskId)),
+                intent
+            )
+
+            canScheduleExact() -> alarms.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                at,
+                intent
+            )
+
+            else -> alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, intent)
+        }
     }
 
     /** What the system opens from its "next alarm" display: the task. */

@@ -74,6 +74,9 @@
         </service>
 
         <receiver
+            android:name=".notify.HeartbeatReceiver"
+            android:exported="false" />
+        <receiver
             android:name=".notify.BootReceiver"
             android:exported="true">
             <intent-filter>

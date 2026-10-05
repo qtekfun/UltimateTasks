@@ -28,13 +28,21 @@ class ReminderReceiver : BroadcastReceiver() {
     @Inject
     lateinit var recovery: MissedReminderRecovery
 
+    @Inject
+    lateinit var testReminder: TestReminder
+
     override fun onReceive(context: Context, intent: Intent) {
         val reminder = read(intent) ?: return
         notifier.show(reminder, missed = false)
         val pending = goAsync()
         scope.launch {
             try {
-                recovery.markShown(reminder.id, reminder.at)
+                // The test reminder is not planned: only its arrival matters (T33).
+                if (reminder.id == TestReminder.ID) {
+                    testReminder.arrived()
+                } else {
+                    recovery.markShown(reminder.id, reminder.at)
+                }
                 recovery.recover()
             } finally {
                 pending.finish()
@@ -50,9 +58,6 @@ class ReminderReceiver : BroadcastReceiver() {
         private const val EXTRA_DUE = "due"
         private const val EXTRA_AT = "at"
         private const val EXTRA_EARLY = "early"
-
-        /** No task has this id; actions on it do nothing. */
-        private const val TEST_TASK = 0L
 
         /** What the notification needs, carried by the alarm. */
         fun describe(intent: Intent, reminder: Reminder) {
@@ -76,23 +81,6 @@ class ReminderReceiver : BroadcastReceiver() {
                 due = Instant.ofEpochMilli(intent.getLongExtra(EXTRA_DUE, 0)),
                 at = Instant.ofEpochMilli(intent.getLongExtra(EXTRA_AT, 0)),
                 early = intent.getBooleanExtra(EXTRA_EARLY, false)
-            )
-        }
-
-        /** A notification right away, to check that reminders arrive (RF-10). */
-        fun test(context: Context, title: String) {
-            val now = Instant.now()
-            ReminderNotifier(context.applicationContext).show(
-                Reminder(
-                    -1,
-                    TEST_TASK,
-                    title,
-                    context.getString(R.string.app_name),
-                    now,
-                    now,
-                    false
-                ),
-                missed = false
             )
         }
     }

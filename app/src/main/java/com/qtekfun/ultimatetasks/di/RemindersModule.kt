@@ -4,7 +4,7 @@
 package com.qtekfun.ultimatetasks.di
 
 import com.qtekfun.ultimatetasks.notify.ReminderBeat
-import com.qtekfun.ultimatetasks.notify.RescheduleBeat
+import com.qtekfun.ultimatetasks.notify.ReminderHeartbeat
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,5 +14,5 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 abstract class RemindersModule {
     @Binds
-    abstract fun reminderBeat(beat: RescheduleBeat): ReminderBeat
+    abstract fun reminderBeat(beat: ReminderHeartbeat): ReminderBeat
 }
