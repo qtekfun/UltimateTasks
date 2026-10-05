@@ -76,7 +76,7 @@ class KeepAliveTest {
     }
 
     @Test
-    fun turningTheModeOnStartsTheServiceAndOffStopsIt() = runBlocking {
+    fun turningTheModeOnStartsTheServiceAndOffStopsIt(): Unit = runBlocking {
         settings.setFlag(SettingFlag.ROBUST_MODE, true)
         withTimeout(TIMEOUT) { KeepAliveService.running.first { it } }
 
