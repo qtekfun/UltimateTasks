@@ -16,6 +16,9 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Lets the user exempt the app from battery savers that delay reminders. -->
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- Robust mode (RF-10): an optional foreground service that keeps the process alive. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:name=".UltimateTasksApp"
@@ -57,6 +60,19 @@
         <receiver
             android:name=".notify.ReminderActionReceiver"
             android:exported="false" />
+        <!--
+          Robust mode (RF-10), off by default: keeps the process alive so reminders scheduled
+          on the device are delivered on phones that kill apps in the background. No network.
+        -->
+        <service
+            android:name=".notify.KeepAliveService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps the app alive, at the user's request, so that task reminders scheduled locally with AlarmManager are delivered on phones whose system kills background apps and drops their alarms. It does no network or other work." />
+        </service>
+
         <receiver
             android:name=".notify.HeartbeatReceiver"
             android:exported="false" />

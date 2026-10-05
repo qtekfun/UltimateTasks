@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.settings.AppSettings
+import com.qtekfun.ultimatetasks.data.settings.SettingFlag
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.data.settings.ThemeMode
 import com.qtekfun.ultimatetasks.ui.detail.Choice
@@ -75,7 +76,7 @@ fun ListsSection(
             stringResource(R.string.settings_allow_deleting_lists),
             stringResource(R.string.settings_allow_deleting_lists_hint),
             settings.allowDeletingLists,
-            repository::setAllowDeletingLists
+            { repository.setFlag(SettingFlag.ALLOW_DELETING_LISTS, it) }
         )
     }
 }
@@ -98,7 +99,7 @@ fun AppearanceSection(settings: AppSettings, repository: SettingsRepository) {
             stringResource(R.string.settings_amoled),
             stringResource(R.string.settings_amoled_hint),
             settings.amoled,
-            repository::setAmoled
+            { repository.setFlag(SettingFlag.AMOLED, it) }
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             HorizontalDivider(Modifier.padding(start = 16.dp))
@@ -106,7 +107,7 @@ fun AppearanceSection(settings: AppSettings, repository: SettingsRepository) {
                 stringResource(R.string.settings_dynamic_color),
                 null,
                 settings.dynamicColor,
-                repository::setDynamicColor
+                { repository.setFlag(SettingFlag.DYNAMIC_COLOR, it) }
             )
         }
         if (AppLanguages.supported) {

@@ -14,11 +14,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 private const val KEY_THEME = "theme"
-private const val KEY_AMOLED = "amoled"
-private const val KEY_DYNAMIC_COLOR = "dynamic_color"
 private const val KEY_DEFAULT_LIST = "default_list"
-private const val KEY_ALLOW_DELETING_LISTS = "allow_deleting_lists"
-private const val KEY_ALARM_CLOCK = "alarm_clock"
 private const val KEY_ALL_DAY_HOUR = "all_day_hour"
 private const val KEY_MISSED_WINDOW = "missed_window_hours"
 private const val LAST_HOUR = 23
@@ -43,19 +39,11 @@ class SettingsRepository @Inject constructor(
 
     fun setTheme(theme: ThemeMode) = preferences.edit { putString(KEY_THEME, theme.name) }
 
-    fun setAmoled(on: Boolean) = preferences.edit { putBoolean(KEY_AMOLED, on) }
-
-    fun setDynamicColor(on: Boolean) = preferences.edit { putBoolean(KEY_DYNAMIC_COLOR, on) }
+    fun setFlag(flag: SettingFlag, on: Boolean) = preferences.edit { putBoolean(flag.key, on) }
 
     fun setDefaultList(href: String?) = preferences.edit {
         if (href == null) remove(KEY_DEFAULT_LIST) else putString(KEY_DEFAULT_LIST, href)
     }
-
-    fun setAllowDeletingLists(on: Boolean) = preferences.edit {
-        putBoolean(KEY_ALLOW_DELETING_LISTS, on)
-    }
-
-    fun setAlarmClock(on: Boolean) = preferences.edit { putBoolean(KEY_ALARM_CLOCK, on) }
 
     fun setAllDayHour(hour: Int) = preferences.edit {
         putInt(KEY_ALL_DAY_HOUR, hour.coerceIn(0, LAST_HOUR))
@@ -68,8 +56,8 @@ class SettingsRepository @Inject constructor(
     /** Applies every setting at once, from a backup (T23). */
     fun restore(restored: AppSettings) = preferences.edit {
         putString(KEY_THEME, restored.theme.name)
-        putBoolean(KEY_AMOLED, restored.amoled)
-        putBoolean(KEY_DYNAMIC_COLOR, restored.dynamicColor)
+        putBoolean(SettingFlag.AMOLED.key, restored.amoled)
+        putBoolean(SettingFlag.DYNAMIC_COLOR.key, restored.dynamicColor)
         if (restored.defaultList ==
             null
         ) {
@@ -77,8 +65,9 @@ class SettingsRepository @Inject constructor(
         } else {
             putString(KEY_DEFAULT_LIST, restored.defaultList)
         }
-        putBoolean(KEY_ALLOW_DELETING_LISTS, restored.allowDeletingLists)
-        putBoolean(KEY_ALARM_CLOCK, restored.alarmClock)
+        putBoolean(SettingFlag.ALLOW_DELETING_LISTS.key, restored.allowDeletingLists)
+        putBoolean(SettingFlag.ALARM_CLOCK.key, restored.alarmClock)
+        putBoolean(SettingFlag.ROBUST_MODE.key, restored.robustMode)
         putInt(KEY_ALL_DAY_HOUR, restored.allDayHour.coerceIn(0, LAST_HOUR))
         putInt(KEY_MISSED_WINDOW, restored.missedWindowHours.coerceAtLeast(0))
     }
@@ -88,14 +77,18 @@ class SettingsRepository @Inject constructor(
         val theme = preferences.getString(KEY_THEME, null)
         return AppSettings(
             theme = ThemeMode.entries.firstOrNull { it.name == theme } ?: defaults.theme,
-            amoled = preferences.getBoolean(KEY_AMOLED, defaults.amoled),
-            dynamicColor = preferences.getBoolean(KEY_DYNAMIC_COLOR, defaults.dynamicColor),
+            amoled = preferences.getBoolean(SettingFlag.AMOLED.key, defaults.amoled),
+            dynamicColor = preferences.getBoolean(
+                SettingFlag.DYNAMIC_COLOR.key,
+                defaults.dynamicColor
+            ),
             defaultList = preferences.getString(KEY_DEFAULT_LIST, null),
             allowDeletingLists = preferences.getBoolean(
-                KEY_ALLOW_DELETING_LISTS,
+                SettingFlag.ALLOW_DELETING_LISTS.key,
                 defaults.allowDeletingLists
             ),
-            alarmClock = preferences.getBoolean(KEY_ALARM_CLOCK, defaults.alarmClock),
+            alarmClock = preferences.getBoolean(SettingFlag.ALARM_CLOCK.key, defaults.alarmClock),
+            robustMode = preferences.getBoolean(SettingFlag.ROBUST_MODE.key, defaults.robustMode),
             allDayHour = preferences.getInt(KEY_ALL_DAY_HOUR, defaults.allDayHour),
             missedWindowHours = preferences.getInt(KEY_MISSED_WINDOW, defaults.missedWindowHours)
         )

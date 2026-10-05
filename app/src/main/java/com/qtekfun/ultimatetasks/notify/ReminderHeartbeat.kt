@@ -14,8 +14,8 @@ import javax.inject.Singleton
 class ReminderHeartbeat @Inject constructor(
     private val coordinator: ReminderCoordinator,
     private val recovery: MissedReminderRecovery
-) {
-    suspend fun beat() {
+) : ReminderBeat {
+    override suspend fun beat() {
         recovery.recover()
         coordinator.replan()
     }

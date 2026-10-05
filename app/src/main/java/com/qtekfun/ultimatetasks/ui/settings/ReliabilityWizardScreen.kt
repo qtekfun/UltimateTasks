@@ -79,6 +79,7 @@ fun ReliabilityWizardScreen(onDone: () -> Unit, viewModel: SettingsViewModel = v
                     viewModel::setAlarmClock
                 )
             }
+            DetailCard { RobustModeSetting(settings.robustMode, viewModel::setRobustMode) }
             TestReminderButton()
             Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.wizard_done))
