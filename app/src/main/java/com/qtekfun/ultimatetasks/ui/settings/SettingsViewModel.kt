@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.settings.AppSettings
+import com.qtekfun.ultimatetasks.data.settings.SettingFlag
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.data.task.ListRepository
 import com.qtekfun.ultimatetasks.data.task.TaskRepository
@@ -42,11 +43,13 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { lists.setVisible(href, visible) }
     }
 
-    fun setAlarmClock(on: Boolean) = repository.setAlarmClock(on)
+    fun setAlarmClock(on: Boolean) = repository.setFlag(SettingFlag.ALARM_CLOCK, on)
 
-    fun setRobustMode(on: Boolean) = repository.setRobustMode(on)
+    fun setRobustMode(on: Boolean) = repository.setFlag(SettingFlag.ROBUST_MODE, on)
 
     fun setAllDayHour(hour: Int) = repository.setAllDayHour(hour)
+
+    fun setMissedWindowHours(hours: Int) = repository.setMissedWindowHours(hours)
 
     private companion object {
         const val STOP_MS = 5_000L

@@ -17,6 +17,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.qtekfun.ultimatetasks.R
+import com.qtekfun.ultimatetasks.data.settings.SettingFlag
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,7 +57,7 @@ class KeepAliveService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == ACTION_TURN_OFF) {
             // The controller stops the service when it sees the setting change.
-            settings.setRobustMode(false)
+            settings.setFlag(SettingFlag.ROBUST_MODE, false)
             stopSelf()
             return START_NOT_STICKY
         }

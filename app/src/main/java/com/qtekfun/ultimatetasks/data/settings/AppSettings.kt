@@ -22,9 +22,15 @@ data class AppSettings(
      */
     val robustMode: Boolean = false,
     /** When all-day tasks remind (RF-10), as an hour of the day. */
-    val allDayHour: Int = DEFAULT_ALL_DAY_HOUR
+    val allDayHour: Int = DEFAULT_ALL_DAY_HOUR,
+    /** How far back reminders the system kept from showing are brought back (T32); 0: never. */
+    val missedWindowHours: Int = DEFAULT_MISSED_WINDOW_HOURS
 ) {
     companion object {
         const val DEFAULT_ALL_DAY_HOUR = 9
+        const val DEFAULT_MISSED_WINDOW_HOURS = 24
+
+        /** The choices offered for [missedWindowHours]. */
+        val MISSED_WINDOW_CHOICES = listOf(6, 24, 48, 0)
     }
 }

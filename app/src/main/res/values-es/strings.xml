@@ -309,4 +309,13 @@
     <string name="keep_alive_title">Avisos protegidos</string>
     <string name="keep_alive_text">UltimateTasks sigue activa para que tus avisos lleguen a su hora. No usa la red.</string>
     <string name="keep_alive_turn_off">Desactivar</string>
+    <string name="reminder_missed_text">%1$s · no llegó a su hora (%2$s)</string>
+    <string name="settings_missed_window">Recuperar avisos perdidos</string>
+    <string name="settings_missed_window_hint">Si el móvil paró la app a la hora de un aviso, se muestra cuando vuelve a funcionar.</string>
+    <string name="settings_missed_window_off">Nunca</string>
+    <plurals name="settings_missed_window_hours">
+        <item quantity="one">Última %d hora</item>
+        <item quantity="other">Últimas %d horas</item>
+        <item quantity="many">Últimas %d horas</item>
+    </plurals>
 </resources>

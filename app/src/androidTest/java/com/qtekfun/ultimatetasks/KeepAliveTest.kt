@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.qtekfun.ultimatetasks.data.local.UltimateTasksDatabase
 import com.qtekfun.ultimatetasks.data.local.entity.AccountEntity
 import com.qtekfun.ultimatetasks.data.settings.OnboardingPrefs
+import com.qtekfun.ultimatetasks.data.settings.SettingFlag
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.notify.KeepAliveController
 import com.qtekfun.ultimatetasks.notify.KeepAliveService
@@ -68,7 +69,7 @@ class KeepAliveTest {
 
     @After
     fun tearDown() {
-        settings.setRobustMode(false)
+        settings.setFlag(SettingFlag.ROBUST_MODE, false)
         scope.cancel()
         KeepAliveService.stop(context)
         scenario?.close()
@@ -76,10 +77,10 @@ class KeepAliveTest {
 
     @Test
     fun turningTheModeOnStartsTheServiceAndOffStopsIt() = runBlocking {
-        settings.setRobustMode(true)
+        settings.setFlag(SettingFlag.ROBUST_MODE, true)
         withTimeout(TIMEOUT) { KeepAliveService.running.first { it } }
 
-        settings.setRobustMode(false)
+        settings.setFlag(SettingFlag.ROBUST_MODE, false)
         withTimeout(TIMEOUT) { KeepAliveService.running.first { !it } }
     }
 

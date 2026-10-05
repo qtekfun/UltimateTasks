@@ -86,4 +86,26 @@ class ReminderPlannerTest {
         )
         assertNull(ReminderPlanner.dueInstant(task(2, "yesterday"), 9, madrid))
     }
+
+    @Test
+    fun `planning everything keeps past reminders, and a past snooze replaces the due time`() {
+        val rang = Instant.parse("2026-10-03T08:30:00Z")
+        val all = ReminderPlanner.planAll(
+            listOf(
+                task(1, "2026-10-03T09:00", "Europe/Madrid", before = 3600),
+                task(2, "2026-10-02T09:00", "Europe/Madrid")
+            ),
+            mapOf(2L to rang),
+            allDayHour = 9,
+            zone = madrid
+        )
+        assertEquals(
+            listOf(
+                2L to Instant.parse("2026-10-03T07:00:00Z"),
+                3L to Instant.parse("2026-10-03T06:00:00Z"),
+                4L to rang
+            ),
+            all.map { it.id to it.at }
+        )
+    }
 }

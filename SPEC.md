@@ -100,7 +100,14 @@ Hoja/pantalla con, en este orden:
   - **Modo alarma** opcional (`setAlarmClock`) en Ajustes para móviles que retrasan alarmas.
   - Canal de notificación de importancia alta; agrupación cuando hay varias.
   - Botón "Enviar aviso de prueba" en Ajustes.
-- Lógica de planificación pura en `domain`, **100% de cobertura**.
+  - **Avisos perdidos (T32):** algunas ROM (ColorOS, MIUI, OriginOS, MagicOS) congelan o detienen la app y sus alarmas se pierden. La app guarda qué avisos se mostraron (id + hora del aviso) y, al arrancar, al terminar cada sync y al recibir cualquier aviso, muestra los que ya pasaron sin mostrarse dentro de una ventana configurable (6 h, **24 h** por defecto, 48 h o nunca), con el texto «No llegó a su hora (10:30)». La primera vez tras actualizar solo registra lo pasado, sin mostrarlo.
+- Lógica de planificación pura en `domain`, **100% de cobertura** (planificador y selección de avisos perdidos).
+
+#### Diagnóstico en el móvil
+Con el móvil conectado por adb:
+- `adb shell dumpsys package com.qtekfun.ultimatetasks | grep stopped`: `stopped=true` significa que el sistema (o el usuario) forzó la detención; Android borra entonces **todas** las alarmas de la app hasta que se vuelva a abrir. `stopped=false` con avisos que no llegan apunta a congelación o retrasos de batería.
+- `adb shell dumpsys alarm | grep com.qtekfun.ultimatetasks`: las alarmas programadas ahora mismo (una por aviso futuro). Si no sale nada y hay avisos pendientes, se perdieron.
+- `adb shell dumpsys deviceidle whitelist`: si aparece `com.qtekfun.ultimatetasks`, la app está exenta de la optimización de batería (Doze).
 
 ### RF-12 Búsqueda
 - Barra en la home. Busca en título, notas y etiquetas de las listas visibles; resultados agrupados por lista, con opción de incluir completadas.
@@ -196,6 +203,10 @@ Pixel 8 (1080×2400, Android 17), build release minificada firmada con la clave 
   - Medido en el móvil del autor (OnePlus CPH2841, ColorOS, Android 16) sin exención de batería: las alarmas `setExactAndAllowWhileIdle` llegaron agrupadas, una 73 s tarde y otra 106 s **antes** de tiempo; `setAlarmClock` llegó al segundo. Por eso el asistente (RF-01) pide la exención de batería y ofrece el modo alarma.
   - Permisos: `USE_EXACT_ALARM` en Android 13+ (concedido al instalar; F-Droid no tiene la restricción de Play) y `SCHEDULE_EXACT_ALARM` con `maxSdkVersion` 32.
   - En ColorOS, `pm grant` de notificaciones por adb está bloqueado: los tests en dispositivo conceden el permiso a mano.
+- **Avisos perdidos (T32, 2026-10-05):** recuperar en vez de confiar solo en las alarmas, porque una app detenida pierde todas las suyas y nada local las devuelve hasta que vuelve a ejecutarse.
+  - Se registra cada aviso mostrado por id y hora del aviso (el id `2·tarea` se reutiliza cuando cambia la fecha), en Room (v7, tabla `shown_reminder`); los registros se borran pasadas 48 h.
+  - Ventana por defecto 24 h: un aviso de hace más de un día ya no ayuda y molestaría. Una posposición vencida cuenta como la hora del aviso para recuperarla.
+  - Al actualizar a esta versión no había registro: la primera ejecución marca lo pasado como mostrado para no inundar de avisos.
 - **Servidor real (T09, 2026-10-03, contra el Nextcloud del autor):**
   - Las listas de tareas normales admiten `sync-collection` (token de sincronización) y escritura.
   - Las listas que publica Deck ("Deck: <tablero>") son de **solo lectura** por CalDAV, responden `sync-collection` con HTTP 415 y no envían `getctag`: se descargan enteras (solo ETags y las tareas cambiadas) en cada sync. La app las muestra como listas de solo lectura (RF-08).
