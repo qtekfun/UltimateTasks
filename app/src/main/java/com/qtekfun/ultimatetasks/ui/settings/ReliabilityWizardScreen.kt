@@ -103,6 +103,7 @@ private fun WizardSteps(maker: PhoneMaker) {
     val notifications = remember(refresh) { ReminderPermissions.notificationsAllowed(context) }
     val exact = remember(refresh) { ReminderPermissions.exactAlarmsAllowed(context) }
     val exempt = remember(refresh) { ReminderPermissions.batteryExempt(context) }
+    val unused = remember(refresh) { ReminderPermissions.unusedAppsExempt(context) }
     val askNotifications = rememberNotificationRequest { refresh++ }
     // As in UltimateDeck: the system dialog comes up on its own the first time.
     var asked by rememberSaveable { mutableStateOf(false) }
@@ -124,7 +125,12 @@ private fun WizardSteps(maker: PhoneMaker) {
     WizardStep(R.string.settings_battery, R.string.wizard_battery_why, exempt) {
         ReminderPermissions.askBatteryExemption(context)
     }
-    MakerStep(maker) { ReminderPermissions.openAppSettings(context) }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        WizardStep(R.string.settings_unused_apps, R.string.wizard_unused_why, unused) {
+            PhoneSettings.askUnusedAppsExemption(context)
+        }
+    }
+    DetailCard { MakerAdvice(maker) }
 }
 
 @Composable
@@ -138,33 +144,4 @@ private fun WizardStep(title: Int, why: Int, done: Boolean, onFix: () -> Unit) {
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
         )
     }
-}
-
-/** What to change in the maker's own settings, which no app can do for the user. */
-@Composable
-private fun MakerStep(maker: PhoneMaker, onOpen: () -> Unit) {
-    DetailCard {
-        Text(
-            stringResource(R.string.wizard_maker),
-            Modifier.padding(16.dp),
-            fontWeight = FontWeight.SemiBold
-        )
-        Text(
-            stringResource(makerAdvice(maker)),
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-        OutlinedButton(onClick = onOpen, modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.wizard_open_app_settings))
-        }
-    }
-}
-
-private fun makerAdvice(maker: PhoneMaker): Int = when (maker) {
-    PhoneMaker.COLOROS -> R.string.wizard_maker_coloros
-    PhoneMaker.XIAOMI -> R.string.wizard_maker_xiaomi
-    PhoneMaker.HUAWEI -> R.string.wizard_maker_huawei
-    PhoneMaker.SAMSUNG -> R.string.wizard_maker_samsung
-    PhoneMaker.VIVO -> R.string.wizard_maker_vivo
-    PhoneMaker.OTHER -> R.string.wizard_maker_other
 }

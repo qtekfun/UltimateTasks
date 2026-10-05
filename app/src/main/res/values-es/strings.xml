@@ -284,13 +284,12 @@
     <string name="wizard_exact_why">Para que los avisos suenen en su minuto, no cuando al sistema le parezca.</string>
     <string name="wizard_battery_why">El ahorro de batería retrasa las alarmas con la pantalla apagada. UltimateTasks solo se despierta para tus avisos y para sincronizar.</string>
     <string name="wizard_maker">Ajustes de tu móvil</string>
-    <string name="wizard_maker_coloros">ColorOS (OPPO, OnePlus, realme): en los ajustes de la app, abre Batería y elige «Permitir actividad en segundo plano» y «Permitir inicio automático».</string>
+    <string name="wizard_maker_coloros">ColorOS (OPPO, OnePlus, realme): abre los ajustes de la app › Uso de la batería y activa «Permitir actividad en segundo plano», «Permitir inicio automático» y «Permitir que otras apps la inicien». Después, en Recientes, bloquea UltimateTasks (candado) para que la limpieza no la cierre.</string>
     <string name="wizard_maker_xiaomi">MIUI / HyperOS: en los ajustes de la app, activa Inicio automático y pon Ahorro de batería en «Sin restricciones».</string>
     <string name="wizard_maker_huawei">EMUI / HarmonyOS: en Batería › Inicio de aplicaciones, pon UltimateTasks en «Gestionar manualmente» y activa las tres opciones.</string>
     <string name="wizard_maker_samsung">One UI: en Batería, elige «Sin restricciones» y comprueba que la app no está en «Aplicaciones en suspensión».</string>
-    <string name="wizard_maker_vivo">Funtouch OS / OriginOS: permite el Inicio automático y el «Alto consumo en segundo plano» para la app.</string>
+    <string name="wizard_maker_vivo">Funtouch OS / OriginOS: en i Manager › Gestor de apps › Inicio automático, activa UltimateTasks; en Batería › Consumo en segundo plano, permítele un consumo alto. Después, en Recientes, bloquea la app para que la limpieza no la cierre.</string>
     <string name="wizard_maker_other">Si los avisos siguen llegando tarde, revisa los ajustes de batería de la app y permite que funcione en segundo plano.</string>
-    <string name="wizard_open_app_settings">Abrir ajustes de la app</string>
     <string name="wizard_alarm_recommended">Recomendado en este móvil: los avisos se programan como un despertador, que su ahorro de batería no retrasa.</string>
     <string name="wizard_done">Hecho</string>
     <string name="settings_wizard">Asistente de avisos</string>
@@ -300,4 +299,7 @@
     <string name="task_state_done">Hecha</string>
     <string name="task_state_open">Pendiente</string>
     <string name="task_priority_spoken">Prioridad %1$s. %2$s</string>
+    <string name="wizard_open_maker_settings">Abrir ajustes del móvil</string>
+    <string name="settings_unused_apps">Seguir activa aunque no se use</string>
+    <string name="wizard_unused_why">Android pausa las apps que no abres en un tiempo y les quita los permisos, también los avisos. Desactiva «Pausar actividad de la app si no se usa».</string>
 </resources>

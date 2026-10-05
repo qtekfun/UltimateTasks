@@ -88,7 +88,7 @@ class ReminderReceiver : BroadcastReceiver() {
     ).format(due.atZone(ZoneId.systemDefault()))
 
     companion object {
-        private const val CHANNEL = "reminders"
+        const val CHANNEL = "reminders"
         private const val GROUP = "reminders"
         private const val EXTRA_TITLE = "title"
         private const val EXTRA_LIST = "list"
