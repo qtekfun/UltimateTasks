@@ -99,14 +99,15 @@ Hoja/pantalla con, en este orden:
   - Alarmas exactas reprogramadas en arranque, cambio de hora/zona, actualización de la app y tras cada sync.
   - **Modo alarma** opcional (`setAlarmClock`) en Ajustes para móviles que retrasan alarmas.
   - Canal de notificación de importancia alta; agrupación cuando hay varias.
-  - Botón "Enviar aviso de prueba" en Ajustes.
+  - **Aviso de prueba real (T33):** el botón programa una alarma a +1 min por el mismo camino que los avisos (exacta o de reloj según el modo alarma) y dice si llegó a tiempo (≤ 1 min), con cuántos minutos de retraso o que no llegó (a los 10 min).
   - **Avisos perdidos (T32):** algunas ROM (ColorOS, MIUI, OriginOS, MagicOS) congelan o detienen la app y sus alarmas se pierden. La app guarda qué avisos se mostraron (id + hora del aviso) y, al arrancar, al terminar cada sync y al recibir cualquier aviso, muestra los que ya pasaron sin mostrarse dentro de una ventana configurable (6 h, **24 h** por defecto, 48 h o nunca), con el texto «No llegó a su hora (10:30)». La primera vez tras actualizar solo registra lo pasado, sin mostrarlo.
+  - **Latido (T33):** mientras quede algún aviso futuro, una alarma silenciosa cada 30 min recupera los perdidos y vuelve a programar todos los avisos, por si la ROM los tiró al congelar la app. Se cancela sin avisos pendientes o al cerrar sesión, y vuelve tras reiniciar (el arranque replanifica). Es una alarma exacta (`setExactAndAllowWhileIdle`), no de reloj: no aparece como «próxima alarma» en la pantalla de bloqueo.
 - Lógica de planificación pura en `domain`, **100% de cobertura** (planificador y selección de avisos perdidos).
 
 #### Diagnóstico en el móvil
 Con el móvil conectado por adb:
 - `adb shell dumpsys package com.qtekfun.ultimatetasks | grep stopped`: `stopped=true` significa que el sistema (o el usuario) forzó la detención; Android borra entonces **todas** las alarmas de la app hasta que se vuelva a abrir. `stopped=false` con avisos que no llegan apunta a congelación o retrasos de batería.
-- `adb shell dumpsys alarm | grep com.qtekfun.ultimatetasks`: las alarmas programadas ahora mismo (una por aviso futuro). Si no sale nada y hay avisos pendientes, se perdieron.
+- `adb shell dumpsys alarm | grep com.qtekfun.ultimatetasks`: las alarmas programadas ahora mismo (una por aviso futuro, más la del latido, `HEARTBEAT`). Si no sale nada y hay avisos pendientes, se perdieron.
 - `adb shell dumpsys deviceidle whitelist`: si aparece `com.qtekfun.ultimatetasks`, la app está exenta de la optimización de batería (Doze).
 
 ### RF-12 Búsqueda
@@ -211,3 +212,4 @@ Pixel 8 (1080×2400, Android 17), build release minificada firmada con la clave 
   - Las listas de tareas normales admiten `sync-collection` (token de sincronización) y escritura.
   - Las listas que publica Deck ("Deck: <tablero>") son de **solo lectura** por CalDAV, responden `sync-collection` con HTTP 415 y no envían `getctag`: se descargan enteras (solo ETags y las tareas cambiadas) en cada sync. La app las muestra como listas de solo lectura (RF-08).
   - El parser DOM de Android no admite la opción `disallow-doctype-decl`; se activa solo donde existe (no resuelve entidades externas en ningún caso).
+- **Latido de avisos (T33, 2026-10-05):** alarma exacta (`setExactAndAllowWhileIdle`) cada 30 min solo mientras haya avisos pendientes. No se usa `setAlarmClock` porque mostraría el reloj y la «próxima alarma» en la pantalla de bloqueo para algo que no avisa de nada; Doze deja pasar una alarma exacta cada ~9 min, de sobra para 30 min. Los avisos reales siguen con `setAlarmClock` en el modo alarma. Límite conocido: si la ROM fuerza la detención (`stopped=true`), Android borra todas las alarmas, también el latido; ahí ayudan la recuperación al volver a abrir (T32) y el modo robusto (T34).

@@ -67,5 +67,6 @@ Reglas: una tarea cada vez, en su rama `feat/<tarea>`, con `./gradlew check` en 
 Móviles que matan las apps en segundo plano (ColorOS, MIUI, OriginOS, MagicOS). Solo local: sin servidores ni push.
 - [x] **T32 Recuperación de avisos vencidos** (RF-10): registrar qué avisos se mostraron y mostrar los que pasaron sin mostrarse (ventana configurable, por defecto 24 h), al arrancar, tras cada sync y al recibir cualquier aviso.
   - *Resultado:* `MissedReminders` y `ReminderPlanner.planAll` en domain (100 %), tabla `shown_reminder` (Room v7), notificación «No llegó a su hora», ajuste «Recuperar avisos perdidos» incluido en la copia; sin avalancha al actualizar.
-- [ ] **T33 Alarma de latido y aviso de prueba real**: alarma periódica (30 min, solo con avisos pendientes) que replanifica y recupera sin notificar; el aviso de prueba programa una alarma real a +1 min y muestra si llegó a tiempo.
+- [x] **T33 Alarma de latido y aviso de prueba real**: alarma periódica (30 min, solo con avisos pendientes) que replanifica y recupera sin notificar; el aviso de prueba programa una alarma real a +1 min y muestra si llegó a tiempo.
+  - *Resultado:* latido exacto cada 30 min con avisos pendientes (recupera y replanifica, se cancela sin avisos o al cerrar sesión, sin icono de alarma); aviso de prueba real a +1 min que informa de si llegó a tiempo.
 - [ ] **T34 Modo robusto**: servicio en primer plano `specialUse` opcional (recomendado en móviles con ROM agresiva) que mantiene vivo el proceso y ejecuta el latido; arranque en boot si está activo; explicado en `PRIVACY.md`.

@@ -39,7 +39,6 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.data.settings.AppSettings
 import com.qtekfun.ultimatetasks.domain.reminders.PhoneMaker
-import com.qtekfun.ultimatetasks.notify.ReminderReceiver
 import com.qtekfun.ultimatetasks.ui.detail.Choice
 import com.qtekfun.ultimatetasks.ui.detail.DetailCard
 import java.time.LocalTime
@@ -88,12 +87,7 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
             Text(stringResource(R.string.settings_wizard))
         }
         HorizontalDivider(Modifier.padding(start = 16.dp))
-        val testTitle = stringResource(R.string.settings_test_title)
-        OutlinedButton(onClick = {
-            ReminderReceiver.test(context, testTitle)
-        }, modifier = Modifier.padding(16.dp)) {
-            Text(stringResource(R.string.settings_test))
-        }
+        TestReminderButton(Modifier.padding(16.dp))
     }
 }
 

@@ -16,9 +16,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Keeps the alarms in step with the tasks, snoozes and settings (RF-10): any change (sync,
@@ -36,6 +38,9 @@ class ReminderCoordinator @Inject constructor(
 ) {
     private val dao = database.reminderDao()
     private val ticks = MutableStateFlow(0)
+
+    /** How many plans were set, so [replan] knows when its own is done. */
+    private val plans = MutableStateFlow(0)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun start(scope: CoroutineScope) {
@@ -64,11 +69,28 @@ class ReminderCoordinator @Inject constructor(
                         }
                     }
                 }
-                .collect { (reminders, alarmClock) -> scheduler.schedule(reminders, alarmClock) }
+                .collect { (reminders, alarmClock) ->
+                    scheduler.schedule(reminders, alarmClock)
+                    plans.value++
+                }
         }
     }
 
     fun refresh() {
         ticks.value++
+    }
+
+    /**
+     * Plans again and waits until the alarms are set, for callers whose process may end right
+     * after (an alarm's receiver). Gives up after a few seconds: the next beat retries.
+     */
+    suspend fun replan() {
+        val before = plans.value
+        refresh()
+        withTimeoutOrNull(REPLAN_TIMEOUT_MS) { plans.first { it > before } }
+    }
+
+    private companion object {
+        const val REPLAN_TIMEOUT_MS = 5_000L
     }
 }

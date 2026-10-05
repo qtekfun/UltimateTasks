@@ -181,7 +181,7 @@
     <string name="settings_alarm_mode">Modo alarma</string>
     <string name="settings_alarm_mode_hint">Los avisos se programan como un despertador, así ningún ahorro de batería puede retrasarlos. Muestra el icono de alarma en la barra de estado.</string>
     <string name="settings_all_day_hour">Las tareas de todo el día avisan a las</string>
-    <string name="settings_test">Enviar un aviso de prueba</string>
+    <string name="settings_test">Probar un aviso (llega en 1 minuto)</string>
     <string name="settings_test_title">Aviso de prueba</string>
     <string name="reminder_channel">Avisos</string>
     <string name="reminder_text">%1$s · %2$s</string>
@@ -310,5 +310,12 @@
         <item quantity="one">Última %d hora</item>
         <item quantity="other">Últimas %d horas</item>
         <item quantity="many">Últimas %d horas</item>
+    </plurals>
+    <string name="test_waiting">Programado para las %1$s. Puedes salir de la app y esperarlo…</string>
+    <string name="test_on_time">Llegó a las %1$s, a tiempo.</string>
+    <string name="test_missing">No llegó (tocaba a las %1$s). Revisa los pasos de arriba.</string>
+    <plurals name="test_late">
+        <item quantity="one">Llegó a las %1$s, con %2$d minuto de retraso.</item>
+        <item quantity="other">Llegó a las %1$s, con %2$d minutos de retraso.</item>
     </plurals>
 </resources>

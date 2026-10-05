@@ -37,7 +37,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.domain.reminders.PhoneMaker
-import com.qtekfun.ultimatetasks.notify.ReminderReceiver
 import com.qtekfun.ultimatetasks.ui.detail.DetailCard
 
 /**
@@ -80,12 +79,7 @@ fun ReliabilityWizardScreen(onDone: () -> Unit, viewModel: SettingsViewModel = v
                     viewModel::setAlarmClock
                 )
             }
-            val testTitle = stringResource(R.string.settings_test_title)
-            OutlinedButton(onClick = {
-                ReminderReceiver.test(context, testTitle)
-            }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.settings_test))
-            }
+            TestReminderButton()
             Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.wizard_done))
             }
