@@ -8,21 +8,41 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Alarms do not survive a restart or an update, and change meaning with the clock or the time
- * zone (RF-10). Receiving any of these starts the app, which plans every reminder again.
+ * zone (RF-10). Receiving any of these starts the app, which plans every reminder again, and
+ * after a restart or an update starts the robust mode's service if it is on.
  */
 @AndroidEntryPoint
 class BootReceiver : BroadcastReceiver() {
     @Inject
     lateinit var coordinator: ReminderCoordinator
 
+    @Inject
+    lateinit var keepAlive: KeepAliveController
+
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action in ACTIONS) coordinator.refresh()
+        if (intent.action !in ACTIONS) return
+        coordinator.refresh()
+        // Android lets apps start a foreground service from these two broadcasts only.
+        if (intent.action in SERVICE_ACTIONS) {
+            val result = goAsync()
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    if (keepAlive.wanted()) KeepAliveService.start(context)
+                } finally {
+                    result.finish()
+                }
+            }
+        }
     }
 
     private companion object {
+        val SERVICE_ACTIONS = setOf(Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED)
         val ACTIONS = setOf(
             Intent.ACTION_BOOT_COMPLETED,
             Intent.ACTION_MY_PACKAGE_REPLACED,
