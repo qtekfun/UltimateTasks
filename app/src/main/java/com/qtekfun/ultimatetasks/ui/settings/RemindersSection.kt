@@ -67,18 +67,7 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             HorizontalDivider(Modifier.padding(start = 16.dp))
-            StatusRow(stringResource(R.string.settings_unused_apps), unused) {
-                PhoneSettings.askUnusedAppsExemption(context)
-            }
-            // The switch is on the app's info page, which says nothing about why it matters.
-            if (!unused) {
-                Text(
-                    stringResource(R.string.wizard_unused_why),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
-                )
-            }
+            UnusedAppsRow(unused)
         }
         HorizontalDivider(Modifier.padding(start = 16.dp))
         SwitchSetting(
@@ -113,6 +102,23 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
         }, modifier = Modifier.padding(16.dp)) {
             Text(stringResource(R.string.settings_test))
         }
+    }
+}
+
+/** Android 11+ pauses unused apps; the switch is on the app's info page, which explains nothing. */
+@Composable
+private fun UnusedAppsRow(exempt: Boolean) {
+    val context = LocalContext.current
+    StatusRow(stringResource(R.string.settings_unused_apps), exempt) {
+        PhoneSettings.askUnusedAppsExemption(context)
+    }
+    if (!exempt) {
+        Text(
+            stringResource(R.string.wizard_unused_why),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 12.dp)
+        )
     }
 }
 
