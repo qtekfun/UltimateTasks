@@ -77,6 +77,8 @@ fun RemindersSection(settings: AppSettings, viewModel: SettingsViewModel, onWiza
             viewModel::setAlarmClock
         )
         HorizontalDivider(Modifier.padding(start = 16.dp))
+        RobustModeSetting(settings.robustMode, viewModel::setRobustMode)
+        HorizontalDivider(Modifier.padding(start = 16.dp))
         Row(
             Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(start = 16.dp),
             verticalAlignment = Alignment.CenterVertically
