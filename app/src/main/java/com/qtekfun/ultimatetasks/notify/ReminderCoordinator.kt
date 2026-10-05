@@ -31,6 +31,7 @@ class ReminderCoordinator @Inject constructor(
     database: UltimateTasksDatabase,
     private val settings: SettingsRepository,
     private val scheduler: ReminderScheduler,
+    private val recovery: MissedReminderRecovery,
     private val clock: Clock
 ) {
     private val dao = database.reminderDao()
@@ -38,6 +39,8 @@ class ReminderCoordinator @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun start(scope: CoroutineScope) {
+        // Whatever the system kept from showing while the app was stopped (T32).
+        scope.launch { recovery.recover() }
         scope.launch {
             combine(session.activeAccount, settings.settings, ticks) { account, settings, _ ->
                 account to
