@@ -3,6 +3,7 @@
 
 package com.qtekfun.ultimatetasks.ui.detail
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -75,10 +78,12 @@ fun TaskDetailScreen(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow
     ) { padding ->
         val task = state.task ?: return@Scaffold
+        val focusManager = LocalFocusManager.current
+        // A tap on an empty spot ends typing; a half-typed subtask is then kept.
         Column(
-            Modifier.padding(
-                padding
-            ).fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
+            Modifier.padding(padding).fillMaxSize()
+                .pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } }
+                .verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             ConflictCards(task, viewModel)

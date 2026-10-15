@@ -19,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -27,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.qtekfun.ultimatetasks.R
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
+import com.qtekfun.ultimatetasks.ui.components.rememberCommitOnLeave
 import com.qtekfun.ultimatetasks.ui.theme.ListColors
 
 /** The subtasks of the task, checkable, and a field to add more (RF-07). */
@@ -61,22 +63,25 @@ fun SubtasksSection(task: TaskEntity, state: TaskDetailState, viewModel: TaskDet
 @Composable
 private fun NewSubtask(onAdd: (String) -> Unit) {
     var text by rememberSaveable { mutableStateOf("") }
+    val add = {
+        if (text.isNotBlank()) onAdd(text)
+        text = ""
+    }
+    // A tap elsewhere keeps what was typed, as Enter would.
+    val onLeave = rememberCommitOnLeave({ text }, add)
     TextField(
         value = text,
         onValueChange = { text = it },
         singleLine = true,
         placeholder = { Text(stringResource(R.string.add_subtask)) },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = {
-            if (text.isNotBlank()) onAdd(text)
-            text = ""
-        }),
+        keyboardActions = KeyboardActions(onDone = { add() }),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().onFocusChanged(onLeave)
     )
 }
