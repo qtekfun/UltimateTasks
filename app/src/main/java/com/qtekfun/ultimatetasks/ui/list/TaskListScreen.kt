@@ -3,6 +3,7 @@
 
 package com.qtekfun.ultimatetasks.ui.list
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -61,6 +65,7 @@ import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.Subtasks
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
+import com.qtekfun.ultimatetasks.ui.components.rememberCommitOnLeave
 import com.qtekfun.ultimatetasks.ui.lists.ListMenuItems
 import com.qtekfun.ultimatetasks.ui.lists.ListMessages
 import com.qtekfun.ultimatetasks.ui.lists.ListsViewModel
@@ -180,7 +185,13 @@ private fun TaskListContent(
 ) {
     val color = colorOf(source, state.list?.color)
     val reordering by viewModel.ordering.reordering.collectAsStateWithLifecycle()
-    LazyColumn(Modifier.fillMaxSize()) {
+    val focusManager = LocalFocusManager.current
+    // A tap on an empty spot ends typing; the new row then keeps its text.
+    LazyColumn(
+        Modifier.fillMaxSize().pointerInput(Unit) {
+            detectTapGestures { focusManager.clearFocus() }
+        }
+    ) {
         item { ListTitle(titleOf(source, state.list?.name)) }
         state.groups.forEach { group ->
             if (group.key != GroupKey.None) {
@@ -232,12 +243,21 @@ private fun TaskListContent(
     }
 }
 
-/** Typing a title and pressing Enter adds it and opens a new empty row, as in Apple Reminders. */
+/**
+ * Typing a title and pressing Enter adds it and opens a new empty row; tapping elsewhere adds it
+ * and ends, as in Apple Reminders.
+ */
 @Composable
 private fun NewTaskRow(color: Color, onAdd: (String) -> Unit, onDone: () -> Unit) {
     var text by rememberSaveable { mutableStateOf("") }
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { focus.requestFocus() }
+    // A tap elsewhere keeps what was typed, as Enter would, and ends adding.
+    val onLeave = rememberCommitOnLeave({ text }) {
+        if (text.isNotBlank()) onAdd(text)
+        text = ""
+        onDone()
+    }
     Row(verticalAlignment = Alignment.CenterVertically) {
         RoundCheckbox(
             checked = false,
@@ -265,7 +285,7 @@ private fun NewTaskRow(color: Color, onAdd: (String) -> Unit, onDone: () -> Unit
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
-            modifier = Modifier.weight(1f).focusRequester(focus)
+            modifier = Modifier.weight(1f).focusRequester(focus).onFocusChanged(onLeave)
         )
     }
 }
