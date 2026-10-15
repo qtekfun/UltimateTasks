@@ -1,0 +1,1 @@
+A new task or subtask is kept when you tap elsewhere or leave the screen, without pressing Enter.

@@ -9,6 +9,13 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+## [1.0.0-rc.3] - 2026-10-15
+
+### Changed
+
+- A new task or subtask is kept when you tap elsewhere or leave the screen, as Enter does: no need to press Enter.
+- Gradle 9.8.1 and Kotlin 2.4.21.
+
 ## [1.0.0-rc.2] - 2026-10-05
 
 Second release candidate: reminders that survive phones which stop apps in the background.
@@ -44,6 +51,7 @@ First release candidate of 1.0.0.
 - Accessibility: TalkBack reads each task as one element with its actions; layouts hold at 200% font size.
 - English and Spanish.
 
-[Unreleased]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.2...HEAD
+[Unreleased]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.3...HEAD
+[1.0.0-rc.3]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.2...v1.0.0-rc.3
 [1.0.0-rc.2]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.1...v1.0.0-rc.2
 [1.0.0-rc.1]: https://github.com/qtekfun/UltimateTasks/releases/tag/v1.0.0-rc.1
