@@ -24,6 +24,7 @@ UltimateTasks is a client for the tasks in your own Nextcloud. It has no servers
 | Permission | Why |
 |---|---|
 | Internet (`INTERNET`) | To talk to your Nextcloud server. |
+| Local network (`ACCESS_LOCAL_NETWORK`, Android 17+) | Only if your server is on your local network, for example a home server reached through split DNS: without it Android blocks the connection. Asked only in that case, naming your server, and used for nothing but talking to it. |
 | Notifications (`POST_NOTIFICATIONS`) | Task reminders. Asked by the reminders wizard or from Settings → Reminders (Android 13+). |
 | Exact alarms (`USE_EXACT_ALARM`, `SCHEDULE_EXACT_ALARM` on Android 12) | So reminders arrive at the time you set, not minutes later. On Android 13+ it is granted at install because reminders are the app's purpose; on Android 12 you allow it in the system settings. |
 | Alarm clock mode (optional setting) | Some phones delay even exact alarms to save battery. In this mode reminders are set like an alarm clock, which no battery saver delays; Android then shows the alarm icon while one is pending. |
@@ -58,6 +59,7 @@ UltimateTasks es un cliente para las tareas de tu propio Nextcloud. No tiene ser
 | Permiso | Por qué |
 |---|---|
 | Internet (`INTERNET`) | Para hablar con tu servidor Nextcloud. |
+| Red local (`ACCESS_LOCAL_NETWORK`, Android 17+) | Solo si tu servidor está en tu red local, por ejemplo un servidor en casa al que llegas con DNS dividido: sin él, Android bloquea la conexión. Solo se pide en ese caso, con el nombre de tu servidor, y no se usa para nada más que hablar con él. |
 | Notificaciones (`POST_NOTIFICATIONS`) | Avisos de tareas. Se piden desde el asistente de avisos o en Ajustes → Avisos (Android 13+). |
 | Alarmas exactas (`USE_EXACT_ALARM`, `SCHEDULE_EXACT_ALARM` en Android 12) | Para que los avisos lleguen a la hora que pusiste y no minutos después. En Android 13+ se concede al instalar porque los avisos son el propósito de la app; en Android 12 lo permites en los ajustes del sistema. |
 | Modo alarma (ajuste opcional) | Algunos móviles retrasan incluso las alarmas exactas para ahorrar batería. En este modo los avisos se programan como un despertador, que ningún ahorro de batería retrasa; Android muestra entonces el icono de alarma mientras haya uno pendiente. |
