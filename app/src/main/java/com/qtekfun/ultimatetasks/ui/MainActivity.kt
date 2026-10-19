@@ -17,7 +17,10 @@ import com.qtekfun.ultimatetasks.data.settings.AppSettings
 import com.qtekfun.ultimatetasks.data.settings.OnboardingPrefs
 import com.qtekfun.ultimatetasks.data.settings.SettingsRepository
 import com.qtekfun.ultimatetasks.notify.TaskLink
+import com.qtekfun.ultimatetasks.ui.localnet.LocalNetwork
+import com.qtekfun.ultimatetasks.ui.localnet.LocalNetworkAccess
 import com.qtekfun.ultimatetasks.ui.login.LoginScreen
+import com.qtekfun.ultimatetasks.ui.login.LoginViewModel
 import com.qtekfun.ultimatetasks.ui.navigation.AppNavigation
 import com.qtekfun.ultimatetasks.ui.session.SessionViewModel
 import com.qtekfun.ultimatetasks.ui.theme.ThemeOptions
@@ -48,11 +51,13 @@ class MainActivity : ComponentActivity() {
                 val sessionViewModel: SessionViewModel = viewModel()
                 val session by sessionViewModel.state.collectAsStateWithLifecycle()
                 val account = session.account
+                val loginViewModel: LoginViewModel = viewModel()
+                val login by loginViewModel.state.collectAsStateWithLifecycle()
                 when {
                     // Nothing is drawn until stored credentials are loaded (a few milliseconds).
                     !session.ready -> Unit
 
-                    account == null -> LoginScreen()
+                    account == null -> LoginScreen(viewModel = loginViewModel)
 
                     else -> AppNavigation(
                         accountName = account.displayName,
@@ -62,6 +67,14 @@ class MainActivity : ComponentActivity() {
                         onboarding = onboarding
                     )
                 }
+                // The server the app talks to: the account's, or, while signing in, the polled one.
+                val host = when {
+                    !session.ready -> null
+                    account != null -> LocalNetwork.hostOf(account.serverUrl)
+                    login.step != null -> LocalNetwork.hostOf(login.server)
+                    else -> null
+                }
+                LocalNetworkAccess(viewModel(), host)
             }
         }
     }
