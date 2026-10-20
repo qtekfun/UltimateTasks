@@ -9,6 +9,13 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+## [1.0.0-rc.5] - 2026-10-20
+
+Sync right away once the local network is allowed.
+
+### Fixed
+- After you allowed local network access, or after a run of failed syncs, opening the app or pulling to refresh could do nothing for a long while (up to hours), because the app waited for the retry delay of the failed syncs. Now it syncs at once.
+
 ## [1.0.0-rc.4] - 2026-10-19
 
 Reach a server on your local network on Android 17.
@@ -58,7 +65,8 @@ First release candidate of 1.0.0.
 - Accessibility: TalkBack reads each task as one element with its actions; layouts hold at 200% font size.
 - English and Spanish.
 
-[Unreleased]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.4...HEAD
+[Unreleased]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.5...HEAD
+[1.0.0-rc.5]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.4...v1.0.0-rc.5
 [1.0.0-rc.4]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.3...v1.0.0-rc.4
 [1.0.0-rc.3]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.2...v1.0.0-rc.3
 [1.0.0-rc.2]: https://github.com/qtekfun/UltimateTasks/compare/v1.0.0-rc.1...v1.0.0-rc.2
