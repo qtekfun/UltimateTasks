@@ -7,8 +7,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import com.qtekfun.ultimatetasks.sync.engine.SyncScheduler
 import com.qtekfun.ultimatetasks.ui.localnet.HostResolver
 import com.qtekfun.ultimatetasks.ui.localnet.LocalNetwork
+import com.qtekfun.ultimatetasks.ui.localnet.LocalNetworkGranted
 import com.qtekfun.ultimatetasks.ui.localnet.LocalNetworkPermission
 import com.qtekfun.ultimatetasks.ui.localnet.SystemHostResolver
 import dagger.Module
@@ -32,4 +34,9 @@ object LocalNetworkModule {
 
     @Provides
     fun resolver(): HostResolver = SystemHostResolver()
+
+    /** Once the local network is allowed again, sync at once instead of after the retry delay. */
+    @Provides
+    fun granted(scheduler: SyncScheduler): LocalNetworkGranted =
+        LocalNetworkGranted { scheduler.requestSync() }
 }
