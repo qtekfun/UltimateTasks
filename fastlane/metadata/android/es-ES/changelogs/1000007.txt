@@ -1,0 +1,1 @@
+En plegables y tablets, los botones Nueva tarea y Añadir lista ya no quedan ocultos tras el dock o la barra de tareas.
