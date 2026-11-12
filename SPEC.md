@@ -59,6 +59,7 @@ Hoja/pantalla con, en este orden:
 - **Título** y **notas** (texto plano multilínea; los enlaces son tocables).
 - **URL** (propiedad `URL`).
 - **Fecha** (interruptor) y **Hora** (interruptor; sin hora = todo el día, `DUE;VALUE=DATE`).
+- **Zona horaria** (solo con hora): por defecto **flotante** (`DUE` sin `TZID`: "a las 9:00 donde estés", sigue al dispositivo en viajes y cambios de horario), como Recordatorios de Apple. Se puede fijar una zona (IANA o UTC) conservando la hora escrita; si difiere de la del dispositivo se muestra también la hora equivalente local. Los `TZID` de Windows/Outlook más comunes se leen como su zona IANA y se conservan tal cual al escribir.
 - **Aviso anticipado**: ninguno, 5/15/30 min, 1 h, 1 día, 1 semana antes, o personalizado → `VALARM` con `TRIGGER` relativo a `DUE`.
 - **Repetir** (RF-06).
 - **Prioridad**: ninguna / baja / media / alta → `PRIORITY` 0 / 9 / 5 / 1 (mismo mapeo que Apple y Nextcloud Tasks).
@@ -66,6 +67,8 @@ Hoja/pantalla con, en este orden:
 - **Lista** (mover a otra lista = mover el recurso CalDAV).
 - **Subtareas** (RF-07).
 - Guardado automático; cambios offline van a la cola.
+- Al crear una tarea desde la fila rápida (Enter) se abre su detalle para completar el resto.
+- Las vistas inteligentes, los contadores y los avisos se recalculan al cambiar de día, de hora o de zona del dispositivo.
 
 ### RF-06 Recurrencia
 - Presets: diaria, entre semana, semanal, cada 2 semanas, mensual, cada 3 meses, cada 6 meses, anual.

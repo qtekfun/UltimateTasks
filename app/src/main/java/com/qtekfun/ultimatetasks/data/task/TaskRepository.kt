@@ -8,6 +8,8 @@ import com.qtekfun.ultimatetasks.data.local.UltimateTasksDatabase
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.local.model.SmartCounts
+import com.qtekfun.ultimatetasks.data.time.DayZone
+import com.qtekfun.ultimatetasks.data.time.LocalDay
 import com.qtekfun.ultimatetasks.domain.recurrence.RepeatingTasks
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
@@ -45,7 +47,8 @@ class TaskRepository @Inject constructor(
     private val session: AccountSession,
     private val queue: OperationQueue,
     private val scheduler: SyncScheduler,
-    private val clock: Clock
+    private val clock: Clock,
+    private val localDay: LocalDay
 ) {
     private val tasks = database.taskDao()
     private val smart = database.smartListDao()
@@ -53,37 +56,42 @@ class TaskRepository @Inject constructor(
     private val accountId: Flow<Long> =
         session.activeAccount.filterNotNull().map { it.id }.distinctUntilChanged()
 
-    fun observeHome(): Flow<HomeData> = accountId.flatMapLatest { id ->
-        combine(
-            smart.observeCounts(id, tomorrow()),
-            database.taskListDao().observeAll(id),
-            smart.observeOpenCounts(id)
-        ) { counts, lists, open ->
-            val byList = open.associate { it.listHref to it.open }
-            HomeData(
-                counts,
-                lists.filter {
-                    it.visible
-                }.map { ListSummary(it, byList[it.href] ?: 0) }
-            )
+    /** The device's date and zone, re-emitted when either changes. */
+    fun localDay(): Flow<DayZone> = localDay.changes
+
+    fun observeHome(): Flow<HomeData> =
+        combine(accountId, localDay.changes, ::Pair).flatMapLatest { (id, day) ->
+            combine(
+                smart.observeCounts(id, tomorrow(day)),
+                database.taskListDao().observeAll(id),
+                smart.observeOpenCounts(id)
+            ) { counts, lists, open ->
+                val byList = open.associate { it.listHref to it.open }
+                HomeData(
+                    counts,
+                    lists.filter {
+                        it.visible
+                    }.map { ListSummary(it, byList[it.href] ?: 0) }
+                )
+            }
         }
-    }
 
     fun observeLists(): Flow<List<TaskListEntity>> =
         accountId.flatMapLatest { database.taskListDao().observeAll(it) }
 
-    fun observeTasks(source: TaskSource): Flow<List<TaskEntity>> = accountId.flatMapLatest { id ->
-        when (source) {
-            is TaskSource.List -> tasks.observeList(id, source.href)
+    fun observeTasks(source: TaskSource): Flow<List<TaskEntity>> =
+        combine(accountId, localDay.changes, ::Pair).flatMapLatest { (id, day) ->
+            when (source) {
+                is TaskSource.List -> tasks.observeList(id, source.href)
 
-            is TaskSource.Smart -> when (source.kind) {
-                SmartList.TODAY -> smart.observeToday(id, tomorrow())
-                SmartList.SCHEDULED -> smart.observeScheduled(id)
-                SmartList.ALL -> smart.observeAll(id)
-                SmartList.COMPLETED -> smart.observeCompleted(id)
+                is TaskSource.Smart -> when (source.kind) {
+                    SmartList.TODAY -> smart.observeToday(id, tomorrow(day))
+                    SmartList.SCHEDULED -> smart.observeScheduled(id)
+                    SmartList.ALL -> smart.observeAll(id)
+                    SmartList.COMPLETED -> smart.observeCompleted(id)
+                }
             }
         }
-    }
 
     /**
      * Marks a task done or open (RF-04). A repeating task is not completed but moved to its
@@ -182,6 +190,5 @@ class TaskRepository @Inject constructor(
         )
     }
 
-    private fun tomorrow(): String =
-        LocalDate.now(clock.withZone(ZoneId.systemDefault())).plusDays(1).toString()
+    private fun tomorrow(day: DayZone): String = day.date.plusDays(1).toString()
 }

@@ -160,6 +160,8 @@ class UiTests {
         compose.waitUntil(TIMEOUT) { task("Call Ana") != null }
         // The change is saved first, then queued.
         compose.waitUntil(TIMEOUT) { queued() == listOf(QueuedOperation.CreateTask) }
+        // Enter also opens the new task's detail, to fill in the rest.
+        waitForText(text(R.string.field_time))
     }
 
     @Test

@@ -31,6 +31,16 @@ class IcsDateTest {
     }
 
     @Test
+    fun `Windows zone names are read as their IANA zone and kept as written`() {
+        val date = read("DUE;TZID=Romance Standard Time:20261005T093000")!!
+        assertEquals("Romance Standard Time", date.zone)
+        assertEquals(Instant.parse("2026-10-05T07:30:00Z"), date.toInstant(ZoneOffset.UTC))
+        assertEquals(ZoneId.of("Europe/Paris"), IcsDate.zoneOf("Romance Standard Time"))
+        assertEquals(madrid, IcsDate.zoneOf("Europe/Madrid"))
+        assertNull(IcsDate.zoneOf("Made Up Standard Time"))
+    }
+
+    @Test
     fun `invalid values are null`() {
         assertNull(read("DUE:tomorrow"))
         assertNull(read("DUE:20261345"))

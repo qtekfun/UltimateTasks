@@ -10,15 +10,16 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.settings.ListSortPrefs
 import com.qtekfun.ultimatetasks.data.task.TaskEditor
 import com.qtekfun.ultimatetasks.data.task.TaskRepository
+import com.qtekfun.ultimatetasks.data.time.DayZone
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskGroup
 import com.qtekfun.ultimatetasks.domain.task.TaskGroups
+import com.qtekfun.ultimatetasks.domain.task.TaskSort
 import com.qtekfun.ultimatetasks.domain.task.TaskSorting
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.sync.engine.SyncScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Instant
-import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -75,8 +76,9 @@ class TaskListViewModel @Inject constructor(
             repository.observeLists(),
             showCompleted,
             lingering,
-            combine(lastCompleted, collapsed, ordering.sort, ::Triple)
-        ) { unsorted, lists, showDone, kept, (last, folded, sort) ->
+            combine(lastCompleted, collapsed, ordering.sort, repository.localDay(), ::Extras)
+        ) { unsorted, lists, showDone, kept, extras ->
+            val (last, folded, sort) = extras
             val tasks = if (current is TaskSource.List) {
                 TaskSorting.sort(
                     unsorted,
@@ -108,7 +110,7 @@ class TaskListViewModel @Inject constructor(
                         it.href
                     },
                     Instant.now(),
-                    ZoneId.systemDefault()
+                    extras.day.zone
                 )
             )
         }
@@ -157,12 +159,20 @@ class TaskListViewModel @Inject constructor(
         lastCompleted.value = null
     }
 
-    fun add(title: String) {
+    /** Adds a task to the open list; [onCreated] gets its id once stored. */
+    fun add(title: String, onCreated: (Long) -> Unit = {}) {
         val list = (source.value as? TaskSource.List)?.href ?: return
-        viewModelScope.launch { repository.create(list, title) }
+        viewModelScope.launch { repository.create(list, title)?.let(onCreated) }
     }
 
     fun refresh() = scheduler.requestSync()
+
+    private data class Extras(
+        val last: TaskEntity?,
+        val folded: Set<String>,
+        val sort: TaskSort,
+        val day: DayZone
+    )
 
     private companion object {
         const val STOP_MS = 5_000L

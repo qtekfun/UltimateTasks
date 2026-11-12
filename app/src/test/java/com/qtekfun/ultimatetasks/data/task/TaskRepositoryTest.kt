@@ -10,6 +10,8 @@ import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import com.qtekfun.ultimatetasks.data.local.entity.TaskListEntity
 import com.qtekfun.ultimatetasks.data.local.inMemoryDatabase
 import com.qtekfun.ultimatetasks.data.local.model.SmartCounts
+import com.qtekfun.ultimatetasks.data.time.DayZone
+import com.qtekfun.ultimatetasks.data.time.LocalDay
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.sync.conflict.TaskField
@@ -38,10 +40,20 @@ class TaskRepositoryTest {
     private val scheduler = mockk<SyncScheduler>(relaxed = true)
     private val account = MutableStateFlow<AccountEntity?>(null)
     private val session = mockk<AccountSession> { every { activeAccount } returns account }
-    private val repository = TaskRepository(db, session, queue, scheduler, clock)
 
     // The test clock ignores zones and reads as UTC.
     private val today = LocalDate.ofInstant(clock.now, ZoneOffset.UTC)
+    private val day = MutableStateFlow(DayZone(today, ZoneOffset.UTC))
+    private val repository = TaskRepository(
+        db,
+        session,
+        queue,
+        scheduler,
+        clock,
+        object : LocalDay {
+            override val changes = day
+        }
+    )
 
     @AfterEach
     fun close() = db.close()
@@ -93,6 +105,24 @@ class TaskRepositoryTest {
             val home = awaitItem()
             assertEquals(SmartCounts(today = 2, scheduled = 3, all = 4, completed = 1), home.counts)
             assertEquals(listOf("A" to 2, "B" to 2), home.lists.map { it.list.name to it.open })
+        }
+    }
+
+    @Test
+    fun `today and the home counts follow the day when it changes`() = runTest {
+        setUp()
+        repository.observeTasks(TaskSource.Smart(SmartList.TODAY)).test {
+            assertEquals(listOf("overdue", "today"), awaitItem().map { it.uid })
+            day.value = DayZone(today.plusDays(5), ZoneOffset.UTC)
+            assertEquals(listOf("overdue", "today", "later"), awaitItem().map { it.uid })
+        }
+        repository.observeHome().test {
+            assertEquals(3, awaitItem().counts.today)
+            day.value = DayZone(today, ZoneOffset.UTC)
+            assertEquals(2, awaitItem().counts.today)
+        }
+        repository.localDay().test {
+            assertEquals(DayZone(today, ZoneOffset.UTC), awaitItem())
         }
     }
 

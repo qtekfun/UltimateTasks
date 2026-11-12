@@ -52,6 +52,7 @@ import java.time.format.FormatStyle
 @Composable
 fun DateSection(task: TaskEntity, editable: Boolean, viewModel: TaskDetailViewModel) {
     val zone = ZoneId.systemDefault()
+    val today = LocalDate.now(zone)
     val date = DueEdits.date(task)
     val time = DueEdits.time(task)
     var pickDate by remember { mutableStateOf(false) }
@@ -63,7 +64,7 @@ fun DateSection(task: TaskEntity, editable: Boolean, viewModel: TaskDetailViewMo
             checked = date != null,
             enabled = editable,
             onChecked = { on ->
-                if (on) pickDate = true else viewModel.edit { DueEdits.withDate(it, null, zone) }
+                if (on) pickDate = true else viewModel.edit { DueEdits.withDate(it, null) }
             }
         )
         HorizontalDivider(Modifier.padding(start = 16.dp))
@@ -73,9 +74,13 @@ fun DateSection(task: TaskEntity, editable: Boolean, viewModel: TaskDetailViewMo
             checked = time != null,
             enabled = editable,
             onChecked = { on ->
-                if (on) pickTime = true else viewModel.edit { DueEdits.withTime(it, null, zone) }
+                if (on) pickTime = true else viewModel.edit { DueEdits.withTime(it, null, today) }
             }
         )
+        if (time != null) {
+            HorizontalDivider(Modifier.padding(start = 16.dp))
+            ZoneRow(task, editable, zone) { id -> viewModel.edit { DueEdits.withZone(it, id) } }
+        }
         HorizontalDivider(Modifier.padding(start = 16.dp))
         ReminderRow(
             task.reminderBefore,
@@ -87,14 +92,14 @@ fun DateSection(task: TaskEntity, editable: Boolean, viewModel: TaskDetailViewMo
     if (pickDate) {
         DueDatePicker(
             date,
-            onPick = { picked -> viewModel.edit { DueEdits.withDate(it, picked, zone) } },
+            onPick = { picked -> viewModel.edit { DueEdits.withDate(it, picked) } },
             onDismiss = { pickDate = false }
         )
     }
     if (pickTime) {
         DueTimePicker(
             time,
-            onPick = { picked -> viewModel.edit { DueEdits.withTime(it, picked, zone) } },
+            onPick = { picked -> viewModel.edit { DueEdits.withTime(it, picked, today) } },
             onDismiss = { pickTime = false }
         )
     }
@@ -205,7 +210,7 @@ private fun RepeatRow(task: TaskEntity, editable: Boolean, viewModel: TaskDetail
     val zone = ZoneId.systemDefault()
     val today = LocalDate.now(zone)
     val anchor = DueEdits.date(task) ?: today
-    val apply = { rule: String? -> viewModel.edit { RepeatEdits.withRule(it, rule, today, zone) } }
+    val apply = { rule: String? -> viewModel.edit { RepeatEdits.withRule(it, rule, today) } }
     Row(
         Modifier.fillMaxWidth().heightIn(
             min = 56.dp
