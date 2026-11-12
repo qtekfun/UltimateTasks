@@ -1,0 +1,1 @@
+Pressing Enter on a new task opens its details. Times you set are now floating by default, so they follow you when you travel, and a new Time zone row lets you pick a fixed zone. Today and the counts update when the day or time zone changes.

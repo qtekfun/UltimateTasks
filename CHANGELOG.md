@@ -9,6 +9,19 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+## [1.0.0-rc.6] - 2026-11-12
+
+Add a task and fill in its details at once, and times that follow you when you travel.
+
+### Added
+- Pressing Enter on a new task now opens its details, so you can set the date, time, reminder and the rest right away.
+- A Time zone row for tasks with a time: floating (the same time wherever you are), your device's zone, or any other zone. When the zone differs from your device's, the equivalent local time is shown too.
+
+### Changed
+- A time you set on a task is now floating by default: "9:00" stays 9:00 local when you travel to another time zone, instead of being tied to the zone you were in when you set it.
+- Today, the home counts and the list sections update when the day, the clock or the time zone changes, instead of staying out of date until you reopen the screen.
+- Time zone names written by Windows and Outlook calendars are understood.
+
 ## [1.0.0-rc.5] - 2026-10-20
 
 Sync right away once the local network is allowed.
