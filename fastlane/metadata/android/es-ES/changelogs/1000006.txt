@@ -1,0 +1,1 @@
+Al pulsar Enter en una tarea nueva se abre su detalle. Las horas que pones son ahora flotantes por defecto y te siguen cuando viajas, y una nueva fila de zona horaria permite fijar una zona. Hoy y los contadores se actualizan al cambiar el día o la zona horaria.
