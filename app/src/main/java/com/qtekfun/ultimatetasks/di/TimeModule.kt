@@ -3,6 +3,9 @@
 
 package com.qtekfun.ultimatetasks.di
 
+import com.qtekfun.ultimatetasks.data.time.LocalDay
+import com.qtekfun.ultimatetasks.data.time.SystemLocalDay
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,10 +16,15 @@ import kotlin.random.Random
 /** Time and randomness, injected so tests can fix them. */
 @Module
 @InstallIn(SingletonComponent::class)
-object TimeModule {
-    @Provides
-    fun clock(): Clock = Clock.systemUTC()
+abstract class TimeModule {
+    @Binds
+    abstract fun localDay(impl: SystemLocalDay): LocalDay
 
-    @Provides
-    fun random(): Random = Random.Default
+    companion object {
+        @Provides
+        fun clock(): Clock = Clock.systemUTC()
+
+        @Provides
+        fun random(): Random = Random.Default
+    }
 }

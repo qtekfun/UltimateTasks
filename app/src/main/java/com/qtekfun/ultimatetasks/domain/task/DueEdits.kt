@@ -3,6 +3,7 @@
 
 package com.qtekfun.ultimatetasks.domain.task
 
+import com.qtekfun.ultimatetasks.data.ical.IcsDate
 import com.qtekfun.ultimatetasks.data.local.entity.TaskEntity
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -50,7 +51,7 @@ object DueEdits {
      * floating, unknown or already in [device]'s zone (nothing to translate).
      */
     fun inDeviceZone(task: TaskEntity, device: ZoneId): LocalDateTime? {
-        val zone = task.dueZone?.let { runCatching { ZoneId.of(it) }.getOrNull() }
+        val zone = task.dueZone?.let(IcsDate::zoneOf)
         val local = task.due?.takeIf { it.length > DATE_LENGTH }?.let(LocalDateTime::parse)
         val shown = zone?.let { local?.atZone(it)?.withZoneSameInstant(device)?.toLocalDateTime() }
         return shown?.takeIf { it != local }

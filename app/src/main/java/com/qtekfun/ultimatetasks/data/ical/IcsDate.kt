@@ -19,7 +19,7 @@ data class IcsDate(val local: String, val zone: String? = null) {
 
     /** The instant this date stands for, reading floating and all-day values in [fallback]. */
     fun toInstant(fallback: ZoneId): Instant {
-        val zoneId = zone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: fallback
+        val zoneId = zone?.let(::zoneOf) ?: fallback
         return if (allDay) {
             LocalDate.parse(local).atStartOfDay(zoneId).toInstant()
         } else {
@@ -29,6 +29,31 @@ data class IcsDate(val local: String, val zone: String? = null) {
 
     companion object {
         const val UTC = "UTC"
+
+        /** Common Windows/Outlook zone names, which other clients write as TZID, to IANA. */
+        private val WINDOWS_ZONES = mapOf(
+            "Romance Standard Time" to "Europe/Paris",
+            "W. Europe Standard Time" to "Europe/Berlin",
+            "Central Europe Standard Time" to "Europe/Budapest",
+            "Central European Standard Time" to "Europe/Warsaw",
+            "GMT Standard Time" to "Europe/London",
+            "Greenwich Standard Time" to "Atlantic/Reykjavik",
+            "E. Europe Standard Time" to "Europe/Chisinau",
+            "FLE Standard Time" to "Europe/Kiev",
+            "Russian Standard Time" to "Europe/Moscow",
+            "Eastern Standard Time" to "America/New_York",
+            "Central Standard Time" to "America/Chicago",
+            "Mountain Standard Time" to "America/Denver",
+            "Pacific Standard Time" to "America/Los_Angeles",
+            "China Standard Time" to "Asia/Shanghai",
+            "Tokyo Standard Time" to "Asia/Tokyo",
+            "India Standard Time" to "Asia/Kolkata",
+            "AUS Eastern Standard Time" to "Australia/Sydney"
+        )
+
+        /** The zone for an IANA or known Windows [id], or null when it cannot be told. */
+        fun zoneOf(id: String): ZoneId? =
+            runCatching { ZoneId.of(WINDOWS_ZONES[id] ?: id) }.getOrNull()
 
         private val BASIC_DATE = DateTimeFormatter.ofPattern("yyyyMMdd")
         private val BASIC_DATE_TIME = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")

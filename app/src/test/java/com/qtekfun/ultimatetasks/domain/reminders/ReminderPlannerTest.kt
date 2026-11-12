@@ -43,6 +43,22 @@ class ReminderPlannerTest {
     }
 
     @Test
+    fun `floating times follow the device zone, so a trip moves the instant`() {
+        val floating = task(1, "2026-10-03T19:00")
+        val shanghai = ZoneId.of("Asia/Shanghai")
+        val atHome = plan(floating).single().at
+        val abroad = ReminderPlanner.plan(
+            listOf(floating),
+            emptyMap(),
+            allDayHour = 9,
+            now = now,
+            zone = shanghai
+        ).single().at
+        assertEquals(Instant.parse("2026-10-03T17:00:00Z"), atHome)
+        assertEquals(Instant.parse("2026-10-03T11:00:00Z"), abroad)
+    }
+
+    @Test
     fun `all-day tasks remind at the chosen hour`() {
         assertEquals(Instant.parse("2026-10-04T07:00:00Z"), plan(task(1, "2026-10-04")).single().at)
     }
