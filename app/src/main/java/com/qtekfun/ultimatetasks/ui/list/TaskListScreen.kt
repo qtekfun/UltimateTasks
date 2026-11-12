@@ -233,10 +233,10 @@ private fun TaskListContent(
         }
         if (adding.value) {
             item(key = "new") {
-                NewTaskRow(color, onAdd = viewModel::add, onDone = {
-                    adding.value =
-                        false
-                })
+                NewTaskRow(color, viewModel::add, { title ->
+                    adding.value = false
+                    viewModel.add(title, onOpenTask)
+                }, { adding.value = false })
             }
         }
         if (state.tasks.isEmpty() && !adding.value) item { EmptyTasks() }
@@ -244,11 +244,16 @@ private fun TaskListContent(
 }
 
 /**
- * Typing a title and pressing Enter adds it and opens a new empty row; tapping elsewhere adds it
- * and ends, as in Apple Reminders.
+ * Typing a title and pressing Enter adds it and opens its detail to fill in the rest; tapping
+ * elsewhere only adds it and ends.
  */
 @Composable
-private fun NewTaskRow(color: Color, onAdd: (String) -> Unit, onDone: () -> Unit) {
+private fun NewTaskRow(
+    color: Color,
+    onAdd: (String) -> Unit,
+    onAddAndOpen: (String) -> Unit,
+    onDone: () -> Unit
+) {
     var text by rememberSaveable { mutableStateOf("") }
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { focus.requestFocus() }
@@ -275,7 +280,7 @@ private fun NewTaskRow(color: Color, onAdd: (String) -> Unit, onDone: () -> Unit
                 if (text.isBlank()) {
                     onDone()
                 } else {
-                    onAdd(text)
+                    onAddAndOpen(text)
                     text = ""
                 }
             }),

@@ -58,6 +58,11 @@
     <string name="field_url">URL</string>
     <string name="field_date">Date</string>
     <string name="field_time">Time</string>
+    <string name="field_zone">Time zone</string>
+    <string name="zone_floating">Floating</string>
+    <string name="zone_floating_hint">Floating (same time wherever you are)</string>
+    <string name="zone_here">%1$s · %2$s here</string>
+    <string name="zone_search">Search zones</string>
     <string name="field_early_reminder">Early reminder</string>
     <string name="field_repeat">Repeat</string>
     <string name="field_priority">Priority</string>

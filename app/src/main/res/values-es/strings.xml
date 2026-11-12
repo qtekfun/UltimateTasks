@@ -55,6 +55,11 @@
     <string name="field_url">URL</string>
     <string name="field_date">Fecha</string>
     <string name="field_time">Hora</string>
+    <string name="field_zone">Zona horaria</string>
+    <string name="zone_floating">Flotante</string>
+    <string name="zone_floating_hint">Flotante (misma hora estés donde estés)</string>
+    <string name="zone_here">%1$s · %2$s aquí</string>
+    <string name="zone_search">Buscar zona</string>
     <string name="field_early_reminder">Aviso anticipado</string>
     <string name="field_repeat">Repetir</string>
     <string name="field_priority">Prioridad</string>

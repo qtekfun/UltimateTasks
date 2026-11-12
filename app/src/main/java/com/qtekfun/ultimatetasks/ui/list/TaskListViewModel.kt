@@ -157,9 +157,10 @@ class TaskListViewModel @Inject constructor(
         lastCompleted.value = null
     }
 
-    fun add(title: String) {
+    /** Adds a task to the open list; [onCreated] gets its id once stored. */
+    fun add(title: String, onCreated: (Long) -> Unit = {}) {
         val list = (source.value as? TaskSource.List)?.href ?: return
-        viewModelScope.launch { repository.create(list, title) }
+        viewModelScope.launch { repository.create(list, title)?.let(onCreated) }
     }
 
     fun refresh() = scheduler.requestSync()
