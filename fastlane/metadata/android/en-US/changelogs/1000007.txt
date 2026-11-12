@@ -1,0 +1,1 @@
+On foldables and tablets, the New task and Add list buttons are no longer hidden behind the dock or taskbar.
