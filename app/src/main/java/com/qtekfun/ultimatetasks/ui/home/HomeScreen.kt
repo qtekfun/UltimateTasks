@@ -77,6 +77,7 @@ import com.qtekfun.ultimatetasks.data.task.HomeData
 import com.qtekfun.ultimatetasks.data.task.ListSummary
 import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
+import com.qtekfun.ultimatetasks.ui.components.bottomBarInsets
 import com.qtekfun.ultimatetasks.ui.list.smartColor
 import com.qtekfun.ultimatetasks.ui.list.smartName
 import com.qtekfun.ultimatetasks.ui.lists.ListEditorDialog
@@ -375,7 +376,8 @@ private fun AskNotificationsOnce() {
 @Composable
 private fun HomeBottomBar(onNewTask: (() -> Unit)?, onAddList: () -> Unit) {
     Row(
-        Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+        Modifier.fillMaxWidth().bottomBarInsets()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (onNewTask != null) {

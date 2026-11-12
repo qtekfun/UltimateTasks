@@ -65,6 +65,7 @@ import com.qtekfun.ultimatetasks.domain.task.SmartList
 import com.qtekfun.ultimatetasks.domain.task.Subtasks
 import com.qtekfun.ultimatetasks.domain.task.TaskSource
 import com.qtekfun.ultimatetasks.ui.components.RoundCheckbox
+import com.qtekfun.ultimatetasks.ui.components.bottomBarInsets
 import com.qtekfun.ultimatetasks.ui.components.rememberCommitOnLeave
 import com.qtekfun.ultimatetasks.ui.lists.ListMenuItems
 import com.qtekfun.ultimatetasks.ui.lists.ListMessages
@@ -169,7 +170,7 @@ private fun UndoSnackbar(
 
 @Composable
 private fun NewTaskButton(color: Color, onClick: () -> Unit) {
-    TextButton(onClick = onClick, modifier = Modifier.padding(8.dp)) {
+    TextButton(onClick = onClick, modifier = Modifier.bottomBarInsets().padding(8.dp)) {
         Icon(Icons.Default.Add, contentDescription = null, tint = color)
         Text(stringResource(R.string.new_task), color = color, fontWeight = FontWeight.SemiBold)
     }

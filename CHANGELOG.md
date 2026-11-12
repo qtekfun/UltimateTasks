@@ -9,6 +9,9 @@ All notable changes are listed here. The format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Fixed
+- On foldables and tablets, the "New task" and "Add list" buttons at the bottom were hidden behind the dock or taskbar. They now stay clear of the navigation bar, the taskbar and the display cutout.
+
 ## [1.0.0-rc.6] - 2026-11-12
 
 Add a task and fill in its details at once, and times that follow you when you travel.
